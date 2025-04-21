@@ -35,7 +35,7 @@
     ```json
     {
       "access_token": "string",
-      "user_id": integer
+      "user_id": "integer"
     }
     ```
 *   **Common Errors:** `400 Bad Request` (missing fields), `401 Unauthorized` (invalid credentials).
@@ -90,11 +90,11 @@
 *   **Success Response (`200 OK`):** Paginated list of matching user profiles.
     ```json
     {
-      "results": [ /* user profiles */ ],
-      "total": integer,
-      "page": integer,
-      "pages": integer,
-      "per_page": integer
+      "results": [ "/* user profiles */" ],
+      "total": "integer",
+      "page": "integer",
+      "pages": "integer",
+      "per_page": "integer"
     }
     ```
 
@@ -108,7 +108,7 @@
 *   **Request Body:**
     ```json
     {
-      "receiver_id": integer,
+      "receiver_id": "integer",
       "content": "string"
     }
     ```
@@ -126,11 +126,11 @@
 *   **Success Response (`200 OK`):** Paginated list of messages.
     ```json
     {
-      "messages": [ /* message objects */ ],
-      "total": integer,
-      "page": integer,
-      "pages": integer,
-      "per_page": integer
+      "messages": [ "/* message objects */" ],
+      "total": "integer",
+      "page": "integer",
+      "pages": "integer",
+      "per_page": "integer"
     }
     ```
 *   **Common Errors:** `401 Unauthorized`, `404 Not Found` (other user not found).
@@ -162,11 +162,11 @@
 *   **Success Response (`200 OK`):** Paginated list of posts including author info.
     ```json
     {
-      "posts": [ /* post objects with author {nom, prenom} */ ],
-      "total": integer,
-      "page": integer,
-      "pages": integer,
-      "per_page": integer
+      "posts": [ "/* post objects with author {nom, prenom} */" ],
+      "total": "integer",
+      "page": "integer",
+      "pages": "integer",
+      "per_page": "integer"
     }
     ```
 *   **Common Errors:** `404 Not Found` (user not found).
