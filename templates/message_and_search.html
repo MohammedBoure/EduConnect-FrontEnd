@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Search & Chat App</title>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/babel-standalone@7.22.9/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #f3f4f6; /* Tailwind's bg-gray-100 */
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // API Base URL
+    const API_BASE_URL = 'http://localhost:5000/api';
+
+    // Fetch with JWT token
+    const fetchWithToken = async (url, options = {}) => {
+      const token = localStorage.getItem('jwt_token');
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        ...options.headers,
+      };
+      const response = await fetch(url, { ...options, headers });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Request failed');
+      }
+      return response.json();
+    };
+
+    // Token Input Modal
+    function TokenModal({ onSave }) {
+      const [token, setToken] = useState('');
+
+      const handleSave = () => {
+        if (token.trim()) {
+          localStorage.setItem('jwt_token', token.trim());
+          onSave();
+        }
+      };
+
+      return (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+            <h2 className="text-xl font-semibold mb-4">Enter JWT Token</h2>
+            <input
+              type="text"
+              value={token}
+              onChange={(e) => setToken(e.target.value)}
+              placeholder="Paste your JWT token here"
+              className="w-full p-2 border rounded mb-4"
+            />
+            <button
+              onClick={handleSave}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    // Search Form Component
+    function SearchForm({ onSearch }) {
+      const [nom, setNom] = useState('');
+      const [filiere, setFiliere] = useState('');
+      const [competence, setCompetence] = useState('');
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        onSearch({ nom, filiere, competence, page: 1 });
+      };
+
+      return (
+        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <input
+              type="text"
+              value={nom}
+              onChange={(e) => setNom(e.target.value)}
+              placeholder="Name"
+              className="p-2 border rounded"
+            />
+            <input
+              type="text"
+              value={filiere}
+              onChange={(e) => setFiliere(e.target.value)}
+              placeholder="Filiere"
+              className="p-2 border rounded"
+            />
+            <input
+              type="text"
+              value={competence}
+              onChange={(e) => setCompetence(e.target.value)}
+              placeholder="Competence"
+              className="p-2 border rounded"
+            />
+          </div>
+          <button
+            onClick={handleSubmit}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Search
+          </button>
+        </div>
+      );
+    }
+
+    // Profile Card Component
+    function ProfileCard({ profile, onSelect }) {
+      return (
+        <div
+          className="bg-white p-4 rounded-lg shadow-md cursor-pointer hover:shadow-lg"
+          onClick={() => onSelect(profile.id)}
+        >
+          <img
+            src={profile.photo || 'https://via.placeholder.com/50'}
+            alt="Profile"
+            className="w-12 h-12 rounded-full mb-2"
+          />
+          <h3 className="text-lg font-semibold">
+            {profile.prenom} {profile.nom}
+          </h3>
+          <p className="text-gray-600">{profile.filiere}</p>
+          <p className="text-sm text-gray-500">
+            Competences: {profile.competences.join(', ')}
+          </p>
+        </div>
+      );
+    }
+
+    // Pagination Component
+    function Pagination({ currentPage, totalPages, onPageChange }) {
+      if (totalPages <= 1) return null;
+
+      return (
+        <div className="flex justify-center space-x-2 mt-4">
+          <button
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span className="px-4 py-2">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      );
+    }
+
+    // Chat Window Component
+    function ChatWindow({ otherUserId, onClose }) {
+      const [messages, setMessages] = useState([]);
+      const [newMessage, setNewMessage] = useState('');
+      const [page, setPage] = useState(1);
+      const [totalPages, setTotalPages] = useState(1);
+      const [error, setError] = useState(null);
+      const [loading, setLoading] = useState(false);
+      const messagesEndRef = useRef(null);
+
+      const fetchMessages = async () => {
+        setLoading(true);
+        try {
+          const data = await fetchWithToken(
+            `${API_BASE_URL}/messages/${otherUserId}?page=${page}&per_page=30`
+          );
+          setMessages(data.messages);
+          setTotalPages(data.pages);
+          setError(null);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      useEffect(() => {
+        if (otherUserId) {
+          fetchMessages();
+        }
+      }, [otherUserId, page]);
+
+      useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, [messages]);
+
+      const handleSendMessage = async () => {
+        if (!newMessage.trim()) return;
+
+        try {
+          const data = await fetchWithToken(`${API_BASE_URL}/messages`, {
+            method: 'POST',
+            body: JSON.stringify({
+              receiver_id: otherUserId,
+              content: newMessage,
+            }),
+          });
+          setMessages([...messages, data.sent_message]);
+          setNewMessage('');
+          setError(null);
+        } catch (err) {
+          setError(err.message);
+        }
+      };
+
+      return (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white w-full max-w-lg h-[80vh] flex flex-col rounded-lg shadow-lg">
+            <div className="p-4 border-b flex justify-between items-center">
+              <h2 className="text-xl font-semibold">Chat</h2>
+              <button
+                onClick={onClose}
+                className="text-red-500 hover:text-red-700"
+              >
+                Close
+              </button>
+            </div>
+            <div className="flex-1 p-4 overflow-y-auto">
+              {loading && <p>Loading messages...</p>}
+              {error && <p className="text-red-500">{error}</p>}
+              {messages.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`mb-2 p-2 rounded ${
+                    msg.sender_id === otherUserId
+                      ? 'bg-gray-100'
+                      : 'bg-blue-100 ml-auto'
+                  }`}
+                >
+                  <p>{msg.content}</p>
+                  <p className="text-xs text-gray-500">
+                    {new Date(msg.created_at).toLocaleTimeString()}
+                  </p>
+                </div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
+            <div className="p-4 border-t">
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  placeholder="Type a message..."
+                  className="flex-1 p-2 border rounded"
+                />
+                <button
+                  onClick={handleSendMessage}
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Send
+                </button>
+              </div>
+            </div>
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    // Main App Component
+    function App() {
+      const [token, setToken] = useState(localStorage.getItem('jwt_token'));
+      const [showTokenModal, setShowTokenModal] = useState(!token);
+      const [profiles, setProfiles] = useState([]);
+      const [searchParams, setSearchParams] = useState({});
+      const [page, setPage] = useState(1);
+      const [totalPages, setTotalPages] = useState(1);
+      const [error, setError] = useState(null);
+      const [loading, setLoading] = useState(false);
+      const [chatUserId, setChatUserId] = useState(null);
+
+      const handleTokenSave = () => {
+        setToken(localStorage.getItem('jwt_token'));
+        setShowTokenModal(false);
+      };
+
+      const handleSearch = async (params) => {
+        setSearchParams(params);
+        setPage(params.page);
+        setLoading(true);
+        try {
+          const query = new URLSearchParams({
+            ...(params.nom && { nom: params.nom }),
+            ...(params.filiere && { filiere: params.filiere }),
+            ...(params.competence && { competence: params.competence }),
+            page: params.page,
+            per_page: 10,
+          }).toString();
+          const data = await fetchWithToken(`${API_BASE_URL}/search?${query}`);
+          setProfiles(data.results);
+          setTotalPages(data.pages);
+          setError(null);
+        } catch (err) {
+          setError(err.message);
+          setProfiles([]);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const handlePageChange = (newPage) => {
+        handleSearch({ ...searchParams, page: newPage });
+      };
+
+      return (
+        <div className="min-h-screen p-6">
+          {showTokenModal && <TokenModal onSave={handleTokenSave} />}
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-3xl font-bold mb-6 text-center">
+              Profile Search & Chat
+            </h1>
+            <button
+              onClick={() => setShowTokenModal(true)}
+              className="mb-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+            >
+              Change JWT Token
+            </button>
+            <SearchForm onSearch={handleSearch} />
+            {loading && <p className="text-center">Loading profiles...</p>}
+            {error && <p className="text-red-500 text-center">{error}</p>}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {profiles.map((profile) => (
+                <ProfileCard
+                  key={profile.id}
+                  profile={profile}
+                  onSelect={setChatUserId}
+                />
+              ))}
+            </div>
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
+          {chatUserId && (
+            <ChatWindow
+              otherUserId={chatUserId}
+              onClose={() => setChatUserId(null)}
+            />
+          )}
+        </div>
+      );
+    }
+
+    // Render the App
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

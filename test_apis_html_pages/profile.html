@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحديث وحذف الملف الشخصي</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input {
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #profile-output {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>إدارة الملف الشخصي</h1>
+
+        <!-- عرض الملف الشخصي -->
+        <div id="profile-section">
+            <h2>عرض الملف الشخصي</h2>
+            <button onclick="fetchProfile()">تحميل الملف الشخصي</button>
+            <pre id="profile-output"></pre>
+        </div>
+
+        <!-- تحديث الملف الشخصي -->
+        <div id="update-section">
+            <h2>تحديث الملف الشخصي</h2>
+            <form id="update-form" onsubmit="updateProfile(event)">
+                <input type="text" id="nom" placeholder="الاسم" required>
+                <input type="text" id="prenom" placeholder="اللقب" required>
+                <input type="text" id="filiere" placeholder="التخصص" required>
+                <input type="text" id="competences" placeholder="المهارات" required>
+                <input type="text" id="photo" placeholder="رابط الصورة" required>
+                <button type="submit">تحديث</button>
+            </form>
+        </div>
+
+        <!-- حذف الملف الشخصي -->
+        <div id="delete-section">
+            <h2>حذف الملف الشخصي</h2>
+            <button onclick="deleteProfile()">حذف</button>
+        </div>
+    </div>
+
+    <script>
+        const userId = 11; // أدخل ID المستخدم الصحيح هنا
+        const apiUrl = `http://localhost:5000/api/profile/${userId}`; // تأكد من مسار الـ API الصحيح
+
+        // تحميل الملف الشخصي
+        function fetchProfile() {
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Profile Data:', data);
+                    document.getElementById('profile-output').textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    console.error('Error fetching profile:', error);
+                });
+        }
+
+        function updateProfile(event) {
+            event.preventDefault();
+        
+            const updatedData = {
+                nom: document.getElementById('nom').value,
+                prenom: document.getElementById('prenom').value,
+                filiere: document.getElementById('filiere').value,
+                competences: document.getElementById('competences').value,
+                photo: document.getElementById('photo').value
+            };
+        
+            fetch(apiUrl, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NTEzNzczNywianRpIjoiOGViZjkzZTUtYjI5My00NTA1LWJmMTEtNjRmM2FjYTQwNTRlIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjExIiwibmJmIjoxNzQ1MTM3NzM3LCJjc3JmIjoiZDZkMzQzNjAtODBhNi00OWFjLWIxZWQtNDBkNGM3MjBiOWMyIiwiZXhwIjoxNzQ1MTM4NjM3fQ.L_qqH-v3fjxKRRvE5wSWUBCuMSFSRtYZjzEENKJdDz4"
+                },
+                body: JSON.stringify(updatedData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Update Response:', data);
+                alert(data.message || 'تم التحديث بنجاح');
+                // إعادة تحميل البيانات بعد التحديث
+                fetchProfile();  // استدعاء الدالة لعرض البيانات المحدثة
+            })
+            .catch(error => {
+                console.error('Error updating profile:', error);
+            });
+        }
+        function deleteProfile() {
+            fetch(apiUrl, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NTEzNzczNywianRpIjoiOGViZjkzZTUtYjI5My00NTA1LWJmMTEtNjRmM2FjYTQwNTRlIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjExIiwibmJmIjoxNzQ1MTM3NzM3LCJjc3JmIjoiZDZkMzQzNjAtODBhNi00OWFjLWIxZWQtNDBkNGM3MjBiOWMyIiwiZXhwIjoxNzQ1MTM4NjM3fQ.L_qqH-v3fjxKRRvE5wSWUBCuMSFSRtYZjzEENKJdDz4"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Delete Response:', data);
+                alert(data.message || 'تم الحذف بنجاح');
+            })
+            .catch(error => {
+                console.error('Error deleting profile:', error);
+            });
+        }
+        
+        
+    </script>
+</body>
+</html>
