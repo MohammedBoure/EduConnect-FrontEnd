@@ -13,8 +13,8 @@
       "email": "string",
       "mot_de_passe": "string",
       "filiere": "string",
-      "competences": ["string"], // Array of strings expected
-      "photo": "string" // optional URL
+      "competences": ["string"],
+      "photo": "string"
     }
     ```
 *   **Success Response (`201 Created`):** User details (id, nom, prenom, email).
