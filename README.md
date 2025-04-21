@@ -1,10 +1,15 @@
-EduConnect Backend API Documentation
-This document provides detailed information about the EduConnect Backend API, which powers a student directory and networking platform. The API allows users to register, log in, manage profiles, search for other users, send messages, and create posts. It is built using Flask, SQLAlchemy, and JWT for authentication, with an SQLite database for data storage.
-The base URL for the API is: https://educonnect-wp9t.onrender.com/api
+EduConnect Backend API
+EduConnect is a Flask-based backend API for a student networking platform, enabling user registration, profile management, messaging, and post creation. It uses SQLAlchemy for database operations, JWT for authentication, and SQLite for data storage (configurable for other databases in production).
+Deployed API: https://educonnect-wp9t.onrender.com
+
 Table of Contents
 
-Authentication
+Features
+Technologies
+Installation
+Usage
 API Endpoints
+Authentication
 User Registration
 User Login
 Profile Management
@@ -14,38 +19,115 @@ Posts
 
 
 Error Handling
-Setup and Deployment
+Contributing
+License
 
 
-Authentication
-Most endpoints require authentication using a JSON Web Token (JWT). To authenticate:
+Features
 
-Obtain a token by sending a POST request to /api/login with valid credentials.
+User authentication with JWT
+Profile creation, update, and deletion
+Search profiles by name, field of study, or skills
+Private messaging between users
+Post creation and management
+Pagination for search results, messages, and posts
+CORS support for frontend integration
+
+
+Technologies
+
+Flask: Web framework
+SQLAlchemy: ORM for database management
+Flask-JWT-Extended: JWT authentication
+SQLite: Default database (configurable for PostgreSQL, etc.)
+Flask-CORS: Cross-origin resource sharing
+Python 3.8+
+
+
+Installation
+
+Clone the repository:
+git clone https://github.com/your-username/educonnect-backend.git
+cd educonnect-backend
+
+
+Create a virtual environment:
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+
+Install dependencies:
+pip install -r requirements.txt
+
+Example requirements.txt:
+flask==2.3.3
+flask-sqlalchemy==3.0.5
+flask-jwt-extended==4.5.3
+flask-cors==4.0.0
+werkzeug==3.0.1
+
+
+Configure environment:
+Create a .env file or update app.py with:
+JWT_SECRET_KEY=your-super-secret-and-long-key
+SQLALCHEMY_DATABASE_URI=sqlite:///student_directory.db
+
+
+Run the application:
+python app.py
+
+The API will be available at http://localhost:5000/api.
+
+
+
+Usage
+To interact with the API:
+
+Use tools like Postman or cURL to send HTTP requests.
+
+Authenticate via /api/login to obtain a JWT token.
 
 Include the token in the Authorization header for protected endpoints:
 Authorization: Bearer <your_access_token>
 
 
 
+Example: Register a new user:
+curl -X POST https://educonnect-wp9t.onrender.com/api/register \
+-H "Content-Type: application/json" \
+-d '{
+  "nom": "Doe",
+  "prenom": "John",
+  "email": "john.doe@example.com",
+  "mot_de_passe": "securepassword",
+  "filiere": "Computer Science",
+  "competences": ["Python", "JavaScript"]
+}'
+
 
 API Endpoints
+Base URL: https://educonnect-wp9t.onrender.com/api
+Authentication
+Most endpoints require a JWT token in the Authorization header.
 User Registration
-Endpoint: POST /api/register
-Description: Registers a new user in the system.
-Request Body:
+
+POST /register
+
+Description: Register a new user.
+
+Body:
 {
   "nom": "string",
   "prenom": "string",
   "email": "string",
   "mot_de_passe": "string",
   "filiere": "string",
-  "competences": ["string"] | "string",
+  "competences": ["string"],
   "photo": "string" (optional)
 }
 
-Response:
 
-201 Created:
+Response (201):
 {
   "message": "User registered successfully",
   "user": {
@@ -57,70 +139,35 @@ Response:
 }
 
 
-400 Bad Request: Missing or empty required fields.
-
-409 Conflict: Email already exists.
-
-500 Internal Server Error: Database or unexpected error.
-
-
-Example:
-curl -X POST https://educonnect-wp9t.onrender.com/api/register \
--H "Content-Type: application/json" \
--d '{
-  "nom": "Doe",
-  "prenom": "John",
-  "email": "john.doe@example.com",
-  "mot_de_passe": "securepassword",
-  "filiere": "Computer Science",
-  "competences": ["Python", "JavaScript"],
-  "photo": "https://example.com/photo.jpg"
-}'
-
 
 User Login
-Endpoint: POST /api/login
-Description: Authenticates a user and returns a JWT token.
-Request Body:
+
+POST /login
+
+Description: Authenticate and get a JWT token.
+
+Body:
 {
   "email": "string",
   "mot_de_passe": "string"
 }
 
-Response:
 
-200 OK:
+Response (200):
 {
   "access_token": "string",
   "user_id": integer
 }
 
 
-400 Bad Request: Missing email or password.
-
-401 Unauthorized: Invalid email or password.
-
-
-Example:
-curl -X POST https://educonnect-wp9t.onrender.com/api/login \
--H "Content-Type: application/json" \
--d '{
-  "email": "john.doe@example.com",
-  "mot_de_passe": "securepassword"
-}'
-
 
 Profile Management
-Get Profile
-Endpoint: GET /api/profile/<user_id>
-Description: Retrieves a user's profile by ID. Requires authentication.
-Headers:
 
-Authorization: Bearer <token>
+GET /profile/<user_id>
 
-Response:
+Description: Get a user's profile.
 
-200 OK:
+Response (200):
 {
   "id": integer,
   "nom": "string",
@@ -132,114 +179,47 @@ Response:
 }
 
 
-404 Not Found: User not found.
+PUT /profile/<user_id> (Authenticated)
 
+Description: Update own profile.
 
-Example:
-curl -X GET https://educonnect-wp9t.onrender.com/api/profile/1 \
--H "Authorization: Bearer <token>"
-
-Update Profile
-Endpoint: PUT /api/profile/<user_id>
-Description: Updates the authenticated user's profile. Only the user can update their own profile.
-Headers:
-
-Authorization: Bearer <token>
-
-Request Body (all fields optional):
+Body (optional fields):
 {
   "nom": "string",
   "prenom": "string",
   "filiere": "string",
-  "competences": ["string"] | "string",
+  "competences": ["string"],
   "photo": "string"
 }
 
-Response:
 
-200 OK:
-{
-  "message": "Profile updated successfully",
-  "user": {
-    "id": integer,
-    "nom": "string",
-    "prenom": "string",
-    "filiere": "string",
-    "competences": ["string"],
-    "photo": "string" | null
-  }
-}
+DELETE /profile/<user_id> (Authenticated)
 
+Description: Delete own profile.
 
-400 Bad Request: No update data provided.
-
-401 Unauthorized: Invalid token.
-
-403 Forbidden: Attempt to update another user's profile.
-
-404 Not Found: User not found.
-
-500 Internal Server Error: Database or unexpected error.
-
-
-Example:
-curl -X PUT https://educonnect-wp9t.onrender.com/api/profile/1 \
--H "Authorization: Bearer <token>" \
--H "Content-Type: application/json" \
--d '{
-  "nom": "Doe",
-  "prenom": "Jane",
-  "filiere": "Data Science",
-  "competences": ["Python", "SQL"]
-}'
-
-Delete Profile
-Endpoint: DELETE /api/profile/<user_id>
-Description: Deletes the authenticated user's profile and associated data (posts, messages).
-Headers:
-
-Authorization: Bearer <token>
-
-Response:
-
-200 OK:
+Response (200):
 {
   "message": "Profile deleted successfully"
 }
 
 
-401 Unauthorized: Invalid token.
-
-403 Forbidden: Attempt to delete another user's profile.
-
-404 Not Found: User not found.
-
-500 Internal Server Error: Database or unexpected error.
-
-
-Example:
-curl -X DELETE https://educonnect-wp9t.onrender.com/api/profile/1 \
--H "Authorization: Bearer <token>"
-
 
 Profile Search
-Endpoint: GET /api/search
-Description: Searches for user profiles by name, field of study, or competence. Supports pagination.
-Headers:
 
-Authorization: Bearer <token>
+GET /search (Authenticated)
+
+Description: Search profiles by name, field, or skill.
 
 Query Parameters:
 
-nom (optional): Search by name (first or last).
-filiere (optional): Search by field of study.
-competence (optional): Search by competence.
-page (optional, default: 1): Page number.
-per_page (optional, default: 10): Results per page.
+nom: Name (first or last)
+filiere: Field of study
+competence: Skill
+page: Page number (default: 1)
+per_page: Results per page (default: 10)
 
-Response:
 
-200 OK:
+Response (200):
 {
   "results": [
     {
@@ -259,28 +239,20 @@ Response:
 
 
 
-Example:
-curl -X GET "https://educonnect-wp9t.onrender.com/api/search?nom=John&filiere=Computer%20Science&competence=Python&page=1&per_page=10" \
--H "Authorization: Bearer <token>"
-
-
 Messaging
-Send Message
-Endpoint: POST /api/messages
-Description: Sends a message from the authenticated user to another user.
-Headers:
 
-Authorization: Bearer <token>
+POST /messages (Authenticated)
 
-Request Body:
+Description: Send a message to another user.
+
+Body:
 {
   "receiver_id": integer,
   "content": "string"
 }
 
-Response:
 
-201 Created:
+Response (201):
 {
   "message": "Message sent successfully",
   "sent_message": {
@@ -288,44 +260,22 @@ Response:
     "content": "string",
     "sender_id": integer,
     "receiver_id": integer,
-    "created_at": "string" (ISO format)
+    "created_at": "string"
   }
 }
 
 
-400 Bad Request: Missing or invalid receiver_id or content.
+GET /messages/<other_user_id> (Authenticated)
 
-401 Unauthorized: Invalid token.
-
-404 Not Found: Receiver not found.
-
-500 Internal Server Error: Database or unexpected error.
-
-
-Example:
-curl -X POST https://educonnect-wp9t.onrender.com/api/messages \
--H "Authorization: Bearer <token>" \
--H "Content-Type: application/json" \
--d '{
-  "receiver_id": 2,
-  "content": "Hello, let's collaborate!"
-}'
-
-Get Messages
-Endpoint: GET /api/messages/<other_user_id>
-Description: Retrieves messages between the authenticated user and another user. Supports pagination.
-Headers:
-
-Authorization: Bearer <token>
+Description: Get messages with another user.
 
 Query Parameters:
 
-page (optional, default: 1): Page number.
-per_page (optional, default: 30): Messages per page.
+page: Page number (default: 1)
+per_page: Messages per page (default: 30)
 
-Response:
 
-200 OK:
+Response (200):
 {
   "messages": [
     {
@@ -333,7 +283,7 @@ Response:
       "content": "string",
       "sender_id": integer,
       "receiver_id": integer,
-      "created_at": "string" (ISO format)
+      "created_at": "string"
     }
   ],
   "total": integer,
@@ -343,81 +293,48 @@ Response:
 }
 
 
-401 Unauthorized: Invalid token.
-
-404 Not Found: Other user not found.
-
-500 Internal Server Error: Database or unexpected error.
-
-
-Example:
-curl -X GET "https://educonnect-wp9t.onrender.com/api/messages/2?page=1&per_page=30" \
--H "Authorization: Bearer <token>"
-
 
 Posts
-Create Post
-Endpoint: POST /api/posts
-Description: Creates a new post by the authenticated user.
-Headers:
 
-Authorization: Bearer <token>
+POST /posts (Authenticated)
 
-Request Body:
+Description: Create a new post.
+
+Body:
 {
   "content": "string"
 }
 
-Response:
 
-201 Created:
+Response (201):
 {
   "message": "Post created successfully",
   "post": {
     "id": integer,
     "content": "string",
-    "created_at": "string" (ISO format),
+    "created_at": "string",
     "user_id": integer
   }
 }
 
 
-400 Bad Request: Missing or empty content.
+GET /posts/user/<user_id> (Authenticated)
 
-401 Unauthorized: Invalid token.
-
-500 Internal Server Error: Database or unexpected error.
-
-
-Example:
-curl -X POST https://educonnect-wp9t.onrender.com/api/posts \
--H "Authorization: Bearer <token>" \
--H "Content-Type: application/json" \
--d '{
-  "content": "Excited to share my new project!"
-}'
-
-Get User Posts
-Endpoint: GET /api/posts/user/<user_id>
-Description: Retrieves posts by a specific user. Supports pagination.
-Headers:
-
-Authorization: Bearer <token>
+Description: Get a user's posts.
 
 Query Parameters:
 
-page (optional, default: 1): Page number.
-per_page (optional, default: 10): Posts per page.
+page: Page number (default: 1)
+per_page: Posts per page (default: 10)
 
-Response:
 
-200 OK:
+Response (200):
 {
   "posts": [
     {
       "id": integer,
       "content": "string",
-      "created_at": "string" (ISO format),
+      "created_at": "string",
       "user_id": integer,
       "author": {
         "nom": "string",
@@ -432,131 +349,57 @@ Response:
 }
 
 
-404 Not Found: User not found.
+PUT /posts/<post_id> (Authenticated)
 
-500 Internal Server Error: Database or unexpected error.
+Description: Update own post.
 
-
-Example:
-curl -X GET "https://educonnect-wp9t.onrender.com/api/posts/user/1?page=1&per_page=10" \
--H "Authorization: Bearer <token>"
-
-Update Post
-Endpoint: PUT /api/posts/<post_id>
-Description: Updates a post by the authenticated user (only their own posts).
-Headers:
-
-Authorization: Bearer <token>
-
-Request Body:
+Body:
 {
   "content": "string"
 }
 
-Response:
 
-200 OK:
-{
-  "message": "Post updated successfully",
-  "post": {
-    "id": integer,
-    "content": "string",
-    "created_at": "string" (ISO format),
-    "user_id": integer
-  }
-}
+DELETE /posts/<post_id> (Authenticated)
 
+Description: Delete own post.
 
-400 Bad Request: Missing or empty content.
-
-401 Unauthorized: Invalid token.
-
-403 Forbidden: Attempt to update another user's post.
-
-404 Not Found: Post not found.
-
-500 Internal Server Error: Database or unexpected error.
-
-
-Example:
-curl -X PUT https://educonnect-wp9t.onrender.com/api/posts/1 \
--H "Authorization: Bearer <token>" \
--H "Content-Type: application/json" \
--d '{
-  "content": "Updated project details!"
-}'
-
-Delete Post
-Endpoint: DELETE /api/posts/<post_id>
-Description: Deletes a post by the authenticated user (only their own posts).
-Headers:
-
-Authorization: Bearer <token>
-
-Response:
-
-200 OK:
+Response (200):
 {
   "message": "Post deleted successfully"
 }
 
 
-401 Unauthorized: Invalid token.
-
-403 Forbidden: Attempt to delete another user's post.
-
-404 Not Found: Post not found.
-
-500 Internal Server Error: Database or unexpected error.
-
-
-Example:
-curl -X DELETE https://educonnect-wp9t.onrender.com/api/posts/1 \
--H "Authorization: Bearer <token>"
 
 
 Error Handling
-All endpoints return errors in a consistent JSON format:
+Errors are returned in JSON format:
 {
   "error": "string"
 }
 
-Common HTTP status codes:
+Common status codes:
 
-200 OK: Request successful.
-201 Created: Resource created successfully.
-400 Bad Request: Invalid or missing input.
-401 Unauthorized: Invalid or missing authentication token.
-403 Forbidden: User not authorized to perform the action.
-404 Not Found: Resource not found.
-409 Conflict: Resource already exists (e.g., email during registration).
-500 Internal Server Error: Server-side error.
-
-
-Setup and Deployment
-Local Development
-
-Clone the repository and install dependencies:
-pip install flask flask-sqlalchemy flask-jwt-extended werkzeug flask-cors
+200 OK: Success
+201 Created: Resource created
+400 Bad Request: Invalid input
+401 Unauthorized: Invalid/missing token
+403 Forbidden: Unauthorized action
+404 Not Found: Resource not found
+409 Conflict: Resource exists (e.g., email)
+500 Internal Server Error: Server error
 
 
-Set the JWT_SECRET_KEY in the application configuration (replace the placeholder).
+Contributing
 
-Run the application:
-python app.py
+Fork the repository.
+Create a feature branch (git checkout -b feature/your-feature).
+Commit changes (git commit -m "Add your feature").
+Push to the branch (git push origin feature/your-feature).
+Open a Pull Request.
 
+Please follow the Code of Conduct and include tests for new features.
 
-The API will be available at http://localhost:5000/api.
+License
+This project is licensed under the MIT License. See the LICENSE file for details.
 
-
-Production Deployment
-The API is deployed at https://educonnect-wp9t.onrender.com. Ensure the following:
-
-Use a secure JWT_SECRET_KEY.
-Replace the SQLite database with a production-ready database (e.g., PostgreSQL).
-Configure CORS to allow specific origins instead of *.
-Use a WSGI server like Gunicorn for better performance.
-
-For further details on the API service, visit xAI API.
-
-This README provides a comprehensive guide for frontend developers to integrate with the EduConnect Backend API. For additional support, refer to the deployed application at https://educonnect-wp9t.onrender.com.
+For more details, visit the deployed API at https://educonnect-wp9t.onrender.com or check out xAI's API documentation at https://x.ai/api.
