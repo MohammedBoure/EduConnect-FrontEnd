@@ -1,12 +1,10 @@
 
----
-
 ## API Endpoints
 
 ### User Registration
 
 *   **Endpoint:** `POST /api/register`
-*   **Description:** Registers a new user in the system.
+*   **Description:** Registers a new user.
 *   **Request Body:**
     ```json
     {
@@ -15,45 +13,17 @@
       "email": "string",
       "mot_de_passe": "string",
       "filiere": "string",
-      "competences": ["string"] | "string",
-      "photo": "string" // optional
+      "competences": ["string"], // Array of strings expected
+      "photo": "string" // optional URL
     }
     ```
-*   **Response:**
-    *   **`201 Created`**:
-        ```json
-        {
-          "message": "User registered successfully",
-          "user": {
-            "id": integer,
-            "nom": "string",
-            "prenom": "string",
-            "email": "string"
-          }
-        }
-        ```
-    *   **`400 Bad Request`**: Missing or empty required fields (`{"error": "..."}`).
-    *   **`409 Conflict`**: Email already exists (`{"error": "..."}`).
-    *   **`500 Internal Server Error`**: Database or unexpected error (`{"error": "..."}`).
-*   **Example:**
-    ```bash
-    curl -X POST https://educonnect-wp9t.onrender.com/api/register \
-    -H "Content-Type: application/json" \
-    -d '{
-      "nom": "Doe",
-      "prenom": "John",
-      "email": "john.doe@example.com",
-      "mot_de_passe": "securepassword",
-      "filiere": "Computer Science",
-      "competences": ["Python", "JavaScript"],
-      "photo": "https://example.com/photo.jpg"
-    }'
-    ```
+*   **Success Response (`201 Created`):** User details (id, nom, prenom, email).
+*   **Common Errors:** `400 Bad Request` (missing fields), `409 Conflict` (email exists).
 
 ### User Login
 
 *   **Endpoint:** `POST /api/login`
-*   **Description:** Authenticates a user and returns a JWT token.
+*   **Description:** Authenticates a user and returns a JWT token and user ID.
 *   **Request Body:**
     ```json
     {
@@ -61,162 +31,71 @@
       "mot_de_passe": "string"
     }
     ```
-*   **Response:**
-    *   **`200 OK`**:
-        ```json
-        {
-          "access_token": "string",
-          "user_id": integer
-        }
-        ```
-    *   **`400 Bad Request`**: Missing email or password (`{"error": "..."}`).
-    *   **`401 Unauthorized`**: Invalid email or password (`{"error": "..."}`).
-*   **Example:**
-    ```bash
-    curl -X POST https://educonnect-wp9t.onrender.com/api/login \
-    -H "Content-Type: application/json" \
-    -d '{
-      "email": "john.doe@example.com",
-      "mot_de_passe": "securepassword"
-    }'
+*   **Success Response (`200 OK`):**
+    ```json
+    {
+      "access_token": "string",
+      "user_id": integer
+    }
     ```
+*   **Common Errors:** `400 Bad Request` (missing fields), `401 Unauthorized` (invalid credentials).
 
 ### Profile Management
 
 #### Get Profile
 
 *   **Endpoint:** `GET /api/profile/<user_id>`
-*   **Description:** Retrieves a user's profile by ID. Requires authentication.
-*   **Headers:**
-    *   `Authorization: Bearer <token>`
-*   **Response:**
-    *   **`200 OK`**:
-        ```json
-        {
-          "id": integer,
-          "nom": "string",
-          "prenom": "string",
-          "email": "string",
-          "filiere": "string",
-          "competences": ["string"],
-          "photo": "string" | null
-        }
-        ```
-    *   **`404 Not Found`**: User not found (`{"error": "..."}`).
-*   **Example:**
-    ```bash
-    curl -X GET https://educonnect-wp9t.onrender.com/api/profile/1 \
-    -H "Authorization: Bearer <token>"
-    ```
+*   **Auth:** Required.
+*   **Description:** Retrieves a user's profile.
+*   **Success Response (`200 OK`):** User profile details (id, nom, prenom, email, filiere, competences, photo).
+*   **Common Errors:** `404 Not Found` (user not found).
 
 #### Update Profile
 
 *   **Endpoint:** `PUT /api/profile/<user_id>`
-*   **Description:** Updates the authenticated user's profile. Only the user can update their own profile.
-*   **Headers:**
-    *   `Authorization: Bearer <token>`
+*   **Auth:** Required. Only the user can update their own profile.
+*   **Description:** Updates the authenticated user's profile.
 *   **Request Body (all fields optional):**
     ```json
     {
       "nom": "string",
       "prenom": "string",
       "filiere": "string",
-      "competences": ["string"] | "string",
+      "competences": ["string"],
       "photo": "string"
     }
     ```
-*   **Response:**
-    *   **`200 OK`**:
-        ```json
-        {
-          "message": "Profile updated successfully",
-          "user": {
-            "id": integer,
-            "nom": "string",
-            "prenom": "string",
-            "filiere": "string",
-            "competences": ["string"],
-            "photo": "string" | null
-          }
-        }
-        ```
-    *   **`400 Bad Request`**: No update data provided (`{"error": "..."}`).
-    *   **`401 Unauthorized`**: Invalid token (`{"error": "..."}`).
-    *   **`403 Forbidden`**: Attempt to update another user's profile (`{"error": "..."}`).
-    *   **`404 Not Found`**: User not found (`{"error": "..."}`).
-    *   **`500 Internal Server Error`**: Database or unexpected error (`{"error": "..."}`).
-*   **Example:**
-    ```bash
-    curl -X PUT https://educonnect-wp9t.onrender.com/api/profile/1 \
-    -H "Authorization: Bearer <token>" \
-    -H "Content-Type: application/json" \
-    -d '{
-      "nom": "Doe",
-      "prenom": "Jane",
-      "filiere": "Data Science",
-      "competences": ["Python", "SQL"]
-    }'
-    ```
+*   **Success Response (`200 OK`):** Updated user profile details.
+*   **Common Errors:** `400 Bad Request` (no data), `401 Unauthorized`, `403 Forbidden` (not own profile), `404 Not Found`.
 
 #### Delete Profile
 
 *   **Endpoint:** `DELETE /api/profile/<user_id>`
-*   **Description:** Deletes the authenticated user's profile and associated data (posts, messages).
-*   **Headers:**
-    *   `Authorization: Bearer <token>`
-*   **Response:**
-    *   **`200 OK`**:
-        ```json
-        {
-          "message": "Profile deleted successfully"
-        }
-        ```
-    *   **`401 Unauthorized`**: Invalid token (`{"error": "..."}`).
-    *   **`403 Forbidden`**: Attempt to delete another user's profile (`{"error": "..."}`).
-    *   **`404 Not Found`**: User not found (`{"error": "..."}`).
-    *   **`500 Internal Server Error`**: Database or unexpected error (`{"error": "..."}`).
-*   **Example:**
-    ```bash
-    curl -X DELETE https://educonnect-wp9t.onrender.com/api/profile/1 \
-    -H "Authorization: Bearer <token>"
-    ```
+*   **Auth:** Required. Only the user can delete their own profile.
+*   **Description:** Deletes the authenticated user's profile and associated data.
+*   **Success Response (`200 OK`):** Confirmation message.
+*   **Common Errors:** `401 Unauthorized`, `403 Forbidden`, `404 Not Found`.
 
 ### Profile Search
 
 *   **Endpoint:** `GET /api/search`
-*   **Description:** Searches for user profiles by name, field of study, or competence. Supports pagination. Requires authentication.
-*   **Headers:**
-    *   `Authorization: Bearer <token>`
+*   **Auth:** Required.
+*   **Description:** Searches user profiles with pagination.
 *   **Query Parameters:**
-    *   `nom` (optional): Search by name (first or last).
+    *   `nom` (optional): Search by name.
     *   `filiere` (optional): Search by field of study.
     *   `competence` (optional): Search by competence.
     *   `page` (optional, default: 1): Page number.
     *   `per_page` (optional, default: 10): Results per page.
-*   **Response:**
-    *   **`200 OK`**:
-        ```json
-        {
-          "results": [
-            {
-              "id": integer,
-              "nom": "string",
-              "prenom": "string",
-              "filiere": "string",
-              "competences": ["string"],
-              "photo": "string" | null
-            }
-          ],
-          "total": integer,
-          "page": integer,
-          "pages": integer,
-          "per_page": integer
-        }
-        ```
-*   **Example:**
-    ```bash
-    curl -X GET "https://educonnect-wp9t.onrender.com/api/search?nom=John&filiere=Computer%20Science&competence=Python&page=1&per_page=10" \
-    -H "Authorization: Bearer <token>"
+*   **Success Response (`200 OK`):** Paginated list of matching user profiles.
+    ```json
+    {
+      "results": [ /* user profiles */ ],
+      "total": integer,
+      "page": integer,
+      "pages": integer,
+      "per_page": integer
+    }
     ```
 
 ### Messaging
@@ -224,9 +103,8 @@
 #### Send Message
 
 *   **Endpoint:** `POST /api/messages`
-*   **Description:** Sends a message from the authenticated user to another user. Requires authentication.
-*   **Headers:**
-    *   `Authorization: Bearer <token>`
+*   **Auth:** Required.
+*   **Description:** Sends a message to another user.
 *   **Request Body:**
     ```json
     {
@@ -234,219 +112,90 @@
       "content": "string"
     }
     ```
-*   **Response:**
-    *   **`201 Created`**:
-        ```json
-        {
-          "message": "Message sent successfully",
-          "sent_message": {
-            "id": integer,
-            "content": "string",
-            "sender_id": integer,
-            "receiver_id": integer,
-            "created_at": "string" // ISO format
-          }
-        }
-        ```
-    *   **`400 Bad Request`**: Missing or invalid `receiver_id` or `content` (`{"error": "..."}`).
-    *   **`401 Unauthorized`**: Invalid token (`{"error": "..."}`).
-    *   **`404 Not Found`**: Receiver not found (`{"error": "..."}`).
-    *   **`500 Internal Server Error`**: Database or unexpected error (`{"error": "..."}`).
-*   **Example:**
-    ```bash
-    curl -X POST https://educonnect-wp9t.onrender.com/api/messages \
-    -H "Authorization: Bearer <token>" \
-    -H "Content-Type: application/json" \
-    -d '{
-      "receiver_id": 2,
-      "content": "Hello, let''s collaborate!"
-    }'
-    ```
+*   **Success Response (`201 Created`):** Confirmation and sent message details.
+*   **Common Errors:** `400 Bad Request` (missing fields), `401 Unauthorized`, `404 Not Found` (receiver not found).
 
 #### Get Messages
 
 *   **Endpoint:** `GET /api/messages/<other_user_id>`
-*   **Description:** Retrieves messages between the authenticated user and another user. Supports pagination. Requires authentication.
-*   **Headers:**
-    *   `Authorization: Bearer <token>`
+*   **Auth:** Required.
+*   **Description:** Retrieves message history between the authenticated user and another user. Paginated.
 *   **Query Parameters:**
     *   `page` (optional, default: 1): Page number.
     *   `per_page` (optional, default: 30): Messages per page.
-*   **Response:**
-    *   **`200 OK`**:
-        ```json
-        {
-          "messages": [
-            {
-              "id": integer,
-              "content": "string",
-              "sender_id": integer,
-              "receiver_id": integer,
-              "created_at": "string" // ISO format
-            }
-          ],
-          "total": integer,
-          "page": integer,
-          "pages": integer,
-          "per_page": integer
-        }
-        ```
-    *   **`401 Unauthorized`**: Invalid token (`{"error": "..."}`).
-    *   **`404 Not Found`**: Other user not found (`{"error": "..."}`).
-    *   **`500 Internal Server Error`**: Database or unexpected error (`{"error": "..."}`).
-*   **Example:**
-    ```bash
-    curl -X GET "https://educonnect-wp9t.onrender.com/api/messages/2?page=1&per_page=30" \
-    -H "Authorization: Bearer <token>"
+*   **Success Response (`200 OK`):** Paginated list of messages.
+    ```json
+    {
+      "messages": [ /* message objects */ ],
+      "total": integer,
+      "page": integer,
+      "pages": integer,
+      "per_page": integer
+    }
     ```
+*   **Common Errors:** `401 Unauthorized`, `404 Not Found` (other user not found).
 
 ### Posts
 
 #### Create Post
 
 *   **Endpoint:** `POST /api/posts`
-*   **Description:** Creates a new post by the authenticated user. Requires authentication.
-*   **Headers:**
-    *   `Authorization: Bearer <token>`
+*   **Auth:** Required.
+*   **Description:** Creates a new post for the authenticated user.
 *   **Request Body:**
     ```json
     {
       "content": "string"
     }
     ```
-*   **Response:**
-    *   **`201 Created`**:
-        ```json
-        {
-          "message": "Post created successfully",
-          "post": {
-            "id": integer,
-            "content": "string",
-            "created_at": "string", // ISO format
-            "user_id": integer
-          }
-        }
-        ```
-    *   **`400 Bad Request`**: Missing or empty content (`{"error": "..."}`).
-    *   **`401 Unauthorized`**: Invalid token (`{"error": "..."}`).
-    *   **`500 Internal Server Error`**: Database or unexpected error (`{"error": "..."}`).
-*   **Example:**
-    ```bash
-    curl -X POST https://educonnect-wp9t.onrender.com/api/posts \
-    -H "Authorization: Bearer <token>" \
-    -H "Content-Type: application/json" \
-    -d '{
-      "content": "Excited to share my new project!"
-    }'
-    ```
+*   **Success Response (`201 Created`):** Confirmation and created post details.
+*   **Common Errors:** `400 Bad Request` (missing content), `401 Unauthorized`.
 
 #### Get User Posts
 
 *   **Endpoint:** `GET /api/posts/user/<user_id>`
-*   **Description:** Retrieves posts by a specific user. Supports pagination. Requires authentication.
-*   **Headers:**
-    *   `Authorization: Bearer <token>`
+*   **Auth:** Required.
+*   **Description:** Retrieves posts by a specific user. Paginated.
 *   **Query Parameters:**
     *   `page` (optional, default: 1): Page number.
     *   `per_page` (optional, default: 10): Posts per page.
-*   **Response:**
-    *   **`200 OK`**:
-        ```json
-        {
-          "posts": [
-            {
-              "id": integer,
-              "content": "string",
-              "created_at": "string", // ISO format
-              "user_id": integer,
-              "author": {
-                "nom": "string",
-                "prenom": "string"
-              }
-            }
-          ],
-          "total": integer,
-          "page": integer,
-          "pages": integer,
-          "per_page": integer
-        }
-        ```
-    *   **`404 Not Found`**: User not found (`{"error": "..."}`).
-    *   **`500 Internal Server Error`**: Database or unexpected error (`{"error": "..."}`).
-*   **Example:**
-    ```bash
-    curl -X GET "https://educonnect-wp9t.onrender.com/api/posts/user/1?page=1&per_page=10" \
-    -H "Authorization: Bearer <token>"
+*   **Success Response (`200 OK`):** Paginated list of posts including author info.
+    ```json
+    {
+      "posts": [ /* post objects with author {nom, prenom} */ ],
+      "total": integer,
+      "page": integer,
+      "pages": integer,
+      "per_page": integer
+    }
     ```
+*   **Common Errors:** `404 Not Found` (user not found).
 
 #### Update Post
 
 *   **Endpoint:** `PUT /api/posts/<post_id>`
-*   **Description:** Updates a post by the authenticated user (only their own posts). Requires authentication.
-*   **Headers:**
-    *   `Authorization: Bearer <token>`
+*   **Auth:** Required. Only the author can update their post.
+*   **Description:** Updates an existing post.
 *   **Request Body:**
     ```json
     {
       "content": "string"
     }
     ```
-*   **Response:**
-    *   **`200 OK`**:
-        ```json
-        {
-          "message": "Post updated successfully",
-          "post": {
-            "id": integer,
-            "content": "string",
-            "created_at": "string", // ISO format
-            "user_id": integer
-          }
-        }
-        ```
-    *   **`400 Bad Request`**: Missing or empty content (`{"error": "..."}`).
-    *   **`401 Unauthorized`**: Invalid token (`{"error": "..."}`).
-    *   **`403 Forbidden`**: Attempt to update another user's post (`{"error": "..."}`).
-    *   **`404 Not Found`**: Post not found (`{"error": "..."}`).
-    *   **`500 Internal Server Error`**: Database or unexpected error (`{"error": "..."}`).
-*   **Example:**
-    ```bash
-    curl -X PUT https://educonnect-wp9t.onrender.com/api/posts/1 \
-    -H "Authorization: Bearer <token>" \
-    -H "Content-Type: application/json" \
-    -d '{
-      "content": "Updated project details!"
-    }'
-    ```
+*   **Success Response (`200 OK`):** Confirmation and updated post details.
+*   **Common Errors:** `400 Bad Request` (missing content), `401 Unauthorized`, `403 Forbidden` (not author), `404 Not Found` (post not found).
 
 #### Delete Post
 
 *   **Endpoint:** `DELETE /api/posts/<post_id>`
-*   **Description:** Deletes a post by the authenticated user (only their own posts). Requires authentication.
-*   **Headers:**
-    *   `Authorization: Bearer <token>`
-*   **Response:**
-    *   **`200 OK`**:
-        ```json
-        {
-          "message": "Post deleted successfully"
-        }
-        ```
-    *   **`401 Unauthorized`**: Invalid token (`{"error": "..."}`).
-    *   **`403 Forbidden`**: Attempt to delete another user's post (`{"error": "..."}`).
-    *   **`404 Not Found`**: Post not found (`{"error": "..."}`).
-    *   **`500 Internal Server Error`**: Database or unexpected error (`{"error": "..."}`).
-*   **Example:**
-    ```bash
-    curl -X DELETE https://educonnect-wp9t.onrender.com/api/posts/1 \
-    -H "Authorization: Bearer <token>"
-    ```
-
----
+*   **Auth:** Required. Only the author can delete their post.
+*   **Description:** Deletes a post.
+*   **Success Response (`200 OK`):** Confirmation message.
+*   **Common Errors:** `401 Unauthorized`, `403 Forbidden` (not author), `404 Not Found` (post not found).
 
 ## Error Handling
 
-All endpoints return errors in a consistent JSON format:
+API errors are returned in a standard JSON format:
 
 ```json
 {
