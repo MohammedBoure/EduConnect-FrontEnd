@@ -1,21 +1,22 @@
 import requests
 
-BASE_URL = "http://127.0.0.1:5000/api/search"
+url = 'http://localhost:5000/api/search'
+token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NTI3NDEyNSwianRpIjoiZWU4YzdmYjQtY2U1MS00YzlkLTk4NDAtY2RhNjljMTkxNzZhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjQiLCJuYmYiOjE3NDUyNzQxMjUsImNzcmYiOiI5ZGVmNjY2OS1hOTZlLTQxYzQtYmUxMC1mYmY4ZjllNWM3NjAiLCJleHAiOjE3NDUyNzUwMjV9.UpIQLQTfW4yrMNXiBx1W0filQLSimwvdY0asEi4vquc"
 
-# أمثلة لطلبات بحث
-search_params = [
-    {},  # بدون أي فلاتر (إرجاع كل الحسابات)
-    {'nom': 'Ali'},  # البحث بالاسم
-    {'filiere': 'Informatique'},  # البحث بالفيلير
-    {'nom': 'Ahmed', 'filiere': 'Mathématiques'}  # بحث مزدوج
-]
+params = {
+    'filiere': 'Physique',
+}
 
-for params in search_params:
-    print(f"Searching with params: {params}")
-    response = requests.get(BASE_URL, params=params)
-    print("Status Code:", response.status_code)
-    try:
-        print("Response:", response.json())
-    except Exception as e:
-        print("Failed to parse response:", e)
-    print("-" * 60)
+headers = {
+    'Authorization': f'Bearer {token}'
+}
+
+response = requests.get(url, headers=headers, params=params)
+
+if response.status_code == 200:
+    data = response.json()
+    print("Résultats:", data['results'])
+    print("Total:", data['total'])
+    print("Page:", data['page'])
+else:
+    print("Erreur:", response.status_code, response.text)

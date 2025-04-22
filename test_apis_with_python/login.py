@@ -1,13 +1,11 @@
 import requests
 import json
 
-# بيانات تسجيل الدخول
 login_data = {
-    "email": "ahmed@example.com",
-    "mot_de_passe": "securepassword123"
+    "email": "richardhenderson@example.org",
+    "mot_de_passe": "test1234"
 }
 
-# إرسال طلب POST
 url = "http://localhost:5000/api/login"
 headers = {"Content-Type": "application/json"}
 

@@ -14,12 +14,12 @@ def generate_fake_user():
         "nom": fake.last_name(),
         "prenom": fake.first_name(),
         "email": fake.unique.email(),
-        "mot_de_passe": "test1234",  # كلمة مرور موحدة لأغراض الاختبار
+        "mot_de_passe": "test1234",
         "filiere": random.choice(filieres),
         "competences": ", ".join(random.sample(competences_possibles, k=random.randint(1, 4)))
     }
 
-for _ in range(10):  # عدد الحسابات التي تريد إنشاؤها
+for _ in range(4):  
     user = generate_fake_user()
     response = requests.post(URL, json=user)
     print(f"{response.status_code} - {response.json()}")
