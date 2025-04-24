@@ -1,8 +1,8 @@
 import requests
 import json
 
-token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NTI3MTc4NSwianRpIjoiZWU3Y2VlNjQtNTNlYi00NTgwLWFmMjgtZTA5NTgzODQ5ZjE0IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NDUyNzE3ODUsImNzcmYiOiI1N2Y5MDAxMi1mNjRmLTRjOWMtYjg0MS1lZTU1Mzc1OGY4YzkiLCJleHAiOjE3NDUyNzI2ODV9.BubwyTAhOewW_0OdSaKPxfqsZOWJ4L8PXYlEhNWmG9Y"
-user_id = 1
+token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NTMzMzk4NCwianRpIjoiYTI1MWY3Y2ItMjIzZi00ZGZlLWEwNWUtYjlmNjI2ZDkwZjE1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjYiLCJuYmYiOjE3NDUzMzM5ODQsImNzcmYiOiJmMGFhMDY2My0wMmFiLTQxN2ItODZiYS05NTM3MTZkOGU3ZTMiLCJleHAiOjE3NDU0MjAzODR9.YDUShP7C7HZsFzHUjjekQCr-d55mZtuHwMV0kViJt_o"
+user_id = 6
 headers = {
     "Content-Type": "application/json",
     "Authorization": f"Bearer {token}"

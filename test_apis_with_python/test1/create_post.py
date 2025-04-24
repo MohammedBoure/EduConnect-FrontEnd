@@ -1,8 +1,8 @@
 import requests
 
-url = 'http://localhost:5000/api/posts'
+url = 'https://educonnect-wp9t.onrender.com/api/posts'
 
-token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NTI3NTM0OSwianRpIjoiNDBhZjljOTQtODg3Yi00NTI2LThkMzAtYTJkODlmOWRiNzk4IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjQiLCJuYmYiOjE3NDUyNzUzNDksImNzcmYiOiJhNjdjYzRjMS0xZTk5LTRiYTMtOTczOC03OTIxNTYwY2EzYmQiLCJleHAiOjE3NDUyNzYyNDl9.CYjjgBdeT93tYb7F-1CgpsQ_sV-ZAAWUEpspZiXOX2k"
+token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NTMzMTQ2OSwianRpIjoiOWNhZGI3NjgtMjE4NC00ZDU0LWE0ZWUtMmIxMjNjYWMwZTM5IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjUiLCJuYmYiOjE3NDUzMzE0NjksImNzcmYiOiJlY2Q5NDM1Ny04ZTU4LTQwN2UtYWIxMS1kNzNlMGRlYzA0MjYiLCJleHAiOjE3NDU0MTc4Njl9.JsL7wY7Z2GSWwt8ta-upc3Qo1SGs7e8chpGRK2OAVK8'
 
 data = {
     'content': 'Hello, this is my first post!'

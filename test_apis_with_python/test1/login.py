@@ -2,8 +2,8 @@ import requests
 import json
 
 login_data = {
-    "email": "richardhenderson@example.org",
-    "mot_de_passe": "test1234"
+    "email": "aaaaa@gmail.com",
+    "mot_de_passe": "aaaaa"
 }
 
 url = "http://localhost:5000/api/login"
