@@ -2,7 +2,7 @@ import requests
 import json
 
 # Base URL for the Flask server (adjust to your server's address)
-BASE_URL = "http://localhost:5000/api"
+BASE_URL = "https://educonnect-wp9t.onrender.com/api"
 
 def test_register():
     """
