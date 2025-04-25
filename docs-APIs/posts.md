@@ -360,7 +360,74 @@ deletePost(postId, jwtToken)
   .then(data => console.log(data))
   .catch(error => console.error(error));
 ```
+### 5. استرجاع منشور
+- **الطريقة**: `GET`
+- **الرابط**: `/api/posts/<post_id>`
+- **الوصف**: استرجاع تفاصيل منشور بناءً على معرفه.
+- **المصادقة**: غير مطلوبة.
 
+#### معلمات المسار
+| المعلم      | النوع   | الوصف                  | ملاحظات          |
+|-------------|---------|------------------------|--------------------|
+| `post_id` * | Integer | معرف المنشور          | رقم صحيح         |
+
+#### جسم الطلب
+- لا يتطلب جسم طلب.
+
+#### الاستجابات
+- **200 OK**:
+  ```json
+  {
+    "post": {
+      "id": 1,
+      "title": "عنوان المنشور",
+      "content": "هذا هو محتوى المنشور!",
+      "image": "https://example.com/image.jpg",
+      "created_at": "2025-04-21T10:00:00Z",
+      "user_id": 123,
+      "author": {
+        "first_name": "أحمد",
+        "last_name": "بن علي",
+        "photo": "https://example.com/photos/ahmed.jpg"
+      }
+    }
+  }
+  ```
+- **404 Not Found**:
+  ```json
+  {"error": "Post not found"}
+  ```
+
+#### مثال JavaScript (Frontend):
+```javascript
+async function getPost(postId) {
+  try {
+    const response = await fetch(`https://educonnect-wp9t.onrender.com/api/posts/${postId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to fetch post');
+    }
+    console.log('Post fetched:', data);
+    return data;
+  } catch (error) {
+    console.error('Error:', error.message);
+    throw error;
+  }
+}
+
+// استخدام الدالة
+const postId = 1;
+
+getPost(postId)
+  .then(data => console.log(data))
+  .catch(error => console.error(error));
+```
 ## ملاحظات عامة
 - يُوصى باستخدام HTTPS في الإنتاج لحماية البيانات الحساسة.
 - اختبر الواجهات باستخدام أدوات مثل Postman أو cURL.

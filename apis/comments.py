@@ -2,10 +2,11 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 import datetime
 from utils import safe_get_jwt_identity_as_int
-from database import AuditLogManager,CommentManager
+from database import AuditLogManager,CommentManager, PostManager
 
 audit_log_manager = AuditLogManager()
 comment_manager = CommentManager()
+posts_manager = PostManager()
 
 def log_admin_action(admin_id, action, resource_type, resource_id, details=None):
     """Log administrative actions for auditing purposes."""
@@ -60,7 +61,7 @@ def add_comment(post_id):
     
 @comments_bp.route('/posts/<int:post_id>/comments', methods=['GET'])
 def get_comments(post_id):
-    if not comment_manager.get_post_by_id(post_id):
+    if not posts_manager.get_post_by_id(post_id):
         return jsonify({'error': 'Post not found'}), 404
 
     page = request.args.get('page', 1, type=int)
@@ -71,15 +72,15 @@ def get_comments(post_id):
     comment_list = []
     for c in comments:
         comment_data = {
-            'id': c[0],
-            'content': c[1],
-            'created_at': c[2].isoformat() + "Z" if isinstance(c[2], datetime.datetime) else str(c[2]),
-            'post_id': c[3],
-            'user_id': c[4],
+            'id': c['id'],  # هنا نستخدم المفتاح 'id' بدلاً من c[0]
+            'content': c['content'],  # استخدم المفتاح 'content' بدلاً من c[1]
+            'created_at': c['created_at'].isoformat() + "Z" if isinstance(c['created_at'], datetime.datetime) else str(c['created_at']),
+            'post_id': c['post_id'],  # استخدم المفتاح 'post_id' بدلاً من c[3]
+            'user_id': c['user_id'],  # استخدم المفتاح 'user_id' بدلاً من c[4]
             'author': {
-                'first_name': c[5],
-                'last_name': c[6],
-                'photo': c[7]
+                'first_name': c['first_name'],  # استخدم المفتاح 'first_name' بدلاً من c[5]
+                'last_name': c['last_name'],  # استخدم المفتاح 'last_name' بدلاً من c[6]
+                'photo': c['photo']  # استخدم المفتاح 'photo' بدلاً من c[7]
             }
         }
         comment_list.append(comment_data)

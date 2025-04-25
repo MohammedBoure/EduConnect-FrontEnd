@@ -175,7 +175,6 @@ def create_post():
 
 @admin_bp.route('/admin/posts', methods=['GET'])
 def list_posts():
-    """Retrieve a paginated list of all posts."""
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
 
@@ -185,7 +184,7 @@ def list_posts():
         'title': post[1],
         'content': post[2],
         'image': post[3],
-        'created_at': post[4],
+        'created_at': post[4].isoformat() + "Z" if isinstance(post[4], datetime.datetime) else str(post[4]),
         'user_id': post[5],
         'author': {
             'first_name': post[6],
@@ -201,7 +200,7 @@ def list_posts():
         'pages': (total + per_page - 1) // per_page if per_page > 0 else 0,
         'per_page': per_page
     }), 200
-
+    
 @admin_bp.route('/admin/posts/<int:post_id>', methods=['PUT'])
 def update_post(post_id):
     """Update an existing post."""
@@ -251,25 +250,29 @@ def add_comment(post_id):
     """Add a comment to a post."""
     try:
         new_comment = request.get_json()
-        if 'content' not in new_comment or 'created_at' not in new_comment:
-            return jsonify({'error': 'Missing content or created_at field'}), 400
+        if 'content' not in new_comment or 'created_at' not in new_comment or 'user_id' not in new_comment:
+            return jsonify({'error': 'Missing content, created_at, or user_id field'}), 400
 
         content = new_comment['content']
         created_at = new_comment['created_at']
+        user_id = new_comment['user_id']
 
+        # Validate and convert created_at to datetime
         if isinstance(created_at, str):
             try:
-                created_at = isoparse(created_at)  # Use dateutil.parser.isoparse
+                created_at = isoparse(created_at)
             except ValueError:
                 return jsonify({'error': 'Invalid date format for created_at'}), 400
-
-        elif not isinstance(created_at, datetime):
+        elif not isinstance(created_at, datetime.datetime):
             return jsonify({'error': 'created_at must be a datetime object or ISO format string'}), 400
 
-        # Assume admin user_id=0 for simplicity; adjust based on auth
-        comment_id = comment_manager.create_comment(post_id=post_id, user_id=0, content=content, created_at=created_at)
+        # Create the comment
+        comment_id = comment_manager.create_comment(post_id=post_id, user_id=user_id, content=content, created_at=created_at)
         if comment_id:
             comment = comment_manager.get_comment_by_id(comment_id)
+            if not comment:
+                return jsonify({'error': 'Comment not found after creation'}), 500
+
             return jsonify({
                 'message': 'Comment added successfully',
                 'comment': {
@@ -316,18 +319,33 @@ def list_comments():
 @admin_bp.route('/admin/comments/<int:comment_id>', methods=['PUT'])
 def update_comment(comment_id):
     """Update an existing comment."""
+    
+    # Attempt to retrieve the comment by ID
     comment = comment_manager.get_comment_by_id(comment_id)
+    
+    # Return an error response if comment is not found
     if not comment:
         return jsonify({'error': 'Comment not found'}), 404
 
+    # Get the new content from the request JSON, ensure it's not empty
     data = request.get_json()
-    content = data.get('content', '').strip() if data else ''
+    
+    if not data:
+        return jsonify({'error': 'No data provided'}), 400
+
+    content = data.get('content', '').strip()
     if not content:
         return jsonify({'error': 'Comment content cannot be empty'}), 400
 
+    # Attempt to update the comment in the database
     if comment_manager.update_comment(comment_id, content):
+        # Log the admin action for auditing
         log_admin_action(0, 'update_comment', 'comment', comment_id, f"New content: {content[:50]}...")
+        
+        # Retrieve the updated comment to include in the response
         updated_comment = comment_manager.get_comment_by_id(comment_id)
+        
+        # Prepare the updated comment's data
         comment_data = {
             'id': updated_comment['id'],
             'content': updated_comment['content'],
@@ -340,10 +358,14 @@ def update_comment(comment_id):
                 'photo': updated_comment['photo']
             }
         }
+        
+        # Return the success response with updated comment data
         return jsonify({'message': 'Comment updated successfully', 'comment': comment_data}), 200
+
+    # If update fails, return an error response
     return jsonify({'error': 'Failed to update comment'}), 500
 
-@admin_bp.route('/admin/comments/<int:comment_id>', methods=['DELETE'])
+@admin_bp.route('/admin/comments/<int:comment_id>', methods=['DELETE','OPTIONS'])
 def delete_comment(comment_id):
     """Delete a comment by ID."""
     if not comment_manager.get_comment_by_id(comment_id):

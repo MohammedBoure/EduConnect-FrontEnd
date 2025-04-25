@@ -66,6 +66,31 @@ def create_post():
 
     return jsonify({'error': 'Failed to create post'}), 500
 
+
+
+@posts_bp.route('/posts/<int:post_id>', methods=['GET'])
+def get_post(post_id):
+    """Retrieve a single post by its ID."""
+    post = post_manager.get_post_by_id(post_id)
+    if not post:
+        return jsonify({'error': 'Post not found'}), 404
+
+    post_data = {
+        'id': post[0],
+        'title': post[1],
+        'content': post[2],
+        'image': post[3],
+        'created_at': post[4].isoformat() + "Z" if isinstance(post[4], datetime.datetime) else str(post[4]),
+        'user_id': post[5],
+        'author': {
+            'first_name': post[6],
+            'last_name': post[7],
+            'photo': post[8]
+        }
+    }
+    return jsonify({'post': post_data}), 200
+
+
 @posts_bp.route('/posts/user/<int:user_id>', methods=['GET'])
 @jwt_required()
 def get_user_posts_authenticated(user_id):

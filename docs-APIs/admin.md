@@ -507,22 +507,23 @@ POST /admin/posts/{post_id}/comments
 **جسم الطلب:**
 ```json
 {
-  "content": "محتوى التعليق الجديد",
-  "created_at": "2023-05-23T15:30:45.123Z"
+    "content": "This is a sample comment.",
+    "created_at": "2025-04-25T20:47:31Z",
+    "user_id": 7
 }
 ```
 
 **الاستجابة:**
 ```json
+201
 {
-  "message": "Comment added successfully",
-  "comment": {
+  "comment": {"content": "This is a sample comment.",
+    "created_at": "2025-04-25T20:47:31+00:00Z",
     "id": 7,
-    "content": "محتوى التعليق الجديد",
-    "created_at": "2023-05-23T15:30:45.123Z",
-    "post_id": 5,
-    "user_id": 0
-  }
+    "post_id": 2,
+    "user_id": 7
+  },
+  "message": "Comment added successfully"
 }
 ```
 
