@@ -452,6 +452,13 @@
             display: inline-block;
         }
 
+        th:nth-child(2),
+        td:nth-child(2) {
+            text-align: center;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
         /* تأثيرات متحركة */
         @keyframes fadeIn {
             from {
@@ -506,6 +513,7 @@
                 <thead>
                     <tr>
                         <th width="60">الصورة</th>
+                        <th width="80">ID User</th> <!-- عمود جديد -->
                         <th>الاسم</th>
                         <th>البريد الإلكتروني</th>
                         <th>القسم</th>
@@ -560,25 +568,25 @@
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.trim().toLowerCase();
             currentSearchQuery = query;
-
+        
             if (usersData.length > 0) {
                 // تنفيذ البحث المحلي
                 const filteredUsers = usersData.filter(user => {
                     const fullName = `${user.first_name || ''} ${user.last_name || ''}`.toLowerCase();
                     const email = (user.email || '').toLowerCase();
                     const department = (user.department || '').toLowerCase();
-
+                    const userId = user.id.toString(); // تحويل ID إلى نص للبحث
+        
                     return fullName.includes(query) ||
                         email.includes(query) ||
-                        department.includes(query);
+                        department.includes(query) ||
+                        userId.includes(query);
                 });
-
+        
                 renderUsers(filteredUsers);
             } else if (query.length >= 3) {
-                // إعادة تحميل الصفحة مع معايير البحث إذا لم تكن البيانات محملة محليًا
                 loadUsers(1, query);
             } else if (query.length === 0) {
-                // إعادة تحميل جميع المستخدمين إذا تم مسح البحث
                 loadUsers(1);
             }
         });
@@ -606,15 +614,15 @@
 
         function renderUsers(users) {
             usersTbody.innerHTML = ''; // مسح الصفوف القديمة
-
+        
             if (users.length > 0) {
                 tableContainer.style.display = 'block';
                 noUsersP.style.display = 'none';
-
+        
                 users.forEach(user => {
                     const row = usersTbody.insertRow();
                     row.classList.add('fade-in');
-
+        
                     // تحويل المهارات إلى نص أو عناصر HTML
                     let skillsHtml = '';
                     if (Array.isArray(user.skills) && user.skills.length > 0) {
@@ -626,7 +634,7 @@
                     } else {
                         skillsHtml = '<span class="text-muted">-</span>';
                     }
-
+        
                     // تحديد لون الدور
                     let roleClass = 'role-user';
                     if (user.role === 'admin') {
@@ -634,16 +642,17 @@
                     } else if (user.role === 'editor') {
                         roleClass = 'role-editor';
                     }
-
+        
                     // تحضير صورة المستخدم
                     const photoHtml = user.photo
                         ? `<img src="${user.photo}" alt="صورة ${user.first_name}">`
                         : `<div style="width:40px;height:40px;border-radius:50%;background:#ddd;display:flex;align-items:center;justify-content:center;color:#888;">
                             <i class="fas fa-user"></i>
                            </div>`;
-
+        
                     row.innerHTML = `
                         <td>${photoHtml}</td>
+                        <td>${user.id}</td> <!-- إضافة ID User -->
                         <td>${user.first_name || ''} ${user.last_name || ''}</td>
                         <td><a href="mailto:${user.email}">${user.email || ''}</a></td>
                         <td>${user.department || '<span class="text-muted">-</span>'}</td>
