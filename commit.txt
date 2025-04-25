@@ -1,9 +1,0 @@
-Project restructure and major API/database enhancements
-
-- Added new modular API endpoints under `apis/`, including full admin API for user privilege management
-- Improved database structure: split into modules (audit, base, comment, message, post, user)
-- Migrated database and API field names from French to English for consistency and clarity
-- Replaced old `database.py` with structured package `database/`
-- Updated and expanded API documentation under `docs-APIs/`, removed outdated `docs/` files
-- Cleaned up old HTML test files and moved Python tests into organized `test1/` and `test2/` directories
-- Updated `README.md` and utility scripts for new structure

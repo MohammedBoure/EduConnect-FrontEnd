@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Auto Run Script</title>
+    <link rel="icon" href="data:,">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        #result {
+            padding: 10px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Result of Auto-Executed Script</h2>
+    <div id="result" style="white-space: pre-wrap;">Loading...</div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        //document.getElementById('result').textContent = result;
+        async function autoRunScript() {
+
+            const result = await apiGetUserDetails(5);
+            if (result.ok) {
+                const user = result.data;
+                document.getElementById('result').textContent = result;
+
+            } else {
+                document.getElementById('result').textContent = result;
+            }
+        }
+        window.onload = autoRunScript;
+
+    </script>
+
+</body>
+
+</html>

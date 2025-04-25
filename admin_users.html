@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المستخدمين</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --text-color: #333;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* الشريط العلوي */
+        nav {
+            background-color: var(--primary-color);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            padding: 0 1rem;
+            margin: 0;
+        }
+
+        nav ul li {
+            position: relative;
+        }
+
+        nav ul li a,
+        nav ul li button {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        nav ul li a:hover,
+        nav ul li button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        nav ul li a i,
+        nav ul li button i {
+            margin-left: 0.5rem;
+        }
+
+        #logoutBtn {
+            color: #ff6b6b;
+        }
+
+        #logoutBtn:hover {
+            background-color: #ff6b6b;
+            color: white;
+        }
+
+        /* الحاوية الرئيسية */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* العنوان والأدوات */
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-section h1 {
+            color: var(--primary-color);
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .header-section h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--secondary-color);
+        }
+
+        .tools {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .search-container {
+            position: relative;
+            margin-left: 1rem;
+        }
+
+        .search-container input {
+            padding: 0.6rem 2.5rem 0.6rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            width: 250px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .search-container input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+        }
+
+        .btn {
+            padding: 0.6rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        /* الرسائل */
+        .message {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .message i {
+            margin-left: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* التحميل */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .loading i {
+            animation: spin 1s infinite linear;
+            margin-left: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* جدول المستخدمين */
+        .table-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background-color: var(--light-color);
+            border-bottom: 2px solid #ddd;
+        }
+
+        th {
+            padding: 1rem;
+            font-weight: 600;
+            text-align: right;
+            color: var(--dark-color);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        td.actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        /* صور المستخدمين */
+        td img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--light-color);
+        }
+
+        /* أزرار الإجراءات */
+        .btn-sm {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.85rem;
+            border-radius: 3px;
+        }
+
+        .btn-edit {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-delete {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background-color: #c0392b;
+        }
+
+        /* الترقيم */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            background-color: white;
+            color: var(--text-color);
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .pagination button:hover:not([disabled]) {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
+        .pagination button.active {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination span {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        /* حالة عدم وجود مستخدمين */
+        .no-data {
+            text-align: center;
+            padding: 3rem 1rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .no-data i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .no-data p {
+            color: #777;
+            font-size: 1.1rem;
+        }
+
+        /* كلاسات للنص */
+        .user-role {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .role-admin {
+            background-color: #c8ebfb;
+            color: #0277bd;
+        }
+
+        .role-editor {
+            background-color: #d4e6f9;
+            color: #1565c0;
+        }
+
+        .role-user {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+
+        /* الإستجابة للشاشات المختلفة */
+        @media (max-width: 992px) {
+            .search-container input {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .tools {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .search-container {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .search-container input {
+                width: 100%;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            th,
+            td {
+                min-width: 120px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            nav ul {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* تنسيقات إضافية للمهارات */
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+
+        .skill-tag {
+            background-color: #f0f0f0;
+            padding: 0.1rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: inline-block;
+        }
+
+        /* تأثيرات متحركة */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
+            <li><a href="admin_users.html" class="active"><i class="fas fa-users"></i> إدارة المستخدمين</a></li>
+            <li><a href="admin_posts.html"><i class="fas fa-file-alt"></i> إدارة المنشورات</a></li>
+            <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="header-section">
+            <h1>إدارة المستخدمين</h1>
+            <div class="tools">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="البحث عن مستخدم...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <button class="btn btn-primary" id="addUserBtn">
+                    <i class="fas fa-plus"></i> إضافة مستخدم
+                </button>
+            </div>
+        </div>
+
+        <div id="message" class="message" style="display: none;"></div>
+
+        <div id="loading" class="loading" style="display: none;">
+            <i class="fas fa-spinner"></i> جاري تحميل المستخدمين...
+        </div>
+
+        <div class="table-container" id="tableContainer" style="display: none;">
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th width="60">الصورة</th>
+                        <th>الاسم</th>
+                        <th>البريد الإلكتروني</th>
+                        <th>القسم</th>
+                        <th>المهارات</th>
+                        <th>الدور</th>
+                        <th width="120">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTbody">
+                    <!-- سيتم ملء الصفوف هنا بواسطة JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="noUsers" class="no-data" style="display: none;">
+            <i class="fas fa-users-slash"></i>
+            <p>لا يوجد مستخدمون لعرضهم حالياً.</p>
+        </div>
+
+        <div id="pagination" class="pagination">
+            <!-- أزرار الترقيم هنا -->
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        // حماية الصفحة
+        redirectToLoginIfNotAuthenticated();
+
+        const usersTbody = document.getElementById('usersTbody');
+        const tableContainer = document.getElementById('tableContainer');
+        const loadingDiv = document.getElementById('loading');
+        const noUsersP = document.getElementById('noUsers');
+        const paginationDiv = document.getElementById('pagination');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const messageDiv = document.getElementById('message');
+        const searchInput = document.getElementById('searchInput');
+        const addUserBtn = document.getElementById('addUserBtn');
+
+        let currentPage = 1;
+        const perPage = 10;
+        let currentSearchQuery = '';
+        let usersData = []; // تخزين بيانات المستخدمين للبحث المحلي
+
+        // إضافة مستخدم جديد
+        addUserBtn.addEventListener('click', () => {
+            window.location.href = 'register.html';
+        });
+
+        // البحث عن المستخدمين
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.trim().toLowerCase();
+            currentSearchQuery = query;
+
+            if (usersData.length > 0) {
+                // تنفيذ البحث المحلي
+                const filteredUsers = usersData.filter(user => {
+                    const fullName = `${user.first_name || ''} ${user.last_name || ''}`.toLowerCase();
+                    const email = (user.email || '').toLowerCase();
+                    const department = (user.department || '').toLowerCase();
+
+                    return fullName.includes(query) ||
+                        email.includes(query) ||
+                        department.includes(query);
+                });
+
+                renderUsers(filteredUsers);
+            } else if (query.length >= 3) {
+                // إعادة تحميل الصفحة مع معايير البحث إذا لم تكن البيانات محملة محليًا
+                loadUsers(1, query);
+            } else if (query.length === 0) {
+                // إعادة تحميل جميع المستخدمين إذا تم مسح البحث
+                loadUsers(1);
+            }
+        });
+
+        async function loadUsers(page = 1, searchQuery = '') {
+            showLoading(true);
+            currentPage = page;
+            currentSearchQuery = searchQuery;
+
+            const result = await apiGetUsers(page, perPage, searchQuery);
+
+            showLoading(false);
+
+            if (result.ok && result.data.users) {
+                const users = result.data.users;
+                usersData = users; // تخزين البيانات للبحث المحلي
+                renderUsers(users);
+                renderPagination(result.data.page, result.data.pages);
+            } else {
+                showMessage(`فشل تحميل المستخدمين: ${result.error}`, 'error');
+                tableContainer.style.display = 'none';
+                noUsersP.style.display = 'block';
+            }
+        }
+
+        function renderUsers(users) {
+            usersTbody.innerHTML = ''; // مسح الصفوف القديمة
+
+            if (users.length > 0) {
+                tableContainer.style.display = 'block';
+                noUsersP.style.display = 'none';
+
+                users.forEach(user => {
+                    const row = usersTbody.insertRow();
+                    row.classList.add('fade-in');
+
+                    // تحويل المهارات إلى نص أو عناصر HTML
+                    let skillsHtml = '';
+                    if (Array.isArray(user.skills) && user.skills.length > 0) {
+                        skillsHtml = '<div class="skill-tags">';
+                        user.skills.forEach(skill => {
+                            skillsHtml += `<span class="skill-tag">${skill}</span>`;
+                        });
+                        skillsHtml += '</div>';
+                    } else {
+                        skillsHtml = '<span class="text-muted">-</span>';
+                    }
+
+                    // تحديد لون الدور
+                    let roleClass = 'role-user';
+                    if (user.role === 'admin') {
+                        roleClass = 'role-admin';
+                    } else if (user.role === 'editor') {
+                        roleClass = 'role-editor';
+                    }
+
+                    // تحضير صورة المستخدم
+                    const photoHtml = user.photo
+                        ? `<img src="${user.photo}" alt="صورة ${user.first_name}">`
+                        : `<div style="width:40px;height:40px;border-radius:50%;background:#ddd;display:flex;align-items:center;justify-content:center;color:#888;">
+                            <i class="fas fa-user"></i>
+                           </div>`;
+
+                    row.innerHTML = `
+                        <td>${photoHtml}</td>
+                        <td>${user.first_name || ''} ${user.last_name || ''}</td>
+                        <td><a href="mailto:${user.email}">${user.email || ''}</a></td>
+                        <td>${user.department || '<span class="text-muted">-</span>'}</td>
+                        <td>${skillsHtml}</td>
+                        <td><span class="user-role ${roleClass}">${user.role || 'مستخدم'}</span></td>
+                        <td class="actions">
+                            <button class="btn btn-sm btn-edit" onclick="editUser(${user.id})" title="تعديل">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-delete" onclick="deleteUser(${user.id}, '${user.first_name} ${user.last_name}')" title="حذف">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                });
+            } else {
+                tableContainer.style.display = 'none';
+                noUsersP.style.display = 'block';
+            }
+        }
+
+        function renderPagination(currentPage, totalPages) {
+            paginationDiv.innerHTML = ''; // مسح الأزرار القديمة
+
+            if (totalPages <= 1) {
+                paginationDiv.style.display = 'none';
+                return;
+            }
+
+            paginationDiv.style.display = 'flex';
+
+            // زر السابق
+            const prevButton = document.createElement('button');
+            prevButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            prevButton.disabled = currentPage === 1;
+            prevButton.title = 'الصفحة السابقة';
+            prevButton.onclick = () => loadUsers(currentPage - 1, currentSearchQuery);
+            paginationDiv.appendChild(prevButton);
+
+            // أزرار الصفحات
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, startPage + 4);
+
+            if (endPage - startPage < 4) {
+                startPage = Math.max(1, endPage - 4);
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                pageButton.classList.toggle('active', i === currentPage);
+                pageButton.onclick = () => loadUsers(i, currentSearchQuery);
+                paginationDiv.appendChild(pageButton);
+            }
+
+            // زر التالي
+            const nextButton = document.createElement('button');
+            nextButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            nextButton.disabled = currentPage >= totalPages;
+            nextButton.title = 'الصفحة التالية';
+            nextButton.onclick = () => loadUsers(currentPage + 1, currentSearchQuery);
+            paginationDiv.appendChild(nextButton);
+
+            // إضافة نص عدد الصفحات
+            const pageInfo = document.createElement('span');
+            pageInfo.textContent = `${currentPage} من ${totalPages}`;
+            pageInfo.style.marginRight = '10px';
+            paginationDiv.appendChild(pageInfo);
+        }
+
+        function showLoading(show) {
+            loadingDiv.style.display = show ? 'flex' : 'none';
+            if (show) {
+                tableContainer.style.display = 'none';
+                noUsersP.style.display = 'none';
+            }
+        }
+
+        function showMessage(text, type = 'success') {
+            messageDiv.className = 'message ' + type;
+
+            const icon = type === 'success' ?
+                '<i class="fas fa-check-circle"></i>' :
+                '<i class="fas fa-exclamation-circle"></i>';
+
+            messageDiv.innerHTML = icon + text;
+            messageDiv.style.display = 'flex';
+
+            // إخفاء الرسالة بعد 5 ثوانٍ
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function hideMessage() {
+            messageDiv.style.display = 'none';
+        }
+
+        function editUser(userId) {
+            window.location.href = `admin_user_edit.html?id=${userId}`;
+        }
+
+        async function deleteUser(userId, userName) {
+            // إنشاء مربع حوار مخصص بدلاً من استخدام confirm الافتراضي
+            if (confirm(`هل أنت متأكد من حذف المستخدم "${userName}"؟`)) {
+                showLoading(true);
+                const result = await apiDeleteUser(userId);
+                showLoading(false);
+
+                if (result.ok) {
+                    showMessage(`تم حذف المستخدم ${userName} بنجاح`, 'success');
+                    // إعادة تحميل الصفحة الحالية من المستخدمين
+                    loadUsers(currentPage, currentSearchQuery);
+                } else {
+                    showMessage(`فشل حذف المستخدم: ${result.error}`, 'error');
+                }
+            }
+        }
+
+        // تسجيل الخروج
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+                logout();
+            }
+        });
+
+        // تحميل المستخدمين عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUsers(currentPage);
+
+            // تحديد الرابط النشط في القائمة
+            const navLinks = document.querySelectorAll('nav a');
+            navLinks.forEach(link => {
+                if (link.href.includes(window.location.pathname)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

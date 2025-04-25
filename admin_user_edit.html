@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduConnect - تعديل بيانات المستخدم</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --text-color: #333;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        nav {
+            background-color: var(--primary-color);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: flex-start;
+            list-style: none;
+            padding: 0 1rem;
+            margin: 0;
+        }
+
+        nav ul li a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        nav ul li a:hover {
+            background-color: var(--secondary-color);
+        }
+
+        nav ul li a.active {
+            background-color: var(--secondary-color);
+        }
+
+        nav ul li a i {
+            margin-left: 0.5rem;
+        }
+
+        #logoutBtn {
+            color: #ff6b6b;
+        }
+
+        #logoutBtn:hover {
+            background-color: #ff6b6b;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .header-section {
+            margin-bottom: 2rem;
+        }
+
+        .header-section h1 {
+            color: var(--primary-color);
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .header-section h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--secondary-color);
+        }
+
+        form {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        form input[type="text"],
+        form input[type="email"],
+        form input[type="url"],
+        form select {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        form input[type="text"]:focus,
+        form input[type="email"]:focus,
+        form input[type="url"]:focus,
+        form select:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        form select {
+            background-color: white;
+            cursor: pointer;
+        }
+
+        form button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-left: 0.5rem;
+        }
+
+        form button[type="submit"] {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        form button[type="submit"]:hover {
+            background-color: #2980b9;
+        }
+
+        form button[type="submit"]:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        form button[type="button"] {
+            background-color: var(--light-color);
+            color: var(--text-color);
+        }
+
+        form button[type="button"]:hover {
+            background-color: #dfe6e9;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .message i {
+            margin-left: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .loading i {
+            animation: spin 1s infinite linear;
+            margin-left: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            form button {
+                width: 100%;
+                margin: 0.5rem 0;
+            }
+        }
+
+        @media (max-width: 576px) {
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+
+            nav ul li {
+                flex: 0 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
+            <li><a href="admin_users.html" class="active"><i class="fas fa-users"></i> إدارة المستخدمين</a></li>
+            <li><a href="admin_posts.html"><i class="fas fa-file-alt"></i> إدارة المنشورات</a></li>
+            <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="header-section">
+            <h1>تعديل بيانات المستخدم</h1>
+        </div>
+
+        <div id="message" class="message" style="display: none;"></div>
+        <div id="loading" class="loading"><i class="fas fa-spinner"></i> جاري تحميل بيانات المستخدم...</div>
+
+        <form id="editUserForm" style="display: none;">
+            <input type="hidden" id="user_id" name="id">
+            <label for="first_name">الاسم الأول:</label>
+            <input type="text" id="first_name" name="first_name" required>
+            <label for="last_name">الاسم الأخير:</label>
+            <input type="text" id="last_name" name="last_name" required>
+            <label for="email">البريد الإلكتروني:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="department">القسم/التخصص:</label>
+            <input type="text" id="department" name="department" required>
+            <label for="skills">المهارات (مثال: Java, Python):</label>
+            <input type="text" id="skills" name="skills" placeholder="أدخل المهارات مفصولة بفواصل" required>
+            <label for="photo">رابط الصورة:</label>
+            <input type="url" id="photo" name="photo">
+            <label for="role">الدور:</label>
+            <select id="role" name="role" required>
+                <option value="user">مستخدم</option>
+                <option value="admin">مشرف</option>
+                <option value="editor">محرر</option>
+            </select>
+            <button type="submit" id="submitBtn">حفظ التغييرات</button>
+            <a href="admin_users.html"><button type="button">إلغاء</button></a>
+        </form>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        redirectToLoginIfNotAuthenticated();
+
+        const form = document.getElementById('editUserForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingDiv = document.getElementById('loading');
+        const messageDiv = document.getElementById('message');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id');
+
+        function showMessage(id, text, type = 'success') {
+            const div = document.getElementById(id);
+            div.className = 'message ' + type;
+            const icon = type === 'success' ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-exclamation-circle"></i>';
+            div.innerHTML = icon + text;
+            div.style.display = 'flex';
+            setTimeout(() => {
+                div.style.display = 'none';
+            }, 5000);
+        }
+
+        function hideMessage(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        async function loadUserDetails() {
+            if (!userId) {
+                showMessage('message', 'لم يتم تحديد معرف المستخدم.', 'error');
+                loadingDiv.style.display = 'none';
+                return;
+            }
+
+            const result = await apiGetUserDetails(userId);
+            loadingDiv.style.display = 'none';
+
+            if (result.ok) {
+                const user = result.data;
+                document.getElementById('user_id').value = user.id;
+                document.getElementById('first_name').value = user.first_name || '';
+                document.getElementById('last_name').value = user.last_name || '';
+                document.getElementById('email').value = user.email || '';
+                document.getElementById('department').value = user.department || '';
+                const skillsText = Array.isArray(user.skills) ? user.skills.join(', ') : (user.skills || '');
+                document.getElementById('skills').value = skillsText;
+                document.getElementById('photo').value = user.photo || '';
+                document.getElementById('role').value = user.role || 'user';
+                form.style.display = 'block';
+            } else {
+                showMessage('message', `فشل تحميل بيانات المستخدم: ${result.error}`, 'error');
+            }
+        }
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            hideMessage('message');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'جاري الحفظ...';
+
+            const formData = new FormData(form);
+            const updatedData = {};
+            formData.forEach((value, key) => {
+                if (key === 'skills') {
+                    updatedData[key] = value.split(',').map(skill => skill.trim()).filter(skill => skill);
+                } else if (key !== 'id') {
+                    updatedData[key] = value;
+                }
+            });
+            if (updatedData.photo === '') {
+                delete updatedData.photo;
+            }
+
+            const currentUserId = formData.get('id');
+            const result = await apiUpdateUser(currentUserId, updatedData);
+
+            if (result.ok) {
+                showMessage('message', 'تم تحديث بيانات المستخدم بنجاح!', 'success');
+            } else {
+                showMessage('message', `فشل تحديث بيانات المستخدم: ${result.error}`, 'error');
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'حفظ التغييرات';
+        });
+
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+                logout();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', loadUserDetails);
+    </script>
+</body>
+</html>
