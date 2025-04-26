@@ -1,6 +1,10 @@
-const API_BASE_URL = 'https://educonnect-wp9t.onrender.com/api'; // http://127.0.0.1:5000     https://educonnect-wp9t.onrender.com
+const API_BASE_URL = 'http://127.0.0.1:5000/api'; // أو 'https://educonnect-wp9t.onrender.com/api' للإنتاج
 
 function setToken(token) {
+    if (!token) {
+        console.error('setToken: Token is undefined or null');
+        return;
+    }
     localStorage.setItem('access_token', token);
 }
 
@@ -9,11 +13,16 @@ function getToken() {
 }
 
 function setUserId(userId) {
+    if (userId === undefined || userId === null) {
+        console.error('setUserId: userId is undefined or null');
+        return;
+    }
     localStorage.setItem('user_id', userId);
 }
 
 function getUserId() {
-    return localStorage.getItem('user_id');
+    const userId = localStorage.getItem('user_id');
+    return userId ? parseInt(userId) : null;
 }
 
 function removeAuthData() {
@@ -22,16 +31,14 @@ function removeAuthData() {
 }
 
 function isAuthenticated() {
-    return !!getToken(); // يرجع true إذا كان هناك توكن، وإلا false
+    return !!getToken() && !!getUserId(); // التأكد من وجود كل من التوكن ومعرف المستخدم
 }
 
 function logout() {
     removeAuthData();
-    // إعادة التوجيه إلى صفحة تسجيل الدخول
     window.location.href = 'login.html';
 }
 
-// دالة للتحقق من المصادقة في بداية تحميل الصفحات المحمية
 function redirectToLoginIfNotAuthenticated() {
     if (!isAuthenticated()) {
         alert('يجب تسجيل الدخول للوصول إلى هذه الصفحة.');
@@ -39,12 +46,11 @@ function redirectToLoginIfNotAuthenticated() {
     }
 }
 
-// دالة لعرض رسائل للمستخدم
 function showMessage(elementId, message, type = 'error') {
     const messageDiv = document.getElementById(elementId);
     if (messageDiv) {
         messageDiv.textContent = message;
-        messageDiv.className = `message ${type}`; // error or success
+        messageDiv.className = `message ${type}`;
         messageDiv.style.display = 'block';
     }
 }

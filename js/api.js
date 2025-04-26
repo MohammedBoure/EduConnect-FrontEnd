@@ -1,94 +1,75 @@
 // تأكد من وجود API_BASE_URL (يمكن استيراده أو تعريفه هنا إذا لزم الأمر)
 // const API_BASE_URL = 'http://127.0.0.1:5000'; // أو /api إذا كنت تستخدم proxy
 
-async function fetchApi(endpoint, options = {}, authRequired = true, expectedResponseType = 'json') {
-    const token = getToken(); // افترض وجود دالة getToken() في auth.js
+async function fetchApi(endpoint, options = {}, expectedResponseType = 'json') {
+    const token = getToken();
     const headers = {
-        // لا تضع Content-Type هنا بشكل افتراضي إذا كنت قد تستخدم FormData
-        ...options.headers, // اسمح بتمرير ترويسات مخصصة
+        ...options.headers,
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
     };
 
-    // أضف Content-Type فقط إذا لم يكن الجسم FormData وكان الجسم موجودًا
     if (!(options.body instanceof FormData) && options.body) {
         headers['Content-Type'] = 'application/json';
-    }
-
-    if (authRequired && token && !endpoint.startsWith('/login') && !endpoint.startsWith('/register')) {
-        headers['Authorization'] = `Bearer ${token}`;
     }
 
     try {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             ...options,
             headers: headers,
-            // تحويل الجسم إلى JSON فقط إذا لم يكن FormData وكان الجسم موجودًا
-            body: (options.body && !(options.body instanceof FormData)) ? JSON.stringify(options.body) : options.body,
+            body: options.body && !(options.body instanceof FormData) ? JSON.stringify(options.body) : options.body,
         });
 
-        // حالة No Content (مثل الحذف الناجح)
         if (response.status === 204) {
             return { ok: true, data: { message: "تمت العملية بنجاح (لا يوجد محتوى)" } };
         }
 
-        const rawResponse = await response.text(); // اقرأ الرد كنص أولاً
+        const rawResponse = await response.text();
 
-        // تحقق من نوع المحتوى المتوقع
         if (expectedResponseType === 'json') {
-             const contentType = response.headers.get('Content-Type');
-             if (contentType && !contentType.includes('application/json')) {
-                // إذا لم تكن الاستجابة JSON، أرجع النص الخام مع حالة الخطأ
-                 if (!response.ok) {
+            const contentType = response.headers.get('Content-Type');
+            if (contentType && !contentType.includes('application/json')) {
+                if (!response.ok) {
                     console.warn(`API Error (Not JSON): Status ${response.status}, Response: ${rawResponse}`);
-                     return { ok: false, error: `خطأ ${response.status}: ${rawResponse || response.statusText}` };
-                 } else {
-                    // حتى لو كانت الاستجابة ناجحة ولكن ليست JSON كما هو متوقع
+                    return { ok: false, error: `خطأ ${response.status}: ${rawResponse || response.statusText}` };
+                } else {
                     console.warn(`API Warning: Expected JSON but received ${contentType}. Response: ${rawResponse}`);
-                     return { ok: true, data: rawResponse }; // أو يمكنك اعتبارها خطأ
-                 }
+                    return { ok: true, data: rawResponse };
+                }
             }
 
-            // محاولة تحليل النص كـ JSON
             let data;
             try {
                 data = JSON.parse(rawResponse);
             } catch (jsonError) {
-                 console.error('JSON Parsing Error:', jsonError, 'Raw Response:', rawResponse);
-                 // إذا فشل تحليل JSON، وكان الرد غير ناجح، أظهر الخطأ
-                 if (!response.ok) {
+                console.error('JSON Parsing Error:', jsonError, 'Raw Response:', rawResponse);
+                if (!response.ok) {
                     return { ok: false, error: `خطأ ${response.status}: ${rawResponse || response.statusText} (فشل تحليل JSON)` };
-                 } else {
-                    // إذا كان الرد ناجحًا ولكن فشل التحليل (غير متوقع)
+                } else {
                     return { ok: false, error: `فشل تحليل استجابة JSON ناجحة: ${rawResponse}` };
-                 }
+                }
             }
 
-            // إذا كان التحليل ناجحًا ولكن الاستجابة غير ناجحة (مثل 4xx, 5xx)
             if (!response.ok) {
-                 console.error('API Error Response (JSON Parsed):', data);
+                console.error('API Error Response (JSON Parsed):', data);
                 return { ok: false, error: data.error || data.message || `خطأ HTTP! الحالة: ${response.status}` };
             }
 
-            // كل شيء جيد (الاستجابة ناجحة وتم تحليل JSON)
             return { ok: true, data };
-
-        } else { // إذا كان نوع الاستجابة المتوقع غير JSON (مثل text)
+        } else {
             if (!response.ok) {
                 return { ok: false, error: `خطأ ${response.status}: ${rawResponse || response.statusText}` };
             }
             return { ok: response.ok, data: rawResponse };
         }
-
-    } catch (error) { // أخطاء الشبكة أو أخطاء أخرى
+    } catch (error) {
         console.error(`API call failed for ${endpoint}: ${error.message}`, error);
-        // حاول تقديم رسالة خطأ أكثر تحديدًا إذا أمكن
         let errorMessage = error.message || 'خطأ في الشبكة أو الخادم غير متاح';
         if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-             errorMessage = 'فشل الاتصال بالخادم. يرجى التحقق من اتصال الشبكة وعنوان الخادم.';
+            errorMessage = 'فشل الاتصال بالخادم. يرجى التحقق من اتصال الشبكة وعنوان الخادم.';
         }
         return { ok: false, error: errorMessage };
     }
 }
-
 
 // --- واجهات المصادقة (موجودة بالفعل) ---
 async function apiRegister(userData) {
@@ -99,10 +80,12 @@ async function apiRegister(userData) {
 }
 
 async function apiLogin(credentials) {
-    return fetchApi('/login', {
+    const result = await fetchApi('/login', {
         method: 'POST',
-        body: credentials, // الجسم ككائن JS
-    }, false);
+        body: credentials
+    });
+    console.log('apiLogin result:', result);
+    return result;
 }
 
 // --- واجهات إدارة المستخدمين (موجودة بالفعل) ---
@@ -115,7 +98,6 @@ async function apiGetUsers(page = 1, perPage = 10, searchQuery = '') {
 }
 
 async function apiGetUserDetails(userId) {
-    // قد تحتاج هذه إلى مصادقة حسب تصميم API الخاص بك
     return fetchApi(`/admin/users/${userId}`, { method: 'GET' });
 }
 
@@ -306,7 +288,6 @@ async function apiAdminUpdateComment(commentId, commentData) {
         body: updatePayload, // الجسم ككائن JS
     });
 }
-
 /**
  * حذف تعليق من لوحة الإدارة.
  * @param {number} commentId معرف التعليق
@@ -316,8 +297,6 @@ async function apiAdminDeleteComment(commentId) {
     // طريقة DELETE عادة لا تحتوي على جسم للطلب
     return fetchApi(`/admin/comments/${commentId}`, { method: 'DELETE' });
 }
-
-
 // --- دالة جديدة لجلب تعليقات منشور معين (إداري) ---
 /**
  * جلب تعليقات منشور معين للوحة الإدارة مع ترقيم الصفحات.
@@ -330,8 +309,6 @@ async function apiAdminGetPostComments(postId, page = 1, perPage = 5) {
     // تأكد من أن نقطة النهاية هذه موجودة في الـ Backend الخاص بك
     return fetchApi(`/posts/${postId}/comments?page=${page}&per_page=${perPage}`, { method: 'GET' });
 }
-
-
 
 async function apiAdminCreateComment(postId, commentData) {
     const payload = { ...commentData };
@@ -357,4 +334,27 @@ async function apiAdminCreateComment(postId, commentData) {
         method: 'POST',
         body: payload,
     }, true);
+}
+
+async function getAllMessages(page = 1, perPage = 30) {
+    return await fetchApi(`/admin/messages?page=${page}&per_page=${perPage}`, { method: 'GET' });
+}
+
+async function getMessagesBetweenUsers(currentUserId, otherUserId, page = 1, perPage = 30) {
+    return await fetchApi(`/admin/messages/${currentUserId}/${otherUserId}?page=${page}&per_page=${perPage}`, { method: 'GET' });
+}
+
+async function sendMessage(senderId, receiverId, content) {
+    return await fetchApi(`/admin/messages`, {
+        method: 'POST',
+        body: {
+            sender_id: senderId,
+            receiver_id: receiverId,
+            content: content
+        }
+    });
+}
+
+async function deleteMessage(messageId) {
+    return await fetchApi(`/admin/messages/${messageId}`, { method: 'DELETE' });
 }

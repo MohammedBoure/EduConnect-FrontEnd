@@ -20,7 +20,7 @@
 
             <button type="submit" id="submitBtn">دخول</button>
         </form>
-         <p>ليس لديك حساب؟ <a href="register.html">إنشاء حساب جديد</a></p>
+        <p>ليس لديك حساب؟ <a href="register.html">إنشاء حساب جديد</a></p>
     </div>
 
     <script src="js/auth.js"></script>
@@ -39,26 +39,34 @@
             hideMessage('message');
             submitBtn.disabled = true;
             submitBtn.textContent = 'جاري الدخول...';
-
+        
             const formData = new FormData(form);
             const credentials = {
                 email: formData.get('email'),
                 password: formData.get('password')
             };
-
+        
             const result = await apiLogin(credentials);
-
+            console.log('Login result:', result); // Add this for debugging
+        
             if (result.ok) {
-                setToken(result.data.access_token);
-                setUserId(result.data.user_id);
-                // إعادة التوجيه إلى الصفحة الرئيسية أو لوحة التحكم
+                const { access_token, user_id } = result.data;
+                if (access_token === undefined || access_token === null || user_id === undefined || user_id === null) {
+                    console.error('Login response missing access_token or user_id:', result.data);
+                    showMessage('message', 'خطأ في استجابة تسجيل الدخول: بيانات غير كاملة', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'دخول';
+                    return;
+                }
+                setToken(access_token);
+                setUserId(user_id);
+                console.log('Stored user_id:', getUserId()); // Verify storage
                 window.location.href = 'index.html';
             } else {
-                showMessage('message', `فشل تسجيل الدخول: ${result.error}`, 'error');
+                showMessage('message', `فشل تسجيل الدخول: ${result.error || 'خطأ غير معروف'}`, 'error');
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'دخول';
             }
-            // لا تقم بتمكين الزر في حالة النجاح لأنه سيتم إعادة التوجيه
         });
     </script>
 </body>

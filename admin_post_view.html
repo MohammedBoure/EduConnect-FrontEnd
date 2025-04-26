@@ -774,25 +774,30 @@
         async function loadPostDetails() {
             const urlParams = new URLSearchParams(window.location.search);
             postId = urlParams.get('id');
-
+        
             if (!postId) {
                 showMessage('message', 'لم يتم تحديد معرف المنشور.', 'error');
                 loadingDiv.style.display = 'none';
                 return;
             }
-
+        
             loadingDiv.style.display = 'flex';
             postContainer.style.display = 'none';
-
+        
             const result = await apiGetPostDetails(postId);
             loadingDiv.style.display = 'none';
-
+        
             if (result.ok && result.data) {
                 const post = result.data.post || result.data;
                 postTitle.textContent = escapeHtml(post.title) || 'بدون عنوان';
                 postImage.src = post.image || 'https://via.placeholder.com/600x400?text=لا+توجد+صورة';
-                postContent.textContent = escapeHtml(post.content) || 'لا يوجد محتوى';
-
+        
+                // تقسيم المحتوى إلى فقرات بناءً على الفواصل السطرية
+                const paragraphs = (post.content || 'لا يوجد محتوى').split('\n').filter(p => p.trim());
+                postContent.innerHTML = paragraphs
+                    .map(paragraph => `<p>${escapeHtml(paragraph)}</p>`)
+                    .join('');
+        
                 if (post.author) {
                     const fullName = `${post.author.first_name || ''} ${post.author.last_name || ''}`.trim();
                     authorName.textContent = fullName || 'غير معروف';
@@ -801,11 +806,11 @@
                     authorName.textContent = 'غير معروف';
                     authorPhoto.style.display = 'none';
                 }
-
+        
                 createdAt.textContent = formatDate(post.created_at);
                 postMeta.style.display = 'block';
                 postContainer.style.display = 'block';
-
+        
                 // Set button actions
                 viewCommentsBtn.onclick = () => openViewCommentsModal(post.id);
                 editPostBtn.onclick = () => window.location.href = `admin_post_edit.html?id=${post.id}`;

@@ -440,50 +440,57 @@
         document.addEventListener('DOMContentLoaded', async () => {
             showLoading(true);
             const userId = getUserId();
-            if (userId) {
-                const result = await apiGetUserDetails(userId);
+            console.log('Retrieved userId:', userId); // للتأكد من القيمة
+            if (!userId) {
+                console.error('No userId found in localStorage');
                 showLoading(false);
-                if (result.ok) {
-                    const user = result.data;
-                    const skillsHtml = Array.isArray(user.skills) && user.skills.length > 0
-                        ? user.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')
-                        : '<span class="text-muted">-</span>';
-                    let roleClass = 'role-user';
-                    if (user.role === 'admin') roleClass = 'role-admin';
-                    else if (user.role === 'editor') roleClass = 'role-editor';
-                    const photoHtml = user.photo
-                        ? `<img src="${user.photo}" alt="صورة ${user.first_name}" class="user-photo">`
-                        : `<div class="user-photo" style="background:#ddd;display:flex;align-items:center;justify-content:center;color:#888;"><i class="fas fa-user"></i></div>`;
-                    userInfoDiv.innerHTML = `
-                        <div class="user-profile-header">
-                            <div class="user-photo-container">${photoHtml}</div>
-                            <div class="user-name-role">
-                                <h2 class="user-name">${user.first_name || ''} ${user.last_name || ''}</h2>
-                                <span class="user-role ${roleClass}">${user.role || 'مستخدم'}</span>
-                            </div>
-                            <a href="admin_user_edit.html?id=${user.id}"><button class="edit-profile-btn"><i class="fas fa-edit"></i> تعديل الملف الشخصي</button></a>
+                showMessage('لم يتم العثور على معرف المستخدم. يرجى تسجيل الدخول.', 'error');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+                return;
+            }
+
+            const result = await apiGetUserDetails(userId);
+            showLoading(false);
+            if (result.ok) {
+                const user = result.data;
+                const skillsHtml = Array.isArray(user.skills) && user.skills.length > 0
+                    ? user.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')
+                    : '<span class="text-muted">-</span>';
+                let roleClass = 'role-user';
+                if (user.role === 'admin') roleClass = 'role-admin';
+                else if (user.role === 'editor') roleClass = 'role-editor';
+                const photoHtml = user.photo
+                    ? `<img src="${user.photo}" alt="صورة ${user.first_name}" class="user-photo">`
+                    : `<div class="user-photo" style="background:#ddd;display:flex;align-items:center;justify-content:center;color:#888;"><i class="fas fa-user"></i></div>`;
+                userInfoDiv.innerHTML = `
+                    <div class="user-profile-header">
+                        <div class="user-photo-container">${photoHtml}</div>
+                        <div class="user-name-role">
+                            <h2 class="user-name">${user.first_name || ''} ${user.last_name || ''}</h2>
+                            <span class="user-role ${roleClass}">${user.role || 'مستخدم'}</span>
                         </div>
-                        <div class="user-details">
-                            <div class="user-detail-item">
-                                <div class="detail-label">البريد الإلكتروني</div>
-                                <div class="detail-value"><a href="mailto:${user.email}">${user.email || '-'}</a></div>
-                            </div>
-                            <div class="user-detail-item">
-                                <div class="detail-label">القسم</div>
-                                <div class="detail-value">${user.department || '-'}</div>
-                            </div>
-                            <div class="user-detail-item">
-                                <div class="detail-label">المهارات</div>
-                                <div class="detail-value skills-container">${skillsHtml}</div>
-                            </div>
+                        <a href="admin_user_edit.html?id=${user.id}"><button class="edit-profile-btn"><i class="fas fa-edit"></i> تعديل الملف الشخصي</button></a>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-detail-item">
+                            <div class="detail-label">البريد الإلكتروني</div>
+                            <div class="detail-value"><a href="mailto:${user.email}">${user.email || '-'}</a></div>
                         </div>
-                    `;
-                } else {
-                    showMessage(`فشل تحميل معلومات المستخدم: ${result.error}`, 'error');
-                }
+                        <div class="user-detail-item">
+                            <div class="detail-label">القسم</div>
+                            <div class="detail-value">${user.department || '-'}</div>
+                        </div>
+                        <div class="user-detail-item">
+                            <div class="detail-label">المهارات</div>
+                            <div class="detail-value skills-container">${skillsHtml}</div>
+                        </div>
+                    </div>
+                `;
+                userInfoDiv.style.display = 'block';
             } else {
-                showLoading(false);
-                showMessage('لم يتم العثور على معرف المستخدم.', 'error');
+                showMessage(`فشل تحميل معلومات المستخدم: ${result.error}`, 'error');
             }
         });
     </script>

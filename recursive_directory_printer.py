@@ -2,7 +2,7 @@ import os
 
 
 # The path you want to explore
-search_path = "C:/Users/AES/Desktop/EduConnect/EduConnect"
+search_path = "C:/Users/AES/Desktop/EduConnect-front-end-admin/"
 
 # A list of files/folders to exclude (you can add more like .git, .venv, __pycache__)
 excluded = ["flask",

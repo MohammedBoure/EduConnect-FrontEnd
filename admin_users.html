@@ -307,6 +307,15 @@
             background-color: #c0392b;
         }
 
+        .btn-message {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-message:hover {
+            background-color: #27ae60;
+        }
+
         /* الترقيم */
         .pagination {
             display: flex;
@@ -513,13 +522,13 @@
                 <thead>
                     <tr>
                         <th width="60">الصورة</th>
-                        <th width="80">ID User</th> <!-- عمود جديد -->
+                        <th width="80">ID User</th>
                         <th>الاسم</th>
                         <th>البريد الإلكتروني</th>
                         <th>القسم</th>
                         <th>المهارات</th>
                         <th>الدور</th>
-                        <th width="120">إجراءات</th>
+                        <th width="150">إجراءات</th>
                     </tr>
                 </thead>
                 <tbody id="usersTbody">
@@ -652,13 +661,16 @@
         
                     row.innerHTML = `
                         <td>${photoHtml}</td>
-                        <td>${user.id}</td> <!-- إضافة ID User -->
+                        <td>${user.id}</td>
                         <td>${user.first_name || ''} ${user.last_name || ''}</td>
                         <td><a href="mailto:${user.email}">${user.email || ''}</a></td>
                         <td>${user.department || '<span class="text-muted">-</span>'}</td>
                         <td>${skillsHtml}</td>
                         <td><span class="user-role ${roleClass}">${user.role || 'مستخدم'}</span></td>
                         <td class="actions">
+                            <button class="btn btn-sm btn-message" onclick="messageUser(${user.id})" title="مراسلة">
+                                <i class="fas fa-envelope"></i>
+                            </button>
                             <button class="btn btn-sm btn-edit" onclick="editUser(${user.id})" title="تعديل">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -755,8 +767,11 @@
             window.location.href = `admin_user_edit.html?id=${userId}`;
         }
 
+        function messageUser(userId) {
+            window.location.href = `admin_messages.html?userId=${userId}`;
+        }
+
         async function deleteUser(userId, userName) {
-            // إنشاء مربع حوار مخصص بدلاً من استخدام confirm الافتراضي
             if (confirm(`هل أنت متأكد من حذف المستخدم "${userName}"؟`)) {
                 showLoading(true);
                 const result = await apiDeleteUser(userId);
@@ -764,7 +779,6 @@
 
                 if (result.ok) {
                     showMessage(`تم حذف المستخدم ${userName} بنجاح`, 'success');
-                    // إعادة تحميل الصفحة الحالية من المستخدمين
                     loadUsers(currentPage, currentSearchQuery);
                 } else {
                     showMessage(`فشل حذف المستخدم: ${result.error}`, 'error');
