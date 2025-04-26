@@ -1,1 +1,1 @@
-https://educonnect-front-end.onrender.com/
+https://educonnect-admin.onrender.com
