@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://127.0.0.1:5000/api'; // أو 'https://educonnect-wp9t.onrender.com/api' للإنتاج
+const API_BASE_URL = 'https://educonnect-wp9t.onrender.com/api/api'; // أو 'https://educonnect-wp9t.onrender.com/api' للإنتاج
 
 function setToken(token) {
     if (!token) {
