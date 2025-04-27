@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - University Social Network</title>
+    <title>Public Posts - University Social Network</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
@@ -38,23 +38,34 @@
 
     <div class="container">
         <div class="section">
-            <h2>Login</h2>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" placeholder="Enter your email" required>
+            <h2>Public Posts</h2>
+            <div id="posts-container">
+                <a href="post.html?id=1" class="post-card">
+                    <img src="https://images.unsplash.com/photo-1503551723145-6c040742065b" alt="Renewable Energy Research">
+                    <div class="post-content">
+                        <h3>Renewable Energy Research</h3>
+                        <p>Just completed my research paper on renewable...</p>
+                    </div>
+                </a>
+                <a href="post.html?id=2" class="post-card">
+                    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3" alt="Coding Competition Team">
+                    <div class="post-content">
+                        <h3>Coding Competition Team</h3>
+                        <p>Looking for teammates for the inter-university...</p>
+                    </div>
+                </a>
+                <a href="post.html?id=3" class="post-card">
+                    <img src="https://images.unsplash.com/photo-1513366208864-87536b8bd7b4" alt="Art Exhibition Piece">
+                    <div class="post-content">
+                        <h3>Art Exhibition Piece</h3>
+                        <p>Sharing my latest artwork created for the...</p>
+                    </div>
+                </a>
             </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Enter your password" required>
-            </div>
-            <div id="loginMessage" class="message" style="display: none;"></div>
-            <button class="btn-primary" onclick="login()">Login</button>
-            <p>Don't have an account? <a href="register.html">Register here</a>.</p>
         </div>
     </div>
 
     <script src="/js/auth.js"></script>
-    <script src="/js/api.js"></script>
     <script defer>
         function showSidebar() {
             document.querySelector('.sideBar').style.display = 'flex';
@@ -74,24 +85,8 @@
             document.getElementById('sideLogoutLink').style.display = isLoggedIn ? 'block' : 'none';
         }
 
-        async function login() {
-            hideMessage('loginMessage');
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            if (!email || !password) {
-                showMessage('loginMessage', 'Email and password are required.', 'error');
-                return;
-            }
-
-            const result = await apiLogin({ email, password });
-            if (result.ok) {
-                showMessage('loginMessage', 'Login successful! Redirecting...', 'success');
-                setTimeout(() => {
-                    window.location.href = 'profile.html';
-                }, 1000);
-            } else {
-                showMessage('loginMessage', result.error, 'error');
-            }
+        if (redirectToLoginIfNotAuthenticated()) {
+            throw new Error('User not authenticated');
         }
 
         document.addEventListener('DOMContentLoaded', updateNav);

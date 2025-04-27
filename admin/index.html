@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduConnect - لوحة التحكم</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --text-color: #333;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        nav {
+            background-color: var(--primary-color);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: flex-start;
+            list-style: none;
+            padding: 0 1rem;
+            margin: 0;
+        }
+
+        nav ul li a {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        nav ul li a:hover {
+            background-color: var(--secondary-color);
+        }
+
+        nav ul li a.active {
+            background-color: var(--secondary-color);
+        }
+
+        nav ul li a i {
+            margin-left: 0.5rem;
+        }
+
+        #logoutBtn {
+            color: #ff6b6b;
+        }
+
+        #logoutBtn:hover {
+            background-color: #ff6b6b;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .header-section {
+            margin-bottom: 2rem;
+            text-align: right;
+        }
+
+        .header-section h1 {
+            color: var(--primary-color);
+            position: relative;
+            padding-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+
+        .header-section h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--secondary-color);
+        }
+
+        .welcome-section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .welcome-section p {
+            color: var(--text-color);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .action-btn i {
+            margin-left: 0.5rem;
+        }
+
+        .action-btn.create-post {
+            background-color: var(--secondary-color);
+        }
+
+        .action-btn.create-post:hover {
+            background-color: #2980b9;
+        }
+
+        .action-btn.view-posts {
+            background-color: var(--success-color);
+        }
+
+        .action-btn.view-posts:hover {
+            background-color: #27ae60;
+        }
+
+        .user-profile-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .user-profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+        }
+
+        .user-photo-container {
+            margin-left: 1.5rem;
+        }
+
+        .user-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--light-color);
+        }
+
+        .user-name-role {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .user-role {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .role-admin {
+            background-color: #c8ebfb;
+            color: #0277bd;
+        }
+
+        .role-editor {
+            background-color: #d4e6f9;
+            color: #1565c0;
+        }
+
+        .role-user {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .edit-profile-btn {
+            padding: 0.5rem 1rem;
+            background-color: var(--warning-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .edit-profile-btn:hover {
+            background-color: #e67e22;
+        }
+
+        .user-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .user-detail-item {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+            border-right: 3px solid var(--secondary-color);
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: var(--text-color);
+            margin-bottom: 0.3rem;
+        }
+
+        .detail-value {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .skill-tag {
+            background-color: #f0f0f0;
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .message i {
+            margin-left: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .loading i {
+            animation: spin 1s infinite linear;
+            margin-left: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .user-profile-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .user-photo-container {
+                margin-left: 0;
+                margin-bottom: 1rem;
+            }
+
+            .user-detail-item {
+                text-align: right;
+            }
+
+            .quick-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .user-details {
+                grid-template-columns: 1fr;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+
+            nav ul li {
+                flex: 0 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html" class="active"><i class="fas fa-home"></i> الرئيسية</a></li>
+            <li><a href="admin_users.html"><i class="fas fa-users"></i> إدارة المستخدمين</a></li>
+            <li><a href="admin_posts.html"><i class="fas fa-file-alt"></i> إدارة المنشورات</a></li>
+            <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="header-section">
+            <h1>لوحة تحكم EduConnect</h1>
+        </div>
+
+        <div id="message" class="message" style="display: none;"></div>
+        <div id="loading" class="loading" style="display: none;">
+            <i class="fas fa-spinner"></i> جاري تحميل معلومات المستخدم...
+        </div>
+
+        <div id="userInfo" class="user-profile-container" style="display: none;"></div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        redirectToLoginIfNotAuthenticated();
+
+        const logoutBtn = document.getElementById('logoutBtn');
+        const userInfoDiv = document.getElementById('userInfo');
+        const messageDiv = document.getElementById('message');
+        const loadingDiv = document.getElementById('loading');
+
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+                logout();
+            }
+        });
+
+        function showLoading(show) {
+            loadingDiv.style.display = show ? 'flex' : 'none';
+            userInfoDiv.style.display = show ? 'none' : 'block';
+            messageDiv.style.display = 'none';
+        }
+
+        function showMessage(text, type = 'success') {
+            messageDiv.className = 'message ' + type;
+            const icon = type === 'success' ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-exclamation-circle"></i>';
+            messageDiv.innerHTML = icon + text;
+            messageDiv.style.display = 'flex';
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            showLoading(true);
+            const userId = getUserId();
+            console.log('Retrieved userId:', userId); // للتأكد من القيمة
+            if (!userId) {
+                console.error('No userId found in localStorage');
+                showLoading(false);
+                showMessage('لم يتم العثور على معرف المستخدم. يرجى تسجيل الدخول.', 'error');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+                return;
+            }
+
+            const result = await apiGetUserDetails(userId);
+            showLoading(false);
+            if (result.ok) {
+                const user = result.data;
+                const skillsHtml = Array.isArray(user.skills) && user.skills.length > 0
+                    ? user.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')
+                    : '<span class="text-muted">-</span>';
+                let roleClass = 'role-user';
+                if (user.role === 'admin') roleClass = 'role-admin';
+                else if (user.role === 'editor') roleClass = 'role-editor';
+                const photoHtml = user.photo
+                    ? `<img src="${user.photo}" alt="صورة ${user.first_name}" class="user-photo">`
+                    : `<div class="user-photo" style="background:#ddd;display:flex;align-items:center;justify-content:center;color:#888;"><i class="fas fa-user"></i></div>`;
+                userInfoDiv.innerHTML = `
+                    <div class="user-profile-header">
+                        <div class="user-photo-container">${photoHtml}</div>
+                        <div class="user-name-role">
+                            <h2 class="user-name">${user.first_name || ''} ${user.last_name || ''}</h2>
+                            <span class="user-role ${roleClass}">${user.role || 'مستخدم'}</span>
+                        </div>
+                        <a href="admin_user_edit.html?id=${user.id}"><button class="edit-profile-btn"><i class="fas fa-edit"></i> تعديل الملف الشخصي</button></a>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-detail-item">
+                            <div class="detail-label">البريد الإلكتروني</div>
+                            <div class="detail-value"><a href="mailto:${user.email}">${user.email || '-'}</a></div>
+                        </div>
+                        <div class="user-detail-item">
+                            <div class="detail-label">القسم</div>
+                            <div class="detail-value">${user.department || '-'}</div>
+                        </div>
+                        <div class="user-detail-item">
+                            <div class="detail-label">المهارات</div>
+                            <div class="detail-value skills-container">${skillsHtml}</div>
+                        </div>
+                    </div>
+                `;
+                userInfoDiv.style.display = 'block';
+            } else {
+                showMessage(`فشل تحميل معلومات المستخدم: ${result.error}`, 'error');
+            }
+        });
+    </script>
+</body>
+</html>

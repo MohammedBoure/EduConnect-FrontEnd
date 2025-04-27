@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - University Social Network</title>
+    <title>About Us - University Social Network</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
@@ -38,18 +38,18 @@
 
     <div class="container">
         <div class="section">
-            <h2>Login</h2>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" placeholder="Enter your email" required>
+            <h2>About Us</h2>
+            <div class="about-content">
+                <p>Welcome to the University Social Network, a platform designed to connect students, faculty, and staff within our academic community. Our mission is to foster collaboration, share knowledge, and build meaningful relationships that enhance the university experience.</p>
+                <p>Key features of our platform include:</p>
+                <ul>
+                    <li><strong>Admin Announcements:</strong> Stay updated with official university news and events.</li>
+                    <li><strong>Public Posts:</strong> Share ideas, projects, and updates with the community.</li>
+                    <li><strong>Messaging:</strong> Connect directly with peers and colleagues in real-time.</li>
+                    <li><strong>Profile Management:</strong> Showcase your skills, department, and personal posts.</li>
+                </ul>
+                <p>Join us today to become part of a vibrant network dedicated to academic and social growth!</p>
             </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Enter your password" required>
-            </div>
-            <div id="loginMessage" class="message" style="display: none;"></div>
-            <button class="btn-primary" onclick="login()">Login</button>
-            <p>Don't have an account? <a href="register.html">Register here</a>.</p>
         </div>
     </div>
 
@@ -72,26 +72,6 @@
             document.getElementById('sideRegisterLink').style.display = isLoggedIn ? 'none' : 'block';
             document.getElementById('sideLoginLink').style.display = isLoggedIn ? 'none' : 'block';
             document.getElementById('sideLogoutLink').style.display = isLoggedIn ? 'block' : 'none';
-        }
-
-        async function login() {
-            hideMessage('loginMessage');
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            if (!email || !password) {
-                showMessage('loginMessage', 'Email and password are required.', 'error');
-                return;
-            }
-
-            const result = await apiLogin({ email, password });
-            if (result.ok) {
-                showMessage('loginMessage', 'Login successful! Redirecting...', 'success');
-                setTimeout(() => {
-                    window.location.href = 'profile.html';
-                }, 1000);
-            } else {
-                showMessage('loginMessage', result.error, 'error');
-            }
         }
 
         document.addEventListener('DOMContentLoaded', updateNav);

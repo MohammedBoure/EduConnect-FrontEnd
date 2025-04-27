@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>تسجيل الدخول</h1>
+        <div id="message" class="message" style="display: none;"></div>
+
+        <form id="loginForm">
+            <label for="email">البريد الإلكتروني:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">كلمة المرور:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit" id="submitBtn">دخول</button>
+        </form>
+        <p>ليس لديك حساب؟ <a href="register.html">إنشاء حساب جديد</a></p>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        // Redirect authenticated users
+        if (isAuthenticated()) {
+            const role = getRole();
+            window.location.href = role === 'admin' ? 'index.html' : '../index.html';
+        }
+
+        const form = document.getElementById('loginForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            hideMessage('message');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'جاري الدخول...';
+
+            const formData = new FormData(form);
+            const credentials = {
+                email: formData.get('email'),
+                password: formData.get('password'),
+            };
+
+            const result = await apiLogin(credentials);
+            console.log('Login result:', result); // For debugging
+
+            if (result.ok) {
+                const { user } = result.data;
+                if (!user || user.id === undefined || user.role === undefined) {
+                    console.error('Login response missing user data:', result.data);
+                    showMessage('message', 'خطأ في استجابة تسجيل الدخول: بيانات غير كاملة', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'دخول';
+                    return;
+                }
+                // setAuthData is called in apiLogin, so no need to call it here
+                console.log('Authenticated user:', { id: user.id, role: user.role });
+                window.location.href = user.role === 'admin' ? 'index.html' : '../index.html';
+            } else {
+                showMessage('message', `فشل تسجيل الدخول: ${result.error || 'خطأ غير معروف'}`, 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'دخول';
+            }
+        });
+    </script>
+</body>
+</html>

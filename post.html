@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - University Social Network</title>
+    <title>Post Details - University Social Network</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
@@ -38,18 +38,19 @@
 
     <div class="container">
         <div class="section">
-            <h2>Login</h2>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" placeholder="Enter your email" required>
+            <h2>Post Details</h2>
+            <div id="postDetails">
+                <p>Loading post...</p>
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Enter your password" required>
+                <label for="commentContent">Add Comment</label>
+                <textarea id="commentContent" rows="3" placeholder="Write your comment..."></textarea>
+                <button class="btn-primary" onclick="createComment()">Comment</button>
+                <div id="commentMessage" class="message" style="display: none;"></div>
             </div>
-            <div id="loginMessage" class="message" style="display: none;"></div>
-            <button class="btn-primary" onclick="login()">Login</button>
-            <p>Don't have an account? <a href="register.html">Register here</a>.</p>
+            <div id="comments">
+                <p>Loading comments...</p>
+            </div>
         </div>
     </div>
 
@@ -74,27 +75,72 @@
             document.getElementById('sideLogoutLink').style.display = isLoggedIn ? 'block' : 'none';
         }
 
-        async function login() {
-            hideMessage('loginMessage');
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            if (!email || !password) {
-                showMessage('loginMessage', 'Email and password are required.', 'error');
-                return;
-            }
+        if (redirectToLoginIfNotAuthenticated()) {
+            throw new Error('User not authenticated');
+        }
 
-            const result = await apiLogin({ email, password });
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('id');
+
+        async function loadPost() {
+            const postDiv = document.getElementById('postDetails');
+            const result = await apiGetPost(postId);
             if (result.ok) {
-                showMessage('loginMessage', 'Login successful! Redirecting...', 'success');
-                setTimeout(() => {
-                    window.location.href = 'profile.html';
-                }, 1000);
+                const post = result.data;
+                postDiv.innerHTML = `
+                    <div class="post">
+                        <h4>${post.user_name}</h4>
+                        <p>${post.content}</p>
+                        ${post.image_url ? `<img src="${post.image_url}" alt="Post Image">` : ''}
+                        <p><small>${new Date(post.created_at).toLocaleString()}</small></p>
+                    </div>
+                `;
             } else {
-                showMessage('loginMessage', result.error, 'error');
+                postDiv.innerHTML = `<p class="message error">${result.error}</p>`;
             }
         }
 
-        document.addEventListener('DOMContentLoaded', updateNav);
+        async function loadComments() {
+            const commentsDiv = document.getElementById('comments');
+            const result = await apiGetComments(postId);
+            if (result.ok) {
+                if (result.data.length === 0) {
+                    commentsDiv.innerHTML = '<p>No comments yet.</p>';
+                } else {
+                    commentsDiv.innerHTML = result.data.map(comment => `
+                        <div class="comment">
+                            <p><strong>${comment.user_name}</strong>: ${comment.content}</p>
+                            <p><small>${new Date(comment.created_at).toLocaleString()}</small></p>
+                        </div>
+                    `).join('');
+                }
+            } else {
+                commentsDiv.innerHTML = `<p class="message error">${result.error}</p>`;
+            }
+        }
+
+        async function createComment() {
+            const content = document.getElementById('commentContent').value.trim();
+            if (!content) {
+                showMessage('commentMessage', 'Comment content is required.', 'error');
+                return;
+            }
+
+            const result = await apiCreateComment(postId, { content });
+            if (result.ok) {
+                showMessage('commentMessage', 'Comment added successfully!', 'success');
+                document.getElementById('commentContent').value = '';
+                loadComments();
+            } else {
+                showMessage('commentMessage', result.error, 'error');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateNav();
+            loadPost();
+            loadComments();
+        });
     </script>
 </body>
 </html>

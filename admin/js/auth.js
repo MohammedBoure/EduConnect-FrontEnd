@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://educonnect-wp9t.onrender.com/api';
+const API_BASE_URL = 'https://educonnect-wp9t.onrender.com/api'; //'https://educonnect-wp9t.onrender.com/api'
 
 function setAuthData(userId, role) {
     if (userId === undefined || userId === null || !role) {
@@ -15,7 +15,7 @@ function getUserId() {
 }
 
 function getRole() {
-    return localStorage.getItem('role');
+    return localStorage.getItem('role'); // Returns 'user', 'admin', or null
 }
 
 function removeAuthData() {
@@ -24,18 +24,18 @@ function removeAuthData() {
 }
 
 function isAuthenticated() {
-    return !!getUserId() && !!getRole();
+    return !!getUserId() && !!getRole(); // Check if user_id and role exist
 }
 
 function isAdmin() {
-    return isAuthenticated() && getRole() === 'admin';
+    return isAuthenticated() && getRole() === 'admin'; // Check if user is admin
 }
 
 async function logout() {
     try {
         const response = await fetch(`${API_BASE_URL}/logout`, {
             method: 'POST',
-            credentials: 'include',
+            credentials: 'include', // Send session cookie
         });
         if (response.ok) {
             removeAuthData();
@@ -58,7 +58,7 @@ function redirectToLoginIfNotAuthenticated(requireAdmin = false) {
     }
     if (requireAdmin && !isAdmin()) {
         alert('يجب أن تكون مديرًا للوصول إلى هذه الصفحة.');
-        window.location.href = 'index.html';
+        window.location.href = 'index.html'; // Or another non-admin page
         return true;
     }
     return false;

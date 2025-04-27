@@ -1,105 +1,246 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل مستخدم جديد</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Register - University Social Network</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background-image: url('images/MainImage.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #navBar {
+            background-color: white;
+            box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        nav ul {
+            width: 100%;
+            list-style: none;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        nav li {
+            height: 50px;
+        }
+
+        nav a {
+            height: 100%;
+            padding: 0 30px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            color: black;
+        }
+
+        nav a:hover {
+            background-color: rgb(161, 161, 161);
+        }
+
+        nav li:first-child {
+            margin-right: auto;
+        }
+
+        .sideBar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: 250px;
+            z-index: 999;
+            background-color: rgba(255, 255, 255, 0.432);
+            backdrop-filter: blur(10px);
+            box-shadow: -10px 0px 10px rgba(0, 0, 0, 0.001);
+            display: none;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        .sideBar li {
+            width: 100%;
+        }
+
+        .sideBar a {
+            width: 100%;
+        }
+
+        @media (max-width: 800px) {
+            .hideOnMobile {
+                display: none;
+            }
+        }
+
+        svg {
+            fill: black;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #1a3c6d;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+        .form-group button {
+            width: 100%;
+            padding: 12px;
+            background-color: #1e88e5;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+
+        .form-group button:hover {
+            background-color: #1565c0;
+        }
+
+        .error {
+            color: #e53935;
+            font-size: 0.9em;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .link a {
+            color: #1e88e5;
+            text-decoration: none;
+        }
+
+        .link a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
-
 <body>
+    <header>
+        <nav id="navBar">
+            <ul class="sideBar">
+                <li onclick="hideSidebar()"><a href="#"><svg id="hidesvg" xmlns="http://www.w3.org/2000/svg" height="26px" viewBox="0 -960 960 960" width="26px" fill="#333"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></a></li>
+                <li><a href="aboutUS.html">ABOUT US</a></li>
+                <li><a href="blog.html">BLOG</a></li>
+                <li><a href="register.html">REGISTER</a></li>
+                <li><a href="login.html">LOGIN</a></li>
+            </ul>
+            <ul>
+                <li><a href="index.html">HOME</a></li>
+                <li class="hideOnMobile"><a href="aboutUS.html">ABOUT US</a></li>
+                <li class="hideOnMobile"><a href="blog.html">BLOG</a></li>
+                <li class="hideOnMobile"><a href="register.html">REGISTER</a></li>
+                <li class="hideOnMobile"><a href="login.html">LOGIN</a></li>
+                <li onclick="showSidebar()"><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#333"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg></a></li>
+            </ul>
+        </nav>
+    </header>
+
     <div class="container">
-        <h1>تسجيل مستخدم جديد</h1>
-        <div id="message" class="message" style="display: none;"></div>
-
-        <form id="registerForm">
-            <label for="first_name">الاسم الأول:</label>
-            <input type="text" id="first_name" name="first_name" required>
-
-            <label for="last_name">الاسم الأخير:</label>
-            <input type="text" id="last_name" name="last_name" required>
-
-            <label for="email">البريد الإلكتروني:</label>
-            <input type="email" id="email" name="email" required>
-
-            <label for="password">كلمة المرور (8 أحرف على الأقل):</label>
-            <input type="password" id="password" name="password" minlength="8" required>
-
-            <label for="department">القسم/التخصص:</label>
-            <input type="text" id="department" name="department" required>
-
-            <label for="skills">المهارات (مثال: Java, Python):</label>
-            <input type="text" id="skills" name="skills" required>
-
-            <label for="photo">رابط الصورة (اختياري):</label>
-            <input type="url" id="photo" name="photo">
-
-            <button type="submit" id="submitBtn">تسجيل</button>
-        </form>
-        <p>لديك حساب بالفعل؟ <a href="login.html">تسجيل الدخول</a></p>
-
-        <!-- إضافة عنصر النتيجة -->
-        <p id="result"></p>
+        <h2>Create Your Account</h2>
+        <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" placeholder="Enter your first name" required>
+        </div>
+        <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" placeholder="Enter your last name" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="Enter your email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter your password" required>
+        </div>
+        <div class="form-group">
+            <button onclick="register()">Register</button>
+        </div>
+        <div class="error" id="registerError"></div>
+        <div class="link">
+            <p>Already have an account? <a href="login.html">Login here</a></p>
+        </div>
     </div>
 
-    <script src="js/auth.js"></script>
-    <script src="js/api.js"></script>
-    <script>
-        const form = document.getElementById('registerForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const messageElement = document.getElementById('message');
-        const resultElement = document.getElementById('result');
+    
+    <script>src="/js/api.js"</script>
+    <script>src="/js/auth.js"</script>
+    <script defer>
+        function showSidebar() {
+            document.querySelector('.sideBar').style.display = 'flex';
+        }
 
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            messageElement.style.display = 'none';
-            resultElement.textContent = '';
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'جاري التسجيل...';
+        function hideSidebar() {
+            document.querySelector('.sideBar').style.display = 'none';
+        }
 
-            const formData = new FormData(form);
-            const userData = {};
-            formData.forEach((value, key) => {
-                userData[key] = value;
-            });
+        async function register() {
+            const errorDiv = document.getElementById('registerError');
+            errorDiv.textContent = '';
 
-            if (!userData.photo) {
-                delete userData.photo;
+            const userData = {
+                first_name: document.getElementById('firstName').value,
+                last_name: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value
+            };
+
+            if (!userData.first_name || !userData.last_name || !userData.email || !userData.password) {
+                errorDiv.textContent = 'All fields are required.';
+                return;
             }
 
-            try {
-                const result = await apiRegister(userData);
-                console.log('Server response:', result);
-
-                if (result.ok) {
-                    const user = result.data;
-
-                    messageElement.style.display = 'block';
-                    messageElement.textContent = '✅ تم التسجيل بنجاح! سيتم تحويلك إلى صفحة تسجيل الدخول خلال ثوان...';
-                    messageElement.style.color = 'green';
-
-                    resultElement.textContent = `الاسم: ${user.first_name} ${user.last_name}\nالبريد الإلكتروني: ${user.email}`;
-
-                    // إعادة التوجيه بعد 3 ثوانٍ
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 3000);
-                } else {
-                    messageElement.style.display = 'block';
-                    messageElement.textContent = `❌ خطأ: ${result.error}`;
-                    messageElement.style.color = 'red';
-                }
-            } catch (error) {
-                messageElement.style.display = 'block';
-                messageElement.textContent = `❌ خطأ في الاتصال: ${error.message}`;
-                messageElement.style.color = 'red';
+            const result = await apiRegister(userData);
+            if (result.ok) {
+                window.location.href = 'index.html';
+            } else {
+                errorDiv.textContent = result.error;
             }
-
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'تسجيل';
-        });
+        }
     </script>
 </body>
-
 </html>
