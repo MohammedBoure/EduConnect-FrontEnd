@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Post - University Social Network</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        #postContent {
+            min-height: 500px;
+            font-family: Consolas, 'Courier New', monospace;
+            font-size: 1.1rem;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: vertical;
+            width: 100%;
+            line-height: 1.5;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #postContent:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav id="navBar">
+            <ul class="sideBar" id="sideBarNav">
+                <li onclick="hideSidebar()"><a href="#"><i class="fas fa-times"></i></a></li>
+                <li><a href="index.html"><i class="fas fa-home"></i> HOME</a></li>
+                <li><a href="messenger.html"><i class="fas fa-comments"></i> MESSENGER</a></li>
+                <li><a href="profile.html"><i class="fas fa-user"></i> PROFILE</a></li>
+                <li><a href="aboutUS.html"><i class="fas fa-info-circle"></i> ABOUT US</a></li>
+                <li><a href="posts.html"><i class="fas fa-blog"></i> BLOG</a></li>
+                <li class="auth-link" id="sideRegisterLink"><a href="register.html"><i class="fas fa-user-plus"></i> REGISTER</a></li>
+                <li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> LOGIN</a></li>
+                <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> LOGOUT</a></li>
+            </ul>
+            <ul id="mainNav">
+                <li><a href="index.html"><i class="fas fa-home"></i> HOME</a></li>
+                <li class="hideOnMobile"><a href="messenger.html"><i class="fas fa-comments"></i> MESSENGER</a></li>
+                <li class="hideOnMobile"><a href="profile.html"><i class="fas fa-user"></i> PROFILE</a></li>
+                <li class="hideOnMobile"><a href="aboutUS.html"><i class="fas fa-info-circle"></i> ABOUT US</a></li>
+                <li class="hideOnMobile"><a href="posts.html"><i class="fas fa-blog"></i> BLOG</a></li>
+                <li class="hideOnMobile auth-link" id="registerLink"><a href="register.html"><i class="fas fa-user-plus"></i> REGISTER</a></li>
+                <li class="hideOnMobile auth-link" id="loginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> LOGIN</a></li>
+                <li class="hideOnMobile auth-link" id="logoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> LOGOUT</a></li>
+                <li onclick="showSidebar()"><a href="#"><i class="fas fa-bars"></i></a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="section" id="postSection">
+            <h2 id="pageTitle"><i class="fas fa-edit"></i> Create a Post</h2>
+            <div class="edit-form" id="postForm">
+                <div class="form-group">
+                    <label for="postTitle"><i class="fas fa-heading"></i> Post Title</label>
+                    <input type="text" id="postTitle" placeholder="Enter post title">
+                </div>
+                <div class="form-group">
+                    <label for="postContent"><i class="fas fa-align-left"></i> Post Content (Markdown)</label>
+                    <textarea id="postContent" rows="10" placeholder="Write your post in Markdown..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="postImage"><i class="fas fa-image"></i> Image URL</label>
+                    <input type="url" id="postImage" placeholder="Enter image URL">
+                </div>
+                <div class="form-group">
+                    <button class="btn-primary" onclick="savePost()"><i class="fas fa-save"></i> Save Post</button>
+                    <a href="profile.html" class="btn-danger" style="background-color: #757575;"><i class="fas fa-times"></i> Cancel</a>
+                </div>
+                <div id="postMessage" class="message" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for displaying API response -->
+    <div id="responseModal" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-code"></i> apiGetPost Response</h3>
+            <pre id="responseContent"></pre>
+            <div id="modalMessage" class="message" style="display: none;"></div>
+            <button class="btn-primary" onclick="copyResponse()"><i class="fas fa-copy"></i> Copy</button>
+            <button class="btn-danger" onclick="closeModal()" style="background-color: #757575;"><i class="fas fa-times"></i> Close</button>
+        </div>
+    </div>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/api.js"></script>
+    <script defer>
+        function showSidebar() {
+            document.querySelector('.sideBar').style.display = 'flex';
+        }
+
+        function hideSidebar() {
+            document.querySelector('.sideBar').style.display = 'none';
+        }
+
+        function updateNav() {
+            const isLoggedIn = isAuthenticated();
+            document.getElementById('registerLink').style.display = isLoggedIn ? 'none' : 'block';
+            document.getElementById('loginLink').style.display = isLoggedIn ? 'none' : 'block';
+            document.getElementById('logoutLink').style.display = isLoggedIn ? 'block' : 'none';
+            document.getElementById('sideRegisterLink').style.display = isLoggedIn ? 'none' : 'block';
+            document.getElementById('sideLoginLink').style.display = isLoggedIn ? 'none' : 'block';
+            document.getElementById('sideLogoutLink').style.display = isLoggedIn ? 'block' : 'none';
+        }
+
+        function showMessage(message, type) {
+            const messageEl = document.getElementById('postMessage');
+            messageEl.textContent = message;
+            messageEl.className = `message ${type}`;
+            messageEl.style.display = 'block';
+        }
+
+        function hideMessage() {
+            const messageEl = document.getElementById('postMessage');
+            messageEl.style.display = 'none';
+        }
+
+        // Modal functions
+        function showModal(content) {
+            const modal = document.getElementById('responseModal');
+            const contentEl = document.getElementById('responseContent');
+            const modalMessage = document.getElementById('modalMessage');
+            contentEl.textContent = content;
+            modalMessage.style.display = 'none';
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('responseModal');
+            modal.style.display = 'none';
+        }
+
+        function copyResponse() {
+            const content = document.getElementById('responseContent').textContent;
+            navigator.clipboard.writeText(content).then(() => {
+                const modalMessage = document.getElementById('modalMessage');
+                modalMessage.textContent = 'Response copied to clipboard!';
+                modalMessage.className = 'message success';
+                modalMessage.style.display = 'block';
+                setTimeout(() => {
+                    modalMessage.style.display = 'none';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                const modalMessage = document.getElementById('modalMessage');
+                modalMessage.textContent = 'Failed to copy: ' + err.message;
+                modalMessage.className = 'message error';
+                modalMessage.style.display = 'block';
+            });
+        }
+
+        if (redirectToLoginIfNotAuthenticated()) {
+            console.log('Redirecting due to authentication failure');
+            throw new Error('User not authenticated');
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('id');
+
+        async function loadPost() {
+            if (!postId) {
+                console.log('No postId provided, assuming new post creation');
+                return;
+            }
+
+            console.log('Loading post with ID:', postId);
+            document.getElementById('pageTitle').textContent = 'Edit Post';
+
+            // Verify DOM elements exist
+            const titleInput = document.getElementById('postTitle');
+            const contentInput = document.getElementById('postContent');
+            const imageInput = document.getElementById('postImage');
+
+            if (!titleInput || !contentInput || !imageInput) {
+                console.error('Form fields not found:', {
+                    titleInput: !!titleInput,
+                    contentInput: !!contentInput,
+                    imageInput: !!imageInput
+                });
+                showMessage('Error: Form fields not found in the page.', 'error');
+                return;
+            }
+
+            try {
+                const result = await apiGetPost(postId);
+                console.log('apiGetPost result:', result);
+                // Display the API response in a modal (for debugging)
+                showModal(JSON.stringify(result, null, 2));
+
+                if (result.ok) {
+                    // Access the post data from result.data.post
+                    const post = result.data.post;
+                    console.log('Post data loaded:', post);
+
+                    // Populate form fields
+                    titleInput.value = post.title || '';
+                    contentInput.value = post.content || '';
+                    imageInput.value = post.image || '';
+
+                    console.log('Form fields populated:', {
+                        title: titleInput.value,
+                        content: contentInput.value,
+                        image: imageInput.value
+                    });
+                } else {
+                    showMessage('Failed to load post: ' + result.error, 'error');
+                    console.error('Failed to load post:', result.error);
+                }
+            } catch (error) {
+                showMessage('Error loading post: ' + error.message, 'error');
+                console.error('Error in loadPost:', error);
+            }
+        }
+
+        async function savePost() {
+            hideMessage();
+            const title = document.getElementById('postTitle').value.trim();
+            const content = document.getElementById('postContent').value.trim();
+            const imageUrl = document.getElementById('postImage').value.trim();
+            if (!content) {
+                showMessage('Content is required.', 'error');
+                console.log('Validation failed: Content is required');
+                return;
+            }
+
+            const isAdminPost = isAdmin();
+            const payload = { 
+                title: title || undefined, 
+                content, 
+                image: imageUrl || undefined, 
+                is_admin_post: isAdminPost 
+            };
+            console.log('Saving post with payload:', payload);
+
+            try {
+                let result;
+                if (postId) {
+                    console.log('Updating post with ID:', postId);
+                    result = await apiUpdatePost(postId, payload);
+                } else {
+                    console.log('Creating new post');
+                    result = await apiCreatePost(payload);
+                }
+                console.log('Save post result:', result);
+
+                if (result.ok) {
+                    showMessage(postId ? 'Post updated successfully!' : 'Post created successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'profile.html';
+                    }, 2000);
+                } else {
+                    showMessage(result.error, 'error');
+                    console.error('Failed to save post:', result.error);
+                }
+            } catch (error) {
+                showMessage('Error saving post: ' + error.message, 'error');
+                console.error('Error in savePost:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('edit-post.html loaded');
+            updateNav();
+            loadPost();
+        });
+    </script>
+</body>
+</html>

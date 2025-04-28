@@ -124,21 +124,21 @@ async function apiSearchUsers({ name = '', department = '', skill = '', page = 1
     }, 'json');
 }
 
-// Post APIs
-async function apiGetAdminPosts() {
-    return await fetchApi('/posts?admin=true', {
+async function apiGetUsers(page = 1, perPage = 10) {
+    return await fetchApi(`/admin/users?page=${page}&per_page=${perPage}`, {
         method: 'GET',
     }, 'json');
 }
 
-async function apiGetPublicPosts() {
-    return await fetchApi('/posts', {
+//Post APIs
+async function apiGetUserPosts(userId, page = 1, perPage = 10) {
+    return await fetchApi(`/posts/user/${userId}?page=${page}&per_page=${perPage}`, {
         method: 'GET',
     }, 'json');
 }
 
-async function apiGetUserPosts(userId) {
-    return await fetchApi(`/posts?user_id=${userId}`, {
+async function apiGetAdminUserPosts(page = 1, perPage = 10) {
+    return await fetchApi(`/posts/admin_user_posts?page=${page}&per_page=${perPage}`, {
         method: 'GET',
     }, 'json');
 }
@@ -153,6 +153,12 @@ async function apiCreatePost(postData) {
     return await fetchApi('/posts', {
         method: 'POST',
         body: postData,
+    }, 'json');
+}
+
+async function apiGetPosts(page = 1, perPage = 10) {
+    return await fetchApi(`/posts?page=${page}&per_page=${perPage}`, {
+        method: 'GET',
     }, 'json');
 }
 
@@ -176,29 +182,35 @@ async function apiGetComments(postId) {
     }, 'json');
 }
 
-async function apiCreateComment(postId, commentData) {
-    return await fetchApi(`/posts/${postId}/comments`, {
+async function postComment(postId, content) {
+    const createdAt = new Date().toISOString(); // Generate ISO format timestamp
+    const payload = {
+        content: content,
+        created_at: createdAt
+    };
+
+    const response = await fetchApi(`/posts/${postId}/comments`, {
         method: 'POST',
-        body: commentData,
-    }, 'json');
+        body: payload,
+    });
+
+    return response;
 }
 
+
 // Message APIs
-async function apiGetContacts() {
-    return await fetchApi('/messages/contacts', {
-        method: 'GET',
+async function apiSendMessage(recipientId, content) {
+    return await fetchApi(`/messages`, {
+        method: 'POST',
+        body: {
+            receiver_id: recipientId,
+            content: content
+        }
     }, 'json');
 }
 
 async function apiGetMessages(recipientId) {
     return await fetchApi(`/messages/${recipientId}`, {
         method: 'GET',
-    }, 'json');
-}
-
-async function apiSendMessage(recipientId, messageData) {
-    return await fetchApi(`/messages/${recipientId}`, {
-        method: 'POST',
-        body: messageData,
     }, 'json');
 }

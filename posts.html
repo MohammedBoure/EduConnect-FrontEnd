@@ -3,69 +3,347 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Public Posts - University Social Network</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <title>Posts - University Of JIJEL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --text-color: #333;
+            --light-gray: #f5f7fa;
+            --border-color: #e0e0e0;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --error-color: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        #navBar {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .sideBar {
+            display: none;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: 250px;
+            background-color: #fff;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 200;
+            padding: 20px 0;
+            transition: transform 0.3s ease;
+        }
+
+        .sideBar li {
+            list-style-type: none;
+            margin: 10px 0;
+        }
+
+        .sideBar li a {
+            display: block;
+            padding: 12px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .sideBar li a:hover {
+            background-color: var(--light-gray);
+            color: var(--secondary-color);
+            padding-left: 25px;
+        }
+
+        #mainNav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            list-style-type: none;
+        }
+
+        #mainNav li a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        #mainNav li a:hover {
+            color: var(--secondary-color);
+            background-color: var(--light-gray);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            position: relative;
+        }
+
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100px;
+            height: 2px;
+            background-color: var(--accent-color);
+        }
+
+        #posts-container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        #userPosts {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        @media (max-width: 768px) {
+            #userPosts {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .user-post {
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-post:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .post-image-container {
+            height: 180px;
+            overflow: hidden;
+        }
+
+        .user-post img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .user-post:hover img {
+            transform: scale(1.05);
+        }
+
+        .post-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-post h3 {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .user-post h3 a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .user-post h3 a:hover {
+            color: var(--secondary-color);
+        }
+
+        .user-post p {
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .post-meta i {
+            margin-right: 5px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .pagination span {
+            font-size: 1rem;
+            color: var(--text-color);
+        }
+
+        .btn-primary {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.4);
+        }
+
+        .no-posts {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .no-posts i {
+            font-size: 3rem;
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+
+        .no-posts h3 {
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .no-posts p {
+            color: #777;
+            margin-bottom: 20px;
+        }
+
+        .message.error {
+            padding: 12px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            background-color: rgba(231, 76, 60, 0.2);
+            border-left: 4px solid var(--error-color);
+            color: #c0392b;
+        }
+
+        @media (max-width: 768px) {
+            .hideOnMobile {
+                display: none;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
         <nav id="navBar">
             <ul class="sideBar" id="sideBarNav">
-                <li onclick="hideSidebar()"><a href="#"><svg id="hidesvg" xmlns="http://www.w3.org/2000/svg" height="26px" viewBox="0 -960 960 960" width="26px" fill="#333"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></a></li>
-                <li><a href="index.html">HOME</a></li>
-                <li><a href="posts.html">PUBLIC POSTS</a></li>
-                <li><a href="messenger.html">MESSENGER</a></li>
-                <li><a href="profile.html">PROFILE</a></li>
-                <li><a href="aboutUS.html">ABOUT US</a></li>
-                <li><a href="blog.html">BLOG</a></li>
-                <li class="auth-link" id="sideRegisterLink"><a href="register.html">REGISTER</a></li>
-                <li class="auth-link" id="sideLoginLink"><a href="login.html">LOGIN</a></li>
-                <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()">LOGOUT</a></li>
+                <li onclick="hideSidebar()"><a href="#"><i class="fas fa-times"></i></a></li>
+                <li><a href="index.html"><i class="fas fa-home"></i> HOME</a></li>
+                <li><a href="messenger.html"><i class="fas fa-comments"></i> MESSENGER</a></li>
+                <li><a href="profile.html"><i class="fas fa-user"></i> PROFILE</a></li>
+                <li><a href="aboutUS.html"><i class="fas fa-info-circle"></i> ABOUT US</a></li>
+                <li><a href="posts.html"><i class="fas fa-blog"></i> BLOG</a></li>
+                <li class="auth-link" id="sideRegisterLink"><a href="register.html"><i class="fas fa-user-plus"></i> REGISTER</a></li>
+                <li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> LOGIN</a></li>
+                <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> LOGOUT</a></li>
             </ul>
             <ul id="mainNav">
-                <li><a href="index.html">HOME</a></li>
-                <li class="hideOnMobile"><a href="posts.html">PUBLIC POSTS</a></li>
-                <li class="hideOnMobile"><a href="messenger.html">MESSENGER</a></li>
-                <li class="hideOnMobile"><a href="profile.html">PROFILE</a></li>
-                <li class="hideOnMobile"><a href="aboutUS.html">ABOUT US</a></li>
-                <li class="hideOnMobile"><a href="blog.html">BLOG</a></li>
-                <li class="hideOnMobile auth-link" id="registerLink"><a href="register.html">REGISTER</a></li>
-                <li class="hideOnMobile auth-link" id="loginLink"><a href="login.html">LOGIN</a></li>
-                <li class="hideOnMobile auth-link" id="logoutLink" style="display: none;"><a href="#" onclick="logout()">LOGOUT</a></li>
-                <li onclick="showSidebar()"><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#333"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg></a></li>
+                <li><a href="index.html"><i class="fas fa-home"></i> HOME</a></li>
+                <li class="hideOnMobile"><a href="messenger.html"><i class="fas fa-comments"></i> MESSENGER</a></li>
+                <li class="hideOnMobile"><a href="profile.html"><i class="fas fa-user"></i> PROFILE</a></li>
+                <li class="hideOnMobile"><a href="aboutUS.html"><i class="fas fa-info-circle"></i> ABOUT US</a></li>
+                <li class="hideOnMobile"><a href="posts.html"><i class="fas fa-blog"></i> BLOG</a></li>
+                <li class="hideOnMobile auth-link" id="registerLink"><a href="register.html"><i class="fas fa-user-plus"></i> REGISTER</a></li>
+                <li class="hideOnMobile auth-link" id="loginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> LOGIN</a></li>
+                <li class="hideOnMobile auth-link" id="logoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> LOGOUT</a></li>
+                <li onclick="showSidebar()"><a href="#"><i class="fas fa-bars"></i></a></li>
             </ul>
         </nav>
     </header>
 
     <div class="container">
         <div class="section">
-            <h2>Public Posts</h2>
+            <h2><i class="fas fa-bullhorn"></i> Public Posts</h2>
             <div id="posts-container">
-                <a href="post.html?id=1" class="post-card">
-                    <img src="https://images.unsplash.com/photo-1503551723145-6c040742065b" alt="Renewable Energy Research">
-                    <div class="post-content">
-                        <h3>Renewable Energy Research</h3>
-                        <p>Just completed my research paper on renewable...</p>
+                <div id="userPosts">
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
                     </div>
-                </a>
-                <a href="post.html?id=2" class="post-card">
-                    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3" alt="Coding Competition Team">
-                    <div class="post-content">
-                        <h3>Coding Competition Team</h3>
-                        <p>Looking for teammates for the inter-university...</p>
-                    </div>
-                </a>
-                <a href="post.html?id=3" class="post-card">
-                    <img src="https://images.unsplash.com/photo-1513366208864-87536b8bd7b4" alt="Art Exhibition Piece">
-                    <div class="post-content">
-                        <h3>Art Exhibition Piece</h3>
-                        <p>Sharing my latest artwork created for the...</p>
-                    </div>
-                </a>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="/js/auth.js"></script>
+    <script src="/js/api.js"></script>
     <script defer>
         function showSidebar() {
             document.querySelector('.sideBar').style.display = 'flex';
@@ -85,11 +363,60 @@
             document.getElementById('sideLogoutLink').style.display = isLoggedIn ? 'block' : 'none';
         }
 
-        if (redirectToLoginIfNotAuthenticated()) {
-            throw new Error('User not authenticated');
+        async function loadPublicPosts(page = 1, perPage = 10) {
+            const postsContainer = document.getElementById('userPosts');
+            try {
+                const result = await apiGetPosts(page, perPage);
+                if (result.ok) {
+                    const { posts, total, pages } = result.data;
+                    if (posts.length === 0) {
+                        postsContainer.innerHTML = `
+                            <div class="no-posts">
+                                <i class="fas fa-file-alt"></i>
+                                <h3>No Public Posts Yet</h3>
+                                <p>No posts available at this time.</p>
+                            </div>
+                        `;
+                    } else {
+                        postsContainer.innerHTML = posts.map(post => `
+                            <div class="user-post">
+                                ${post.image ? `
+                                    <div class="post-image-container">
+                                        <img src="${post.image}" alt="Post Image">
+                                    </div>
+                                ` : ''}
+                                <div class="post-content">
+                                    <h3><a href="post.html?id=${post.id}">${post.title || 'Untitled'}</a></h3>
+                                    <p>${post.content.substring(0, 100)}${post.content.length > 100 ? '...' : ''}</p>
+                                    <div class="post-meta">
+                                        <span><i class="fas fa-user"></i> ${post.author.first_name} ${post.author.last_name}</span>
+                                        <span><i class="fas fa-calendar-alt"></i> ${new Date(post.created_at).toLocaleDateString()}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+                        if (pages > 1) {
+                            postsContainer.insertAdjacentHTML('afterend', `
+                                <div class="pagination">
+                                    ${page > 1 ? `<button class="btn-primary" onclick="loadPublicPosts(${page - 1}, ${perPage})"><i class="fas fa-chevron-left"></i> Previous</button>` : ''}
+                                    <span>Page ${page} of ${pages}</span>
+                                    ${page < pages ? `<button class="btn-primary" onclick="loadPublicPosts(${page + 1}, ${perPage})">Next <i class="fas fa-chevron-right"></i></button>` : ''}
+                                </div>
+                            `);
+                        }
+                    }
+                } else {
+                    postsContainer.innerHTML = `<p class="message error"><i class="fas fa-exclamation-circle"></i> ${result.error}</p>`;
+                }
+            } catch (error) {
+                postsContainer.innerHTML = `<p class="message error"><i class="fas fa-exclamation-circle"></i> Error loading posts: ${error.message}</p>`;
+            }
         }
 
-        document.addEventListener('DOMContentLoaded', updateNav);
+        document.addEventListener('DOMContentLoaded', () => {
+            updateNav();
+            loadPublicPosts();
+        });
     </script>
 </body>
 </html>

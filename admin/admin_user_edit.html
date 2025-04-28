@@ -360,9 +360,7 @@
         form.addEventListener('submit', async (event) => {
             event.preventDefault();
             hideMessage('message');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'جاري الحفظ...';
-
+            
             const formData = new FormData(form);
             const updatedData = {};
             formData.forEach((value, key) => {
@@ -375,18 +373,31 @@
             if (updatedData.photo === '') {
                 delete updatedData.photo;
             }
-
+        
+            // Client-side validation
+            if (!updatedData.email || !/^\S+@\S+\.\S+$/.test(updatedData.email)) {
+                showMessage('message', 'الرجاء إدخال بريد إلكتروني صالح', 'error');
+                return;
+            }
+            if (!updatedData.first_name || !updatedData.last_name) {
+                showMessage('message', 'الرجاء إدخال الاسم الأول واسم العائلة', 'error');
+                return;
+            }
+        
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'جاري الحفظ...';
+        
             const currentUserId = formData.get('id');
             const result = await apiUpdateUser(currentUserId, updatedData);
-
-            if (result.ok) {
-                showMessage('message', 'تم تحديث بيانات المستخدم بنجاح!', 'success');
-            } else {
-                showMessage('message', `فشل تحديث بيانات المستخدم: ${result.error}`, 'error');
-            }
-
+        
             submitBtn.disabled = false;
-            submitBtn.textContent = 'حفظ التغييرات';
+            submitBtn.textContent = 'حفظ';
+        
+            if (result.ok) {
+                showMessage('message', 'تم تحديث المستخدم بنجاح', 'success');
+            } else {
+                showMessage('message', `فشل تحديث المستخدم: ${result.error}`, 'error');
+            }
         });
 
         logoutBtn.addEventListener('click', (e) => {
