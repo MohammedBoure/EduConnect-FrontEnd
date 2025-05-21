@@ -251,7 +251,8 @@ header {
 }
 
 /* Buttons */
-.btn-primary, .btn-danger {
+.btn-primary,
+.btn-danger {
     padding: 12px 20px;
     border: none;
     border-radius: 5px;
@@ -481,15 +482,15 @@ header {
     .hideOnMobile {
         display: none;
     }
-    
+
     .container {
         padding: 0 15px;
     }
-    
+
     .profile-card {
         padding: 20px;
     }
-    
+
     .post-actions {
         flex-direction: column;
     }

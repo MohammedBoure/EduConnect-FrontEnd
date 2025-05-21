@@ -1,4 +1,7 @@
-const API_BASE_URL = 'https://educonnect-wp9t.onrender.com/api'; //'https://educonnect-wp9t.onrender.com/api'
+// http://127.0.0.1:5000/api
+// https://educonnect-wp9t.onrender.com/api
+const API_BASE_URL = 'https://educonnect-wp9t.onrender.com/api';
+
 
 function setAuthData(userId, role) {
     if (userId === undefined || userId === null || !role) {
@@ -51,18 +54,29 @@ async function logout() {
 }
 
 function redirectToLoginIfNotAuthenticated(requireAdmin = false) {
-    if (!isAuthenticated()) {
+    const userId = getUserId();
+    const role = getRole();
+
+    if (!userId || !role) {
         alert('يجب تسجيل الدخول للوصول إلى هذه الصفحة.');
         window.location.href = 'login.html';
         return true;
     }
-    if (requireAdmin && !isAdmin()) {
-        alert('يجب أن تكون مديرًا للوصول إلى هذه الصفحة.');
-        window.location.href = 'index.html'; // Or another non-admin page
+
+    if (role === 'user') {
+        window.location.href = 'login.html';
         return true;
     }
+
+    if (requireAdmin && role !== 'admin') {
+        alert('يجب أن تكون مديرًا للوصول إلى هذه الصفحة.');
+        window.location.href = 'login.html';
+        return true;
+    }
+
     return false;
 }
+
 
 function showMessage(elementId, message, type = 'error') {
     const messageDiv = document.getElementById(elementId);

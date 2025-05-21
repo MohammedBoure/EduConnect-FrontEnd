@@ -80,7 +80,7 @@ async function apiRegister(userData) {
     const result = await fetchApi('/register', {
         method: 'POST',
         body: userData,
-    }, 'json');k
+    }, 'json'); k
     if (result.ok) {
         setAuthData(result.data.user.id, result.data.user.role);
     }

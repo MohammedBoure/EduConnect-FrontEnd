@@ -1,0 +1,19 @@
+#postContent {
+    min-height: 500px;
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 1.1rem;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    resize: vertical;
+    width: 100%;
+    line-height: 1.5;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+#postContent:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}

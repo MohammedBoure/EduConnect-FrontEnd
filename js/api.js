@@ -157,7 +157,7 @@ async function apiCreatePost(postData) {
 }
 
 async function apiGetPosts(page = 1, perPage = 10) {
-    return await fetchApi(`/posts?page=${page}&per_page=${perPage}`, {
+    return await fetchApi(`/posts/users_posts?page=${page}&per_page=${perPage}`, {
         method: 'GET',
     }, 'json');
 }

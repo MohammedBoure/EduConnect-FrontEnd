@@ -1,0 +1,131 @@
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.pagination span {
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+/* About Section Styles */
+.about-section {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 0;
+    /* Remove padding to blend with container */
+    margin-bottom: 30px;
+    border-radius: 10px;
+    overflow: hidden;
+    /* Ensure image and content stay within rounded borders */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.about-image {
+    flex: 1;
+    min-width: 300px;
+    max-width: 600px;
+    /* Increased max-width for larger image */
+    width: 100%;
+    margin: 0;
+    /* Remove margin to blend with container */
+}
+
+.about-image img {
+    width: 100%;
+    height: 400px;
+    /* Fixed height for larger, consistent appearance */
+    object-fit: cover;
+    /* Ensure image covers area without distortion */
+    border-radius: 10px 0 0 10px;
+    /* Rounded only on left side to blend with content */
+    display: block;
+    /* Remove any default spacing */
+}
+
+.about-content {
+    flex: 2;
+    min-width: 300px;
+    padding: 40px;
+    background: #ffffff;
+    /* White background to match typical container styling */
+    border-radius: 0 10px 10px 0;
+    /* Rounded only on right side to blend with image */
+}
+
+.about-content h2 {
+    font-size: 2.5rem;
+    /* Slightly larger for elegance */
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    /* Add elegance with uppercase */
+    letter-spacing: 1px;
+}
+
+.about-content p {
+    font-size: 1.2rem;
+    /* Slightly larger for readability */
+    color: #34495e;
+    line-height: 1.8;
+    /* Increased line height for elegance */
+    margin-bottom: 25px;
+}
+
+.about-content .btn-primary {
+    background-color: #3498db;
+    color: white;
+    padding: 12px 24px;
+    /* Slightly larger button */
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.about-content .btn-primary:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    /* Subtle lift effect for elegance */
+}
+
+@media (max-width: 768px) {
+    .about-section {
+        flex-direction: column;
+        border-radius: 10px;
+        /* Maintain rounded corners on mobile */
+    }
+
+    .about-image {
+        max-width: 100%;
+    }
+
+    .about-image img {
+        border-radius: 10px 10px 0 0;
+        /* Rounded only on top for mobile */
+        height: 300px;
+        /* Slightly smaller height for mobile */
+    }
+
+    .about-content {
+        padding: 20px;
+        border-radius: 0 0 10px 10px;
+        /* Rounded only on bottom for mobile */
+    }
+
+    .about-content h2 {
+        font-size: 1.8rem;
+    }
+
+    .about-content p {
+        font-size: 1rem;
+    }
+}

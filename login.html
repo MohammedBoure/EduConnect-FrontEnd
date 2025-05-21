@@ -1,261 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - University Social Network</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --text-color: #333;
-            --light-gray: #f5f7fa;
-            --border-color: #e0e0e0;
-            --success-color: #2ecc71;
-            --warning-color: #f39c12;
-            --error-color: #e74c3c;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #f9f9f9;
-            color: var(--text-color);
-            line-height: 1.6;
-        }
-
-        header {
-            background-color: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        #navBar {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .sideBar {
-            display: none;
-            flex-direction: column;
-            position: fixed;
-            top: 0;
-            right: 0;
-            height: 100vh;
-            width: 250px;
-            background-color: #fff;
-            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-            z-index: 200;
-            padding: 20px 0;
-            transition: transform 0.3s ease;
-        }
-
-        .sideBar li {
-            list-style-type: none;
-            margin: 10px 0;
-        }
-
-        .sideBar li a {
-            display: block;
-            padding: 12px 20px;
-            color: var(--text-color);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .sideBar li a:hover {
-            background-color: var(--light-gray);
-            color: var(--secondary-color);
-            padding-left: 25px;
-        }
-
-        #mainNav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            list-style-type: none;
-        }
-
-        #mainNav li a {
-            color: var(--text-color);
-            text-decoration: none;
-            font-weight: 500;
-            padding: 10px 15px;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-
-        #mainNav li a:hover {
-            color: var(--secondary-color);
-            background-color: var(--light-gray);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        .section {
-            margin-bottom: 40px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            padding: 20px;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .section h2 {
-            font-size: 1.8rem;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--secondary-color);
-            padding-bottom: 10px;
-            position: relative;
-        }
-
-        .section h2::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 100px;
-            height: 2px;
-            background-color: var(--accent-color);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.95rem;
-            color: var(--primary-color);
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            font-size: 1rem;
-            transition: border 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-        }
-
-        .form-group input::placeholder {
-            color: #aaa;
-        }
-
-        .btn-primary {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background-color: var(--secondary-color);
-            color: white;
-            width: 100%;
-            text-align: center;
-        }
-
-        .btn-primary:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.4);
-        }
-
-        .message {
-            padding: 12px 20px;
-            border-radius: 5px;
-            margin: 10px 0;
-            font-weight: 500;
-            text-align: center;
-        }
-
-        .message.success {
-            background-color: rgba(46, 204, 113, 0.2);
-            border-left: 4px solid var(--success-color);
-            color: #27ae60;
-        }
-
-        .message.error {
-            background-color: rgba(231, 76, 60, 0.2);
-            border-left: 4px solid var(--error-color);
-            color: #c0392b;
-        }
-
-        .section p {
-            margin-top: 15px;
-            text-align: center;
-            font-size: 0.95rem;
-        }
-
-        .section p a {
-            color: var(--secondary-color);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .section p a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 768px) {
-            .hideOnMobile {
-                display: none;
-            }
-
-            .container {
-                padding: 0 15px;
-            }
-
-            .section {
-                padding: 15px;
-                max-width: 100%;
-            }
-
-            .section h2 {
-                font-size: 1.5rem;
-            }
-
-            .form-group label {
-                font-size: 0.9rem;
-            }
-
-            .form-group input {
-                font-size: 0.95rem;
-            }
-
-            .btn-primary {
-                font-size: 0.95rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="/css/login.css">
 </head>
+
 <body>
     <header>
         <nav id="navBar">
@@ -264,21 +17,25 @@
                 <li><a href="index.html"><i class="fas fa-home"></i> HOME</a></li>
                 <li><a href="messenger.html"><i class="fas fa-comments"></i> MESSENGER</a></li>
                 <li><a href="profile.html"><i class="fas fa-user"></i> PROFILE</a></li>
-                <li><a href="aboutUS.html"><i class="fas fa-info-circle"></i> ABOUT US</a></li>
                 <li><a href="posts.html"><i class="fas fa-blog"></i> BLOG</a></li>
-                <li class="auth-link" id="sideRegisterLink"><a href="register.html"><i class="fas fa-user-plus"></i> REGISTER</a></li>
-                <li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> LOGIN</a></li>
-                <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> LOGOUT</a></li>
+                <li class="auth-link" id="sideRegisterLink"><a href="register.html"><i class="fas fa-user-plus"></i>
+                        REGISTER</a></li>
+                <li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i>
+                        LOGIN</a></li>
+                <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i
+                            class="fas fa-sign-out-alt"></i> LOGOUT</a></li>
             </ul>
             <ul id="mainNav">
                 <li><a href="index.html"><i class="fas fa-home"></i> HOME</a></li>
                 <li class="hideOnMobile"><a href="messenger.html"><i class="fas fa-comments"></i> MESSENGER</a></li>
                 <li class="hideOnMobile"><a href="profile.html"><i class="fas fa-user"></i> PROFILE</a></li>
-                <li class="hideOnMobile"><a href="aboutUS.html"><i class="fas fa-info-circle"></i> ABOUT US</a></li>
                 <li class="hideOnMobile"><a href="posts.html"><i class="fas fa-blog"></i> BLOG</a></li>
-                <li class="hideOnMobile auth-link" id="registerLink"><a href="register.html"><i class="fas fa-user-plus"></i> REGISTER</a></li>
-                <li class="hideOnMobile auth-link" id="loginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> LOGIN</a></li>
-                <li class="hideOnMobile auth-link" id="logoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> LOGOUT</a></li>
+                <li class="hideOnMobile auth-link" id="registerLink"><a href="register.html"><i
+                            class="fas fa-user-plus"></i> REGISTER</a></li>
+                <li class="hideOnMobile auth-link" id="loginLink"><a href="login.html"><i
+                            class="fas fa-sign-in-alt"></i> LOGIN</a></li>
+                <li class="hideOnMobile auth-link" id="logoutLink" style="display: none;"><a href="#"
+                        onclick="logout()"><i class="fas fa-sign-out-alt"></i> LOGOUT</a></li>
                 <li onclick="showSidebar()"><a href="#"><i class="fas fa-bars"></i></a></li>
             </ul>
         </nav>
@@ -360,4 +117,5 @@
         document.addEventListener('DOMContentLoaded', updateNav);
     </script>
 </body>
+
 </html>

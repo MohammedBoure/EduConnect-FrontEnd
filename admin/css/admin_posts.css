@@ -1,0 +1,663 @@
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --success-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --warning-color: #f39c12;
+    --light-color: #ecf0f1;
+    --dark-color: #34495e;
+    --text-color: #333;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f9f9f9;
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+nav {
+    background-color: var(--primary-color);
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+nav ul {
+    display: flex;
+    justify-content: flex-start;
+    list-style: none;
+    padding: 0 1rem;
+    margin: 0;
+}
+
+nav ul li a {
+    display: flex;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    padding: 1rem;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+nav ul li a:hover {
+    background-color: var(--secondary-color);
+}
+
+nav ul li a.active {
+    background-color: var(--secondary-color);
+}
+
+nav ul li a i {
+    margin-left: 0.5rem;
+}
+
+#logoutBtn {
+    color: #ff6b6b;
+}
+
+#logoutBtn:hover {
+    background-color: #ff6b6b;
+    color: white;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.header-section {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-section h1 {
+    color: var(--primary-color);
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+.header-section h1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 50px;
+    height: 3px;
+    background-color: var(--secondary-color);
+}
+
+.tools .btn-primary {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.tools .btn-primary:hover {
+    background-color: #2980b9;
+}
+
+.tools .btn-primary i {
+    margin-left: 0.5rem;
+}
+
+.message {
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.message i {
+    margin-left: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    color: var(--secondary-color);
+    font-weight: 500;
+}
+
+.loading i {
+    animation: spin 1s infinite linear;
+    margin-left: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.table-container {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+th,
+td {
+    border: 1px solid #eee;
+    padding: 0.75rem;
+    text-align: right;
+}
+
+thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.post-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    display: block;
+    margin: 0 auto;
+    border: 1px solid #ddd;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+}
+
+.btn-sm {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.9rem;
+    border-radius: 3px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-info {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: #2980b9;
+}
+
+.btn-edit {
+    background-color: var(--warning-color);
+    color: white;
+}
+
+.btn-edit:hover {
+    background-color: #e67e22;
+}
+
+.btn-delete {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.btn-delete:hover {
+    background-color: #c0392b;
+}
+
+.no-data {
+    text-align: center;
+    padding: 2rem;
+    color: #777;
+}
+
+.no-data i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--secondary-color);
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 1rem;
+}
+
+.pagination button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    background-color: white;
+    color: var(--text-color);
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.3s;
+}
+
+.pagination button:hover:not([disabled]) {
+    background-color: var(--secondary-color);
+    color: white;
+    border-color: var(--secondary-color);
+}
+
+.pagination button.active {
+    background-color: var(--secondary-color);
+    color: white;
+    border-color: var(--secondary-color);
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination span {
+    font-size: 0.9rem;
+    margin: 0 0.5rem;
+    color: #555;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    width: 90%;
+    max-width: 800px;
+    position: relative;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: var(--primary-color);
+    font-size: 1.5rem;
+}
+
+.modal-header h2 i {
+    margin-left: 0.5rem;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+    color: var(--text-color);
+}
+
+.modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.modal-body table {
+    margin-bottom: 1rem;
+}
+
+.modal-body th,
+.modal-body td {
+    font-size: 0.9rem;
+}
+
+.modal-body .author-img-sm {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    vertical-align: middle;
+    margin-left: 0.5rem;
+}
+
+.modal-body .comment-content {
+    max-width: 350px;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.modal-body .no-data-modal {
+    text-align: center;
+    padding: 1.5rem;
+    color: #777;
+}
+
+.modal-body .loading-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+    color: var(--secondary-color);
+}
+
+.modal-body .loading-modal i {
+    animation: spin 1s infinite linear;
+    margin-left: 0.5rem;
+}
+
+.modal-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.modal-pagination button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+}
+
+.modal-pagination span {
+    font-size: 0.9rem;
+    margin: 0 0.5rem;
+}
+
+/* Edit Comment Modal */
+#editCommentModal .modal-content {
+    max-width: 500px;
+    margin: 15% auto;
+}
+
+#editCommentModal label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+#editCommentModal textarea {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    min-height: 100px;
+}
+
+#editCommentModal textarea:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+}
+
+#editCommentModal .modal-footer {
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+    text-align: left;
+}
+
+#editCommentModal .btn-primary {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+#editCommentModal .btn-primary:hover {
+    background-color: #2980b9;
+}
+
+#editCommentModal .btn-secondary {
+    background-color: var(--light-color);
+    color: var(--text-color);
+}
+
+#editCommentModal .btn-secondary:hover {
+    background-color: #dfe6e9;
+}
+
+/* Add Comment Section */
+.add-comment-section {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.add-comment-section h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+}
+
+.add-comment-section h3 i {
+    margin-left: 0.5rem;
+}
+
+.add-comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.add-comment-form label {
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+.add-comment-form input[type="text"],
+.add-comment-form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.add-comment-form input[type="text"]:focus,
+.add-comment-form textarea:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+}
+
+.add-comment-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.add-comment-form .btn-primary {
+    align-self: flex-end;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+}
+
+.form-error {
+    color: var(--danger-color);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    display: none;
+}
+
+/* تنسيق خلية العنوان */
+td.post-title-cell {
+    padding: 0.6rem;
+    vertical-align: middle;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    position: relative;
+    font-weight: 500;
+    color: var(--text-color);
+    /* #333 */
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+td.post-title-cell:hover {
+    background-color: var(--light-color);
+    /* #ecf0f1 */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateX(-3px);
+}
+
+/* تلميح عند التمرير */
+td.post-title-cell:hover:after {
+    content: 'عرض تفاصيل المنشور';
+    position: absolute;
+    top: -2.8rem;
+    right: 50%;
+    transform: translateX(50%);
+    background-color: var(--primary-color);
+    /* #2c3e50 */
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    z-index: 100;
+    opacity: 0;
+    animation: fadeInTooltip 0.3s ease forwards;
+    animation-delay: 0.4s;
+}
+
+@keyframes fadeInTooltip {
+    to {
+        opacity: 1;
+    }
+}
+
+/* تحسين التوافق مع الأجهزة الصغيرة */
+@media (max-width: 768px) {
+    td.post-title-cell {
+        font-size: 0.9rem;
+        padding: 0.4rem;
+    }
+
+    td.post-title-cell:hover:after {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    td.post-title-cell {
+        font-size: 0.85rem;
+        padding: 0.3rem;
+    }
+
+    td.post-title-cell:hover:after {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+    }
+
+    nav ul {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    nav ul li {
+        flex: 0 0 auto;
+    }
+
+    .header-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .tools {
+        margin-top: 1rem;
+    }
+
+    th,
+    td {
+        font-size: 0.75rem;
+        padding: 0.4rem;
+    }
+
+    .post-img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .actions .btn-sm {
+        padding: 0.15rem 0.4rem;
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
