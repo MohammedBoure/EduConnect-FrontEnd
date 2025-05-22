@@ -33,21 +33,16 @@ function isAdmin() {
 }
 
 async function logout() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/logout`, {
-            method: 'POST',
-            credentials: 'include',
-        });
-        if (response.ok) {
-            removeAuthData();
-            window.location.href = 'login.html';
-        } else {
-            console.error('Logout failed:', await response.json());
-            alert('فشل تسجيل الخروج. حاول مرة أخرى.');
-        }
-    } catch (error) {
-        console.error('Logout error:', error);
-        alert('حدث خطأ أثناء تسجيل الخروج.');
+    const result = await fetchApi('/logout', {
+        method: 'POST',
+    }, 'json');
+
+    if (result.ok) {
+        removeAuthData();
+        window.location.href = 'login.html';
+    } else {
+        console.error('Logout failed:', result.error);
+        alert(result.error || 'فشل تسجيل الخروج. حاول مرة أخرى.');
     }
 }
 

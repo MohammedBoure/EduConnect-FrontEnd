@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,29 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.0/purify.min.js"></script>
     <link rel="stylesheet" href="/css/post.css">
+    <style>
+        .btn-primary {
+            background-color: #ffffff;
+            color: #007BFF;
+            /* أزرق غامق */
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+
+
+        .btn-primary:hover {
+            background-color: #707070;
+        }
+    </style>
+
+
 </head>
+
 <body>
     <header>
         <nav id="navBar">
@@ -18,18 +41,24 @@
                 <li><a href="messenger.html"><i class="fas fa-comments"></i> Messages</a></li>
                 <li><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
                 <li><a href="posts.html"><i class="fas fa-blog"></i> Blog</a></li>
-                <li class="auth-link" id="sideRegisterLink"><a href="register.html"><i class="fas fa-user-plus"></i> Register</a></li>
-                <li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-                <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li class="auth-link" id="sideRegisterLink"><a href="register.html"><i class="fas fa-user-plus"></i>
+                        Register</a></li>
+                <li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i>
+                        Login</a></li>
+                <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i
+                            class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
             <ul id="mainNav">
                 <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
                 <li class="hideOnMobile"><a href="messenger.html"><i class="fas fa-comments"></i> Messages</a></li>
                 <li class="hideOnMobile"><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
                 <li class="hideOnMobile"><a href="posts.html"><i class="fas fa-blog"></i> Blog</a></li>
-                <li class="hideOnMobile auth-link" id="registerLink"><a href="register.html"><i class="fas fa-user-plus"></i> Register</a></li>
-                <li class="hideOnMobile auth-link" id="loginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-                <li class="hideOnMobile auth-link" id="logoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li class="hideOnMobile auth-link" id="registerLink"><a href="register.html"><i
+                            class="fas fa-user-plus"></i> Register</a></li>
+                <li class="hideOnMobile auth-link" id="loginLink"><a href="login.html"><i
+                            class="fas fa-sign-in-alt"></i> Login</a></li>
+                <li class="hideOnMobile auth-link" id="logoutLink" style="display: none;"><a href="#"
+                        onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                 <li onclick="showSidebar()"><a href="#"><i class="fas fa-bars"></i></a></li>
             </ul>
         </nav>
@@ -51,7 +80,8 @@
                     <textarea id="commentContent" placeholder="Write your comment in Markdown..."></textarea>
                 </div>
                 <div class="form-group">
-                    <button class="btn-primary" onclick="addComment()"><i class="fas fa-paper-plane"></i> Submit Comment</button>
+                    <button class="btn-primary" onclick="addComment()"><i class="fas fa-paper-plane"></i> Submit
+                        Comment</button>
                 </div>
                 <div id="commentMessage" class="message" style="display: none;"></div>
             </div>
@@ -173,10 +203,10 @@
                         const commentsHTML = `
                             <h2><i class="fas fa-comments"></i> Comments</h2>
                             ${comments.map(comment => {
-                                const markdownContent = typeof marked !== 'undefined' && typeof DOMPurify !== 'undefined'
-                                    ? DOMPurify.sanitize(marked.parse(comment.content))
-                                    : comment.content;
-                                return `
+                            const markdownContent = typeof marked !== 'undefined' && typeof DOMPurify !== 'undefined'
+                                ? DOMPurify.sanitize(marked.parse(comment.content))
+                                : comment.content;
+                            return `
                                     <div class="comment">
                                         <div class="comment-header">
                                             <img src="${comment.author.photo || '/images/placeholder-avatar.jpg'}" alt="Commenter photo" class="comment-avatar">
@@ -188,7 +218,7 @@
                                         </div>
                                     </div>
                                 `;
-                            }).join('')}
+                        }).join('')}
                         `;
                         commentsDiv.innerHTML = commentsHTML;
                     }
@@ -202,20 +232,20 @@
 
         async function addComment() {
             const content = document.getElementById('commentContent').value.trim();
-            
+
             if (!content) {
                 showMessage('commentMessage', 'Please write a comment before submitting.', 'error');
                 return;
             }
-        
+
             if (content.length > 1000) {
                 showMessage('commentMessage', 'Comment must be less than 1000 characters.', 'error');
                 return;
             }
-        
+
             try {
                 const result = await postComment(postId, content);
-        
+
                 if (result.ok) {
                     showMessage('commentMessage', result.data.message || 'Comment added successfully!', 'success');
                     document.getElementById('commentContent').value = '';
@@ -227,7 +257,7 @@
                 showMessage('commentMessage', `Error adding comment: ${error.message}`, 'error');
             }
         }
-        
+
 
         async function deletePost(postId) {
             if (!confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
@@ -259,4 +289,5 @@
         });
     </script>
 </body>
+
 </html>

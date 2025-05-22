@@ -185,6 +185,7 @@ header {
     border: none;
     border-radius: 5px;
     font-size: 1rem;
+    color: #2ecc71;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -200,8 +201,9 @@ header {
 .btn-primary:hover {
     background-color: #2980b9;
     transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.4);
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.4);
 }
+
 
 .btn-danger {
     background-color: var(--error-color);

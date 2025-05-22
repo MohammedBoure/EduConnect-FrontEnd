@@ -119,19 +119,14 @@ async function apiUpdateUser(userId, userData) {
     const result = await fetchApi(`/admin/users/${userId}`, {
         method: 'PUT',
         body: userData,
-        headers: {
-            'X-CSRF-Token': await getCsrfToken(), // Remove if CSRF is not required
-        },
     });
     return result;
 }
 
+
 async function apiDeleteUser(userId) {
     const result = await fetchApi(`/admin/users/${userId}`, {
         method: 'DELETE',
-        headers: {
-            'X-CSRF-Token': await getCsrfToken(),
-        },
     });
     return result;
 }
