@@ -1,0 +1,24 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+    } to {
+    opacity: 1;
+    transform: translateY(0);
+    }
+  }
+@media (max-width: 768px) {
+  form button {
+    width: 100%;
+    margin: 0.5rem 0;
+    }
+  }
+@media (max-width: 576px) {
+  nav ul {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    }
+  nav ul li {
+    flex: 0 0 auto;
+    }
+  }

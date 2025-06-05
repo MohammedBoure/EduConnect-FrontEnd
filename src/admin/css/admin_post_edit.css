@@ -1,0 +1,57 @@
+.post-meta {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  margin-bottom: 1.5rem;
+  }
+.post-meta img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--light-color);
+  margin-top: 0.5rem;
+  }
+.post-meta p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  }
+.post-meta strong {
+  color: var(--primary-color);
+  font-weight: 600;
+  }
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+    } to {
+    transform: rotate(360deg);
+    }
+  }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+    } to {
+    opacity: 1;
+    transform: translateY(0);
+    }
+  }
+@media (max-width: 768px) {
+  .post-meta {
+    text-align: right;
+    }
+  form button {
+    width: 100%;
+    margin: 0.5rem 0;
+    }
+  }
+@media (max-width: 576px) {
+  nav ul {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    }
+  nav ul li {
+    flex: 0 0 auto;
+    }
+  }
