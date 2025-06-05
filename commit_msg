@@ -1,4 +1,1 @@
-docs: add project README.md with basic usage and structure
-
-- Introduced a README.md file to document project setup and usage.
-- Provides an overview for new developers or contributors.
+Remove ProjectLens folder, update README, and add .gitignore

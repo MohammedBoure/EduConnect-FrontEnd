@@ -1,4 +1,3 @@
-
 # EduConnect FrontEnd
 
 EduConnect FrontEnd is the client-side interface for the EduConnect platform, a web application designed to facilitate educational content sharing and user interaction. This repository contains the front-end code, built with HTML, CSS, and JavaScript, and integrates with the [EduConnect BackEnd](https://github.com/MohammedBoure/EduConnect-BackEnd) for full functionality.
@@ -7,7 +6,28 @@ EduConnect FrontEnd is the client-side interface for the EduConnect platform, a 
 
 EduConnect provides a user-friendly interface for browsing, creating, editing, and managing educational posts, as well as user authentication and messaging features. The admin panel allows for user and content management, while the public interface supports post interaction and profile management.
 
-### Features
+## Access and Testing
+
+### Site URL
+The live application can be accessed at:  
+[https://educonnect-admin.onrender.com](https://educonnect-admin.onrender.com)
+
+### Admin Interface
+To access the admin interface, use the following link:  
+[https://educonnect-admin.onrender.com/admin.html](https://educonnect-admin.onrender.com/admin.html)
+
+### Test Accounts
+The following accounts can be used for testing the API and admin interface (all accounts share the same password: `11111111`):  
+- Carlos@gmail.com  
+- Chloe@gmail.com  
+- Liam@gmail.com  
+- Rajesh@gmail.com  
+- admin@gmail.com (designated for admin access, required for the admin interface)
+
+### واجهة برمجة التطبيقات (API) - نظرة عامة (بالعربية)
+واجهة برمجة تطبيقات EduConnect هي واجهة RESTful مبنية باستخدام إطار عمل Flask، مصممة لمنصة اجتماعية تدير المستخدمين، الملفات الشخصية، المنشورات، التعليقات، الرسائل، والمهام الإدارية. تستخدم التوثيق القائم على الجلسات وتعتمد على قاعدة بيانات SQLite (student_directory.db) لتخزين البيانات. تدعم الواجهة تسجيل المستخدمين، تسجيل الدخول، إدارة الملفات الشخصية، الرسائل، المنشورات، التعليقات، والعمليات الإدارية.
+
+## Features
 - **User Authentication**: Login, registration, and profile management.
 - **Post Management**: Create, edit, view, and delete educational posts.
 - **Admin Dashboard**: Manage users, posts, and messages with dedicated views.

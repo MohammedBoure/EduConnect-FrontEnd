@@ -7,9 +7,9 @@ cat commit_msg >> commit_msgs
 # 2. Stage all files
 git add .
 
-# 3. Remove all __pycache__ directories from staging (without deleting actual files)
+# 3. Remove all __pycache__ and ProjectLens directories from staging (without deleting actual files)
 find . -type d -name "__pycache__" -exec git rm -r --cached {} +
-find . -type d -na me "ProjectLens" -exec git rm -r --cached {} +
+git rm -r --cached ProjectLens
 
 # 4. Commit using the content of commit_msg as the commit message
 git commit -F commit_msg
