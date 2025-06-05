@@ -2,3 +2,10 @@
 -----
 
 refactor: move project files to src/ and extract duplicate CSS rules
+
+-----
+
+docs: add project README.md with basic usage and structure
+
+- Introduced a README.md file to document project setup and usage.
+- Provides an overview for new developers or contributors.
