@@ -7,34 +7,58 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet" href="/css/edit-post.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
+        <!-- NEW: Modern Navigation Bar with Theme Toggle -->
         <nav id="navBar">
-            <ul class="sideBar" id="sideBarNav">
-                <li onclick="hideSidebar()"><a href="#"><i class="fas fa-times"></i></a></li>
-                <li><a href="index.html"><i class="fas fa-home"></i> HOME</a></li>
-                <li><a href="messenger.html"><i class="fas fa-comments"></i> MESSENGER</a></li>
-                <li><a href="profile.html"><i class="fas fa-user"></i> PROFILE</a></li>
-                <li><a href="posts.html"><i class="fas fa-blog"></i> BLOG</a></li>
-                <li class="auth-link" id="sideRegisterLink"><a href="register.html"><i class="fas fa-user-plus"></i> REGISTER</a></li>
-                <li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> LOGIN</a></li>
-                <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> LOGOUT</a></li>
-            </ul>
+            <div class="logo">
+                <a href="index.html"><i class="fas fa-university"></i> UniSocial</a>
+            </div>
             <ul id="mainNav">
-                <li><a href="index.html"><i class="fas fa-home"></i> HOME</a></li>
-                <li class="hideOnMobile"><a href="messenger.html"><i class="fas fa-comments"></i> MESSENGER</a></li>
-                <li class="hideOnMobile"><a href="profile.html"><i class="fas fa-user"></i> PROFILE</a></li>
-                <li class="hideOnMobile"><a href="posts.html"><i class="fas fa-blog"></i> BLOG</a></li>
-                <li class="hideOnMobile auth-link" id="registerLink"><a href="register.html"><i class="fas fa-user-plus"></i> REGISTER</a></li>
-                <li class="hideOnMobile auth-link" id="loginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> LOGIN</a></li>
-                <li class="hideOnMobile auth-link" id="logoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> LOGOUT</a></li>
-                <li onclick="showSidebar()"><a href="#"><i class="fas fa-bars"></i></a></li>
+                <li class="hideOnMobile"><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li class="hideOnMobile"><a href="messenger.html"><i class="fas fa-comments"></i> Messages</a></li>
+                <li class="hideOnMobile"><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
+                <li class="hideOnMobile"><a href="posts.html"><i class="fas fa-blog"></i> Blog</a></li>
+                <li class="hideOnMobile auth-link" id="registerLink"><a href="register.html"><i class="fas fa-user-plus"></i> Register</a></li>
+                <li class="hideOnMobile auth-link" id="loginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                <li class="hideOnMobile auth-link" id="logoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li class="hideOnMobile">
+                    <button id="themeToggleDesktop" aria-label="Toggle Theme" title="Toggle Theme">
+                        <i class="fas fa-moon" aria-hidden="true"></i>
+                    </button>
+                </li>
             </ul>
+            <div class="mobile-nav">
+                <div class="menu-btn">
+                    <button id="mobileMenuBtn" aria-label="Toggle Menu">
+                        <i class="fas fa-bars" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div class="dropdown-menu" id="mobileDropdown">
+                    <ul>
+                        <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="messenger.html"><i class="fas fa-comments"></i> Messages</a></li>
+                        <li><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
+                        <li><a href="posts.html"><i class="fas fa-blog"></i> Blog</a></li>
+                        <li class="auth-link" id="sideRegisterLink"><a href="register.html"><i class="fas fa-user-plus"></i> Register</a></li>
+                        <li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                        <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        <li>
+                            <button id="themeToggleMobile" aria-label="Toggle Theme" title="Toggle Theme">
+                                <i class="fas fa-moon" aria-hidden="true"></i><span>Toggle Theme</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </nav>
     </header>
 
-    <div class="container">
+    <main class="container">
         <div class="section" id="postSection">
             <h2 id="pageTitle"><i class="fas fa-edit"></i> Create a Post</h2>
             <div class="edit-form" id="postForm">
@@ -43,52 +67,84 @@
                     <input type="text" id="postTitle" placeholder="Enter post title">
                 </div>
                 <div class="form-group">
-                    <label for="postContent"><i class="fas fa-align-left"></i> Post Content (Markdown)</label>
-                    <textarea id="postContent" rows="10" placeholder="Write your post in Markdown..."></textarea>
+                    <label for="postContent"><i class="fas fa-align-left"></i> Post Content (Markdown supported)</label>
+                    <textarea id="postContent" rows="10" placeholder="Write your post here..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="postImage"><i class="fas fa-image"></i> Image URL</label>
-                    <input type="url" id="postImage" placeholder="Enter image URL">
+                    <label for="postImage"><i class="fas fa-image"></i> Image URL (optional)</label>
+                    <input type="url" id="postImage" placeholder="https://example.com/image.jpg">
                 </div>
-                <div class="form-group">
-                    <button class="btn-primary" onclick="savePost()"><i class="fas fa-save"></i> Save Post</button>
-                    <a href="profile.html" class="btn-danger" style="background-color: #757575;"><i class="fas fa-times"></i> Cancel</a>
+                <div class="form-actions">
+                    <button class="btn btn-primary" onclick="savePost()"><i class="fas fa-save"></i> Save Post</button>
+                    <a href="profile.html" class="btn btn-secondary"><i class="fas fa-times"></i> Cancel</a>
                 </div>
                 <div id="postMessage" class="message" style="display: none;"></div>
             </div>
         </div>
-    </div>
+    </main>
 
     <!-- Modal for displaying API response -->
     <div id="responseModal" class="modal">
         <div class="modal-content">
-            <h3><i class="fas fa-code"></i> apiGetPost Response</h3>
+            <h3><i class="fas fa-code"></i> API Response</h3>
             <pre id="responseContent"></pre>
             <div id="modalMessage" class="message" style="display: none;"></div>
-            <button class="btn-primary" onclick="copyResponse()"><i class="fas fa-copy"></i> Copy</button>
-            <button class="btn-danger" onclick="closeModal()" style="background-color: #757575;"><i class="fas fa-times"></i> Close</button>
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="copyResponse()"><i class="fas fa-copy"></i> Copy</button>
+                <button class="btn btn-secondary" onclick="closeModal()"><i class="fas fa-times"></i> Close</button>
+            </div>
         </div>
     </div>
 
     <script src="/js/auth.js"></script>
     <script src="/js/api.js"></script>
     <script defer>
-        function showSidebar() {
-            document.querySelector('.sideBar').style.display = 'flex';
+        // --- START: NAVIGATION AND THEME LOGIC ---
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileDropdown = document.getElementById('mobileDropdown');
+        if (mobileMenuBtn && mobileDropdown) {
+            mobileMenuBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                mobileDropdown.classList.toggle('active');
+                mobileMenuBtn.setAttribute('aria-expanded', mobileDropdown.classList.contains('active'));
+            });
+            document.addEventListener('click', (event) => {
+                if (mobileDropdown.classList.contains('active') && !mobileDropdown.contains(event.target) && event.target !== mobileMenuBtn) {
+                    mobileDropdown.classList.remove('active');
+                    mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                }
+            });
         }
-
-        function hideSidebar() {
-            document.querySelector('.sideBar').style.display = 'none';
+        
+        const themeToggleMobile = document.getElementById('themeToggleMobile');
+        const themeToggleDesktop = document.getElementById('themeToggleDesktop');
+        function applyTheme(theme) {
+            document.body.classList.toggle('dark-mode', theme === 'dark');
+            const icon = theme === 'dark' ? 'fa-sun' : 'fa-moon';
+            if (themeToggleDesktop) themeToggleDesktop.innerHTML = `<i class="fas ${icon}" aria-hidden="true"></i>`;
+            if (themeToggleMobile) themeToggleMobile.innerHTML = `<i class="fas ${icon}" aria-hidden="true"></i><span>Toggle Theme</span>`;
         }
+        function toggleTheme() {
+            const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        }
+        if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
+        if (themeToggleDesktop) themeToggleDesktop.addEventListener('click', toggleTheme);
+        // --- END: NAVIGATION AND THEME LOGIC ---
 
+        // --- START: EDIT POST PAGE LOGIC ---
         function updateNav() {
             const isLoggedIn = isAuthenticated();
-            document.getElementById('registerLink').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('loginLink').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('logoutLink').style.display = isLoggedIn ? 'block' : 'none';
-            document.getElementById('sideRegisterLink').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('sideLoginLink').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('sideLogoutLink').style.display = isLoggedIn ? 'block' : 'none';
+            ['registerLink', 'loginLink'].forEach(id => {
+                const el = document.getElementById(id); if (el) el.style.display = isLoggedIn ? 'none' : 'flex';
+            });
+            ['sideRegisterLink', 'sideLoginLink'].forEach(id => {
+                const el = document.getElementById(id); if (el) el.style.display = isLoggedIn ? 'none' : 'block';
+            });
+            ['logoutLink', 'sideLogoutLink'].forEach(id => {
+                const el = document.getElementById(id); if (el) el.style.display = isLoggedIn ? 'block' : 'none';
+            });
         }
 
         function showMessage(message, type) {
@@ -97,39 +153,24 @@
             messageEl.className = `message ${type}`;
             messageEl.style.display = 'block';
         }
-
-        function hideMessage() {
-            const messageEl = document.getElementById('postMessage');
-            messageEl.style.display = 'none';
-        }
-
+        function hideMessage() { document.getElementById('postMessage').style.display = 'none'; }
+        
         // Modal functions
         function showModal(content) {
-            const modal = document.getElementById('responseModal');
-            const contentEl = document.getElementById('responseContent');
-            const modalMessage = document.getElementById('modalMessage');
-            contentEl.textContent = content;
-            modalMessage.style.display = 'none';
-            modal.style.display = 'flex';
+            document.getElementById('responseContent').textContent = content;
+            document.getElementById('modalMessage').style.display = 'none';
+            document.getElementById('responseModal').style.display = 'flex';
         }
-
-        function closeModal() {
-            const modal = document.getElementById('responseModal');
-            modal.style.display = 'none';
-        }
-
+        function closeModal() { document.getElementById('responseModal').style.display = 'none'; }
         function copyResponse() {
             const content = document.getElementById('responseContent').textContent;
             navigator.clipboard.writeText(content).then(() => {
                 const modalMessage = document.getElementById('modalMessage');
-                modalMessage.textContent = 'Response copied to clipboard!';
+                modalMessage.textContent = 'Response copied!';
                 modalMessage.className = 'message success';
                 modalMessage.style.display = 'block';
-                setTimeout(() => {
-                    modalMessage.style.display = 'none';
-                }, 2000);
+                setTimeout(() => { modalMessage.style.display = 'none'; }, 2000);
             }).catch(err => {
-                console.error('Failed to copy:', err);
                 const modalMessage = document.getElementById('modalMessage');
                 modalMessage.textContent = 'Failed to copy: ' + err.message;
                 modalMessage.className = 'message error';
@@ -137,66 +178,25 @@
             });
         }
 
-        if (redirectToLoginIfNotAuthenticated()) {
-            console.log('Redirecting due to authentication failure');
-            throw new Error('User not authenticated');
-        }
-
         const urlParams = new URLSearchParams(window.location.search);
         const postId = urlParams.get('id');
 
         async function loadPost() {
-            if (!postId) {
-                console.log('No postId provided, assuming new post creation');
-                return;
-            }
-
-            console.log('Loading post with ID:', postId);
-            document.getElementById('pageTitle').textContent = 'Edit Post';
-
-            // Verify DOM elements exist
-            const titleInput = document.getElementById('postTitle');
-            const contentInput = document.getElementById('postContent');
-            const imageInput = document.getElementById('postImage');
-
-            if (!titleInput || !contentInput || !imageInput) {
-                console.error('Form fields not found:', {
-                    titleInput: !!titleInput,
-                    contentInput: !!contentInput,
-                    imageInput: !!imageInput
-                });
-                showMessage('Error: Form fields not found in the page.', 'error');
-                return;
-            }
-
+            if (!postId) return; // Creating a new post, nothing to load
+            document.getElementById('pageTitle').innerHTML = '<i class="fas fa-edit"></i> Edit Post';
             try {
                 const result = await apiGetPost(postId);
-                console.log('apiGetPost result:', result);
-                // Display the API response in a modal (for debugging)
-                showModal(JSON.stringify(result, null, 2));
-
+                // showModal(JSON.stringify(result, null, 2)); // Uncomment for debugging API
                 if (result.ok) {
-                    // Access the post data from result.data.post
-                    const post = result.data.post;
-                    console.log('Post data loaded:', post);
-
-                    // Populate form fields
-                    titleInput.value = post.title || '';
-                    contentInput.value = post.content || '';
-                    imageInput.value = post.image || '';
-
-                    console.log('Form fields populated:', {
-                        title: titleInput.value,
-                        content: contentInput.value,
-                        image: imageInput.value
-                    });
+                    const post = result.data.post || result.data;
+                    document.getElementById('postTitle').value = post.title || '';
+                    document.getElementById('postContent').value = post.content || '';
+                    document.getElementById('postImage').value = post.image || '';
                 } else {
                     showMessage('Failed to load post: ' + result.error, 'error');
-                    console.error('Failed to load post:', result.error);
                 }
             } catch (error) {
                 showMessage('Error loading post: ' + error.message, 'error');
-                console.error('Error in loadPost:', error);
             }
         }
 
@@ -204,50 +204,32 @@
             hideMessage();
             const title = document.getElementById('postTitle').value.trim();
             const content = document.getElementById('postContent').value.trim();
-            const imageUrl = document.getElementById('postImage').value.trim();
             if (!content) {
                 showMessage('Content is required.', 'error');
-                console.log('Validation failed: Content is required');
                 return;
             }
-
-            const isAdminPost = isAdmin();
             const payload = { 
                 title: title || undefined, 
                 content, 
-                image: imageUrl || undefined, 
-                is_admin_post: isAdminPost 
+                image: document.getElementById('postImage').value.trim() || undefined, 
+                is_admin_post: isAdmin() 
             };
-            console.log('Saving post with payload:', payload);
-
             try {
-                let result;
-                if (postId) {
-                    console.log('Updating post with ID:', postId);
-                    result = await apiUpdatePost(postId, payload);
-                } else {
-                    console.log('Creating new post');
-                    result = await apiCreatePost(payload);
-                }
-                console.log('Save post result:', result);
-
+                const result = postId ? await apiUpdatePost(postId, payload) : await apiCreatePost(payload);
                 if (result.ok) {
                     showMessage(postId ? 'Post updated successfully!' : 'Post created successfully!', 'success');
-                    setTimeout(() => {
-                        window.location.href = 'profile.html';
-                    }, 2000);
+                    setTimeout(() => { window.location.href = 'profile.html'; }, 1500);
                 } else {
                     showMessage(result.error, 'error');
-                    console.error('Failed to save post:', result.error);
                 }
             } catch (error) {
                 showMessage('Error saving post: ' + error.message, 'error');
-                console.error('Error in savePost:', error);
             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('edit-post.html loaded');
+            if (redirectToLoginIfNotAuthenticated()) return;
+            applyTheme(localStorage.getItem('theme') || 'light');
             updateNav();
             loadPost();
         });

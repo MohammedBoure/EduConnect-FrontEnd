@@ -5,43 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile - University Social Network</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Use the same fonts as the rest of the site -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Link to the main stylesheet -->
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
     <header>
+        <!-- The new, standardized navigation bar -->
         <nav id="navBar">
-            <ul class="sideBar" id="sideBarNav">
-                <li onclick="hideSidebar()"><a href="#"><i class="fas fa-times"></i></a></li>
-                <li><a href="index.html"><i class="fas fa-home"></i> HOME</a></li>
-                <li><a href="messenger.html"><i class="fas fa-comments"></i> MESSENGER</a></li>
-                <li><a href="profile.html"><i class="fas fa-user"></i> PROFILE</a></li>
-                <li><a href="posts.html"><i class="fas fa-blog"></i> BLOG</a></li>
-                <li class="auth-link" id="sideRegisterLink"><a href="register.html"><i class="fas fa-user-plus"></i> REGISTER</a></li>
-                <li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> LOGIN</a></li>
-                <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> LOGOUT</a></li>
-            </ul>
+            <div class="logo">
+                <a href="index.html"><i class="fas fa-university"></i> UniSocial</a>
+            </div>
+            
             <ul id="mainNav">
-                <li><a href="index.html"><i class="fas fa-home"></i> HOME</a></li>
-                <li class="hideOnMobile"><a href="messenger.html"><i class="fas fa-comments"></i> MESSENGER</a></li>
-                <li class="hideOnMobile"><a href="profile.html"><i class="fas fa-user"></i> PROFILE</a></li>
-                <li class="hideOnMobile"><a href="posts.html"><i class="fas fa-blog"></i> BLOG</a></li>
-                <li class="hideOnMobile auth-link" id="registerLink"><a href="register.html"><i class="fas fa-user-plus"></i> REGISTER</a></li>
-                <li class="hideOnMobile auth-link" id="loginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> LOGIN</a></li>
-                <li class="hideOnMobile auth-link" id="logoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> LOGOUT</a></li>
-                <li onclick="showSidebar()"><a href="#"><i class="fas fa-bars"></i></a></li>
+                <li class="hideOnMobile"><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li class="hideOnMobile"><a href="messenger.html"><i class="fas fa-comments"></i> Messages</a></li>
+                <li class="hideOnMobile"><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
+                <li class="hideOnMobile"><a href="posts.html"><i class="fas fa-blog"></i> Blog</a></li>
+                <li class="hideOnMobile auth-link" id="registerLink"><a href="register.html"><i class="fas fa-user-plus"></i> Register</a></li>
+                <li class="hideOnMobile auth-link" id="loginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                <li class="hideOnMobile auth-link" id="logoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li class="hideOnMobile">
+                    <button id="themeToggleDesktop" title="Toggle Theme"><i class="fas fa-moon"></i></button>
+                </li>
             </ul>
+
+            <div class="mobile-nav">
+                <div class="menu-btn">
+                    <button id="mobileMenuBtn" aria-label="Open Menu"><i class="fas fa-bars"></i></button>
+                </div>
+                <div class="dropdown-menu" id="mobileDropdown">
+                    <ul>
+                        <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="messenger.html"><i class="fas fa-comments"></i> Messages</a></li>
+                        <li><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
+                        <li><a href="posts.html"><i class="fas fa-blog"></i> Blog</a></li>
+                        <li class="auth-link" id="sideRegisterLink"><a href="register.html"><i class="fas fa-user-plus"></i> Register</a></li>
+                        <li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                        <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        <li><button id="themeToggleMobile" title="Toggle Theme"><i class="fas fa-moon"></i><span>Toggle Theme</span></button></li>
+                    </ul>
+                </div>
+            </div>
         </nav>
     </header>
 
     <div class="container">
+        <div id="messageContainer" class="message" style="display: none;"></div>
+
         <div class="section" id="profileSection">
             <h2><i class="fas fa-user-circle"></i> Your Profile</h2>
-            <div class="profile-card" id="profileDetails">
-                <div class="loading-spinner">
-                    <div class="spinner"></div>
-                </div>
+            <div id="profileDetails" class="profile-card">
+                <div class="loading-spinner"><div class="spinner"></div></div>
             </div>
-            <div class="edit-form" id="profileEditForm" style="display: none;">
+            <div id="profileEditForm" class="edit-form" style="display: none;">
                 <div class="form-group">
                     <label for="editFirstName"><i class="fas fa-user"></i> First Name</label>
                     <input type="text" id="editFirstName" required>
@@ -64,21 +86,16 @@
                 </div>
                 <div class="form-group">
                     <label for="editPhoto"><i class="fas fa-image"></i> Photo URL</label>
-                    <input type="url" id="editPhoto">
+                    <input type="url" id="editPhoto" placeholder="https://example.com/photo.jpg">
                 </div>
                 <div class="form-group">
-                    <label for="editPassword"><i class="fas fa-lock"></i> New Password</label>
+                    <label for="editPassword"><i class="fas fa-lock"></i> New Password (leave blank to keep current)</label>
                     <input type="password" id="editPassword">
                 </div>
-                <div id="editMessage" class="message" style="display: none;"></div>
                 <div class="form-group">
-                    <button class="btn-primary" onclick="updateProfile()"><i class="fas fa-save"></i> Update Profile</button>
-                    <button class="btn-danger" onclick="toggleEditProfile()" style="background-color: #757575;"><i class="fas fa-times"></i> Cancel</button>
+                    <button class="btn-primary" onclick="updateProfile()"><i class="fas fa-save"></i> Save Changes</button>
+                    <button class="btn-danger" onclick="toggleEditProfile()" style="background-color: #6b7280;"><i class="fas fa-times"></i> Cancel</button>
                 </div>
-            </div>
-            <div class="profile-actions">
-                <button class="btn-primary" onclick="toggleEditProfile()"><i class="fas fa-edit"></i> Edit Profile</button>
-                <button class="btn-danger" onclick="deleteProfile()"><i class="fas fa-trash-alt"></i> Delete Profile</button>
             </div>
         </div>
 
@@ -89,117 +106,141 @@
             </div>
             <div id="posts-container">
                 <div id="userPosts">
-                    <div class="loading-spinner">
-                        <div class="spinner"></div>
-                    </div>
+                    <div class="loading-spinner"><div class="spinner"></div></div>
                 </div>
             </div>
         </div>
     </div>
+
     <script src="/js/auth.js"></script>
     <script src="/js/api.js"></script>
     <script>
-        function showSidebar() {
-            document.querySelector('.sideBar').style.display = 'flex';
+        // --- START: NEW NAVIGATION AND THEME LOGIC ---
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileDropdown = document.getElementById('mobileDropdown');
+        if (mobileMenuBtn && mobileDropdown) {
+            mobileMenuBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                mobileDropdown.classList.toggle('active');
+            });
+            document.addEventListener('click', (event) => {
+                if (mobileDropdown.classList.contains('active') && !mobileDropdown.contains(event.target) && event.target !== mobileMenuBtn) {
+                    mobileDropdown.classList.remove('active');
+                }
+            });
         }
-
-        function hideSidebar() {
-            document.querySelector('.sideBar').style.display = 'none';
+        
+        const themeToggleMobile = document.getElementById('themeToggleMobile');
+        const themeToggleDesktop = document.getElementById('themeToggleDesktop');
+        function applyTheme(theme) {
+            document.body.classList.toggle('dark-mode', theme === 'dark');
+            const icon = theme === 'dark' ? 'fa-sun' : 'fa-moon';
+            if(themeToggleDesktop) themeToggleDesktop.innerHTML = `<i class="fas ${icon}"></i>`;
+            if(themeToggleMobile) themeToggleMobile.innerHTML = `<i class="fas ${icon}"></i><span>Toggle Theme</span>`;
         }
+        function toggleTheme() {
+            const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        }
+        if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
+        if (themeToggleDesktop) themeToggleDesktop.addEventListener('click', toggleTheme);
+        // --- END: NEW NAVIGATION AND THEME LOGIC ---
 
+
+        // --- START: ORIGINAL PROFILE PAGE LOGIC (Integrated) ---
         function updateNav() {
             const isLoggedIn = isAuthenticated();
-            document.getElementById('registerLink').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('loginLink').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('logoutLink').style.display = isLoggedIn ? 'block' : 'none';
-            document.getElementById('sideRegisterLink').style.display = isLoggedIn ? 'trompe' : 'block';
-            document.getElementById('sideLoginLink').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('sideLogoutLink').style.display = isLoggedIn ? 'block' : 'none';
+            ['registerLink', 'loginLink'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = isLoggedIn ? 'none' : 'flex';
+            });
+            ['sideRegisterLink', 'sideLoginLink'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = isLoggedIn ? 'none' : 'block'; // Corrected typo here
+            });
+            ['logoutLink', 'sideLogoutLink'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = isLoggedIn ? 'block' : 'none';
+            });
         }
 
-        function showMessage(elementId, message, type) {
-            const messageEl = document.getElementById(elementId);
-            messageEl.textContent = message;
+        function showMessage(message, type) {
+            const messageEl = document.getElementById('messageContainer');
+            messageEl.innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
             messageEl.className = `message ${type}`;
-            messageEl.style.display = 'block';
-            
-            // Auto-hide success messages after 5 seconds
-            if (type === 'success') {
-                setTimeout(() => {
-                    messageEl.style.display = 'none';
-                }, 5000);
-            }
-        }
-
-        function hideMessage(elementId) {
-            const messageEl = document.getElementById(elementId);
-            messageEl.style.display = 'none';
+            messageEl.style.display = 'flex';
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+            }, 5000);
         }
 
         if (redirectToLoginIfNotAuthenticated()) {
-            throw new Error('User not authenticated');
+            // Stop script execution if redirecting
+            throw new Error('User not authenticated, redirecting...');
         }
 
         const currentUserId = getUserId();
+        const profileDetailsDiv = document.getElementById('profileDetails');
+        const profileActionsDiv = document.querySelector('.profile-actions');
+        const editFormDiv = document.getElementById('profileEditForm');
 
         async function loadProfile() {
-            hideMessage('editMessage');
-            const profileDetails = document.getElementById('profileDetails');
-            
             try {
                 const result = await apiGetProfile(currentUserId);
-                
                 if (result.ok) {
-                    const { data } = result;
+                    const user = result.data.user || result.data;
                     
-                    profileDetails.innerHTML = `
-                        <img src="${data.photo || 'https://via.placeholder.com/150'}" alt="Profile Photo" class="profile-photo">
+                    profileDetailsDiv.innerHTML = `
+                        <img src="${user.photo || '/images/placeholder-avatar.jpg'}" alt="Profile Photo" class="profile-photo">
                         <div class="profile-info">
-                            <h3>${data.first_name} ${data.last_name}</h3>
-                            <p><strong><i class="fas fa-envelope"></i> Email:</strong> ${data.email}</p>
-                            <p><strong><i class="fas fa-building"></i> Department:</strong> ${data.department || 'N/A'}</p>
-                            <p><strong><i class="fas fa-user-tag"></i> Role:</strong> ${data.role}</p>
-                            <div class="skills-header"><strong><i class="fas fa-tools"></i> Skills:</strong></div>
+                            <h3>${user.first_name} ${user.last_name}</h3>
+                            <p><strong><i class="fas fa-envelope"></i> Email:</strong> ${user.email}</p>
+                            <p><strong><i class="fas fa-building"></i> Department:</strong> ${user.department || 'N/A'}</p>
+                            <p><strong><i class="fas fa-user-tag"></i> Role:</strong> ${user.role}</p>
                             <div class="skills-list">
-                                ${data.skills.length ? data.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('') : '<p>No skills listed</p>'}
+                                ${user.skills && user.skills.length > 0
+                                    ? user.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')
+                                    : '<p style="color: #6b7280; font-size: 0.9rem;">No skills listed.</p>'
+                                }
+                            </div>
+                            <div class="profile-actions">
+                                <button class="btn-primary" onclick="toggleEditProfile()"><i class="fas fa-edit"></i> Edit Profile</button>
+                                <button class="btn-danger" onclick="deleteProfile()"><i class="fas fa-trash-alt"></i> Delete Profile</button>
                             </div>
                         </div>
                     `;
                     
-                    document.getElementById('editFirstName').value = data.first_name;
-                    document.getElementById('editLastName').value = data.last_name;
-                    document.getElementById('editEmail').value = data.email;
-                    document.getElementById('editDepartment').value = data.department || '';
-                    document.getElementById('editSkills').value = data.skills.join(', ');
-                    document.getElementById('editPhoto').value = data.photo || '';
+                    document.getElementById('editFirstName').value = user.first_name;
+                    document.getElementById('editLastName').value = user.last_name;
+                    document.getElementById('editEmail').value = user.email;
+                    document.getElementById('editDepartment').value = user.department || '';
+                    document.getElementById('editSkills').value = user.skills ? user.skills.join(', ') : '';
+                    document.getElementById('editPhoto').value = user.photo || '';
                 } else {
-                    profileDetails.innerHTML = `<p class="message error"><i class="fas fa-exclamation-circle"></i> Error loading profile: ${result.error}</p>`;
+                    profileDetailsDiv.innerHTML = `<p class="message error">${result.error}</p>`;
                 }
             } catch (error) {
-                profileDetails.innerHTML = `<p class="message error"><i class="fas fa-exclamation-circle"></i> An unexpected error occurred: ${error.message}</p>`;
+                profileDetailsDiv.innerHTML = `<p class="message error">An unexpected error occurred: ${error.message}</p>`;
             }
         }
 
         function toggleEditProfile() {
-            const editForm = document.getElementById('profileEditForm');
-            editForm.style.display = editForm.style.display === 'none' ? 'block' : 'none';
+            const isEditing = editFormDiv.style.display === 'block';
+            editFormDiv.style.display = isEditing ? 'none' : 'block';
+            profileDetailsDiv.style.display = isEditing ? 'flex' : 'none';
         }
 
         async function updateProfile() {
-            hideMessage('editMessage');
-
             const firstName = document.getElementById('editFirstName').value.trim();
             const lastName = document.getElementById('editLastName').value.trim();
             const email = document.getElementById('editEmail').value.trim();
             
             if (!firstName || !lastName || !email) {
-                showMessage('editMessage', 'First Name, Last Name, and Email are required.', 'error');
-                return;
+                showMessage('First Name, Last Name, and Email are required.', 'error'); return;
             }
-
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                showMessage('editMessage', 'Please enter a valid email address.', 'error');
-                return;
+                showMessage('Please enter a valid email address.', 'error'); return;
             }
 
             try {
@@ -207,118 +248,98 @@
                     first_name: firstName,
                     last_name: lastName,
                     email,
-                    department: document.getElementById('editDepartment').value.trim(),
-                    skills: document.getElementById('editSkills').value.trim().split(',').map(s => s.trim()).filter(s => s),
-                    photo: document.getElementById('editPhoto').value.trim(),
+                    department: document.getElementById('editDepartment').value.trim() || null,
+                    skills: document.getElementById('editSkills').value.trim().split(',').map(s => s.trim()).filter(Boolean),
+                    photo: document.getElementById('editPhoto').value.trim() || null,
                     password: document.getElementById('editPassword').value || undefined
                 };
+                Object.keys(payload).forEach(key => payload[key] === undefined && delete payload[key]);
 
                 const result = await apiUpdateProfile(currentUserId, payload);
-                
                 if (result.ok) {
-                    showMessage('editMessage', 'Profile updated successfully!', 'success');
+                    showMessage('Profile updated successfully!', 'success');
                     toggleEditProfile();
-                    await loadProfile(); // Reload profile to reflect changes
+                    await loadProfile();
                 } else {
-                    showMessage('editMessage', `Failed to update profile: ${result.error}`, 'error');
+                    showMessage(`Failed to update profile: ${result.error}`, 'error');
                 }
             } catch (error) {
-                showMessage('editMessage', `Error updating profile: ${error.message}`, 'error');
+                showMessage(`Error updating profile: ${error.message}`, 'error');
             }
         }
 
         async function deleteProfile() {
-            if (!confirm('Are you sure you want to delete your profile? This action cannot be undone.')) {
-                return;
-            }
-
+            if (!confirm('Are you sure you want to delete your profile? This action cannot be undone.')) return;
             try {
                 const result = await apiDeleteProfile(currentUserId);
-                
-                if (result.ok) {
-                    logout();
-                } else {
-                    showMessage('editMessage', `Failed to delete profile: ${result.error}`, 'error');
-                }
+                if (result.ok) { logout(); } 
+                else { showMessage(`Failed to delete profile: ${result.error}`, 'error'); }
             } catch (error) {
-                showMessage('editMessage', `Error deleting profile: ${error.message}`, 'error');
+                showMessage(`Error deleting profile: ${error.message}`, 'error');
             }
         }
 
         async function loadPosts() {
-            const userPosts = document.getElementById('userPosts');
-            
+            const userPostsContainer = document.getElementById('userPosts');
             try {
                 const result = await apiGetUserPosts(currentUserId);
-                
                 if (result.ok) {
                     const posts = result.data.posts || [];
-                    
                     if (posts.length === 0) {
-                        userPosts.innerHTML = `
-                            <div class="no-posts">
-                                <i class="fas fa-file-alt"></i>
-                                <h3>No Posts Yet</h3>
-                                <p>You haven't created any posts. Share your thoughts now!</p>
-                                <a href="edit-post.html" class="btn-primary"><i class="fas fa-plus"></i> Create Your First Post</a>
-                            </div>
-                        `;
+                        userPostsContainer.innerHTML = `<div class="no-posts">
+                            <i class="fas fa-file-alt"></i>
+                            <h3>No Posts Yet</h3>
+                            <p>You haven't created any posts. Share your thoughts now!</p>
+                            <a href="edit-post.html" class="btn-primary"><i class="fas fa-plus"></i> Create Your First Post</a>
+                        </div>`;
                         return;
                     }
-
-                    userPosts.innerHTML = posts.map(post => `
+                    userPostsContainer.innerHTML = posts.map(post => `
                         <div class="user-post">
-                            ${post.image ? `
-                                <div class="post-image-container">
-                                    <img src="${post.image}" alt="Post Image">
-                                </div>
-                            ` : ''}
+                            ${post.image ? `<div class="post-image-container"><img src="${post.image}" alt="Post Image"></div>` : ''}
                             <div class="post-content">
                                 <h3><a href="post.html?id=${post.id}">${post.title || 'Untitled'}</a></h3>
-                                <p>${post.content.substring(0, 100)}${post.content.length > 100 ? '...' : ''}</p>
+                                <p>${(post.content || "").substring(0, 100)}${(post.content || "").length > 100 ? '...' : ''}</p>
                                 <div class="post-meta">
-                                    <span><i class="fas fa-user"></i> ${post.user_name}</span>
                                     <span><i class="fas fa-calendar-alt"></i> ${new Date(post.created_at).toLocaleDateString()}</span>
-                                </div>
-                                <div class="post-actions">
-                                    <a href="edit-post.html?id=${post.id}" class="btn-primary"><i class="fas fa-edit"></i> Edit</a>
-                                    <button class="btn-danger" onclick="deletePost(${post.id})"><i class="fas fa-trash-alt"></i> Delete</button>
+                                    <div class="post-actions">
+                                        <a href="edit-post.html?id=${post.id}" class="btn-primary" style="font-size: 0.9rem; padding: 8px 12px;"><i class="fas fa-edit"></i></a>
+                                        <button class="btn-danger" onclick="deletePost(${post.id})" style="font-size: 0.9rem; padding: 8px 12px;"><i class="fas fa-trash-alt"></i></button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    `).join('');
+                        </div>`).join('');
                 } else {
-                    userPosts.innerHTML = `<p class="message error"><i class="fas fa-exclamation-circle"></i> Error loading posts: ${result.error}</p>`;
+                    userPostsContainer.innerHTML = `<p class="message error">${result.error}</p>`;
                 }
             } catch (error) {
-                userPosts.innerHTML = `<p class="message error"><i class="fas fa-exclamation-circle"></i> An unexpected error occurred: ${error.message}</p>`;
+                userPostsContainer.innerHTML = `<p class="message error">An unexpected error occurred: ${error.message}</p>`;
             }
         }
 
         async function deletePost(postId) {
-            if (!confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
-                return;
-            }
-
+            if (!confirm('Are you sure you want to delete this post?')) return;
             try {
                 const result = await apiDeletePost(postId);
-                
                 if (result.ok) {
-                    showMessage('editMessage', 'Post deleted successfully!', 'success');
-                    await loadPosts(); // Reload posts to reflect deletion
+                    showMessage('Post deleted successfully!', 'success');
+                    await loadPosts();
                 } else {
-                    showMessage('editMessage', `Failed to delete post: ${result.error}`, 'error');
+                    showMessage(`Failed to delete post: ${result.error}`, 'error');
                 }
             } catch (error) {
-                showMessage('editMessage', `Error deleting post: ${error.message}`, 'error');
+                showMessage(`Error deleting post: ${error.message}`, 'error');
             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            applyTheme(savedTheme);
             updateNav();
             loadProfile();
             loadPosts();
         });
+        // --- END: ORIGINAL PROFILE PAGE LOGIC ---
     </script>
 </body>
 </html>

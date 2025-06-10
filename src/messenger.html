@@ -1,311 +1,353 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Messenger - University Social Network</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet" href="/css/messenger.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
     <header>
         <nav id="navBar">
-            <ul class="sideBar" id="sideBarNav">
-                <li onclick="hideSidebar()"><a href="#"><i class="fas fa-times"></i></a></li>
-                <li><a href="index.html"><i class="fas fa-home"></i> HOME</a></li>
-                <li><a href="messenger.html"><i class="fas fa-comments"></i> MESSENGER</a></li>
-                <li><a href="profile.html"><i class="fas fa-user"></i> PROFILE</a></li>
-                <li><a href="posts.html"><i class="fas fa-blog"></i> BLOG</a></li>
-                <li class="auth-link" id="sideRegisterLink"><a href="register.html"><i class="fas fa-user-plus"></i>
-                        REGISTER</a></li>
-                <li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i>
-                        LOGIN</a></li>
-                <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i
-                            class="fas fa-sign-out-alt"></i> LOGOUT</a></li>
-            </ul>
+            <div class="logo">
+                <a href="index.html"><i class="fas fa-university"></i> UniSocial</a>
+            </div>
             <ul id="mainNav">
-                <li><a href="index.html"><i class="fas fa-home"></i> HOME</a></li>
-                <li class="hideOnMobile"><a href="messenger.html"><i class="fas fa-comments"></i> MESSENGER</a></li>
-                <li class="hideOnMobile"><a href="profile.html"><i class="fas fa-user"></i> PROFILE</a></li>
-                <li class="hideOnMobile"><a href="posts.html"><i class="fas fa-blog"></i> BLOG</a></li>
-                <li class="hideOnMobile auth-link" id="registerLink"><a href="register.html"><i
-                            class="fas fa-user-plus"></i> REGISTER</a></li>
-                <li class="hideOnMobile auth-link" id="loginLink"><a href="login.html"><i
-                            class="fas fa-sign-in-alt"></i> LOGIN</a></li>
-                <li class="hideOnMobile auth-link" id="logoutLink" style="display: none;"><a href="#"
-                        onclick="logout()"><i class="fas fa-sign-out-alt"></i> LOGOUT</a></li>
-                <li onclick="showSidebar()"><a href="#"><i class="fas fa-bars"></i></a></li>
+                <li class="hideOnMobile"><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li class="hideOnMobile"><a href="messenger.html" aria-current="page"><i class="fas fa-comments"></i> Messages</a></li>
+                <li class="hideOnMobile"><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
+                <li class="hideOnMobile"><a href="posts.html"><i class="fas fa-blog"></i> Blog</a></li>
+                <li class="hideOnMobile auth-link" id="registerLink"><a href="register.html"><i class="fas fa-user-plus"></i> Register</a></li>
+                <li class="hideOnMobile auth-link" id="loginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                <li class="hideOnMobile auth-link" id="logoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li class="hideOnMobile">
+                    <button id="themeToggleDesktop" aria-label="Toggle Theme" title="Toggle Theme">
+                        <i class="fas fa-moon" aria-hidden="true"></i>
+                    </button>
+                </li>
             </ul>
+            <div class="mobile-nav">
+                <div class="menu-btn">
+                    <button id="mobileMenuBtn" aria-label="Toggle Menu">
+                        <i class="fas fa-bars" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div class="dropdown-menu" id="mobileDropdown">
+                    <ul>
+                        <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="messenger.html" aria-current="page"><i class="fas fa-comments"></i> Messages</a></li>
+                        <li><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
+                        <li><a href="posts.html"><i class="fas fa-blog"></i> Blog</a></li>
+                        <li class="auth-link" id="sideRegisterLink"><a href="register.html"><i class="fas fa-user-plus"></i> Register</a></li>
+                        <li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                        <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        <li>
+                            <button id="themeToggleMobile" aria-label="Toggle Theme" title="Toggle Theme">
+                                <i class="fas fa-moon" aria-hidden="true"></i><span>Toggle Theme</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </nav>
     </header>
 
-    <div class="container">
-        <div class="section">
-            <h2><i class="fas fa-comments"></i> Messenger</h2>
-            <div class="messenger">
-                <div class="contacts" id="contacts">
-                    <div class="search-container">
-                        <input type="text" id="searchInput" placeholder="Search contacts..."
-                            aria-label="Search contacts">
-                        <i class="fas fa-search search-icon"></i>
-                    </div>
-                    <div id="contactList">
-                        <div class="loading-spinner">
-                            <div class="spinner"></div>
-                        </div>
+    <main class="messenger-page-container">
+        <div class="messenger" id="messengerContainer">
+            <aside class="contacts-panel" id="contactsPanel">
+                <div class="contacts-header">
+                    <h3>Conversations</h3>
+                    <button id="closeContactsBtn" class="show-on-mobile-only" aria-label="Close Contacts List">
+                        <i class="fas fa-times" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search users..." aria-label="Search for users to start a conversation">
+                    <i class="fas fa-search search-icon" aria-hidden="true"></i>
+                </div>
+                <div id="contactList" class="contact-list-container">
+                    <div class="loading-spinner">
+                        <div class="spinner" aria-label="Loading contacts"></div>
                     </div>
                 </div>
-                <div class="chat">
-                    <div class="chat-messages" id="chatMessages">
-                        <div class="no-messages">
-                            <i class="fas fa-comment-slash"></i>
-                            <p>Select a contact to start chatting.</p>
-                        </div>
+            </aside>
+            <section class="chat-panel">
+                <header class="chat-header" id="chatHeader" style="display: none;">
+                    <!-- Content injected by JS -->
+                </header>
+                <div class="chat-messages" id="chatMessages">
+                    <div class="placeholder-view">
+                        <i class="fas fa-comments" aria-hidden="true"></i>
+                        <h3>Welcome to Messenger</h3>
+                        <p>Select a conversation from the list to start chatting.</p>
                     </div>
-                    <div class="chat-input">
-                        <input type="text" id="messageContent" placeholder="Type your message..."
-                            aria-label="Type your message">
-                        <button class="btn-primary" onclick="sendMessage()"><i class="fas fa-paper-plane"></i>
-                            Send</button>
-                    </div>
-                    <div id="messageMessage" class="message" style="display: none;"></div>
                 </div>
-            </div>
+                <div class="chat-input-area" id="chatInputArea" style="display: none;">
+                    <textarea id="messageContent" placeholder="Type a message..." aria-label="Type your message here" rows="1"></textarea>
+                    <button id="sendButton" class="send-button" onclick="sendMessage()" aria-label="Send Message" disabled>
+                        <i class="fas fa-paper-plane" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </section>
         </div>
-    </div>
+    </main>
 
     <script src="/js/auth.js"></script>
     <script src="/js/api.js"></script>
     <script defer>
+        // --- START: NAVIGATION AND THEME LOGIC ---
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileDropdown = document.getElementById('mobileDropdown');
+        if (mobileMenuBtn && mobileDropdown) {
+            mobileMenuBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                mobileDropdown.classList.toggle('active');
+                mobileMenuBtn.setAttribute('aria-expanded', mobileDropdown.classList.contains('active'));
+            });
+            document.addEventListener('click', (event) => {
+                if (mobileDropdown.classList.contains('active') && !mobileDropdown.contains(event.target) && event.target !== mobileMenuBtn) {
+                    mobileDropdown.classList.remove('active');
+                    mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+        
+        const themeToggleMobile = document.getElementById('themeToggleMobile');
+        const themeToggleDesktop = document.getElementById('themeToggleDesktop');
+        function applyTheme(theme) {
+            document.body.classList.toggle('dark-mode', theme === 'dark');
+            const icon = theme === 'dark' ? 'fa-sun' : 'fa-moon';
+            if (themeToggleDesktop) themeToggleDesktop.innerHTML = `<i class="fas ${icon}" aria-hidden="true"></i>`;
+            if (themeToggleMobile) themeToggleMobile.innerHTML = `<i class="fas ${icon}" aria-hidden="true"></i><span>Toggle Theme</span>`;
+        }
+        function toggleTheme() {
+            const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        }
+        if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
+        if (themeToggleDesktop) themeToggleDesktop.addEventListener('click', toggleTheme);
+        // --- END: NAVIGATION AND THEME LOGIC ---
+
+        // --- START: MESSENGER PAGE LOGIC (REVISED AND CORRECTED) ---
         let currentRecipientId = null;
-        let currentRecipientName = null;
         let currentPage = 1;
         let totalPages = 1;
         let isLoadingMessages = false;
-        let searchQuery = '';
-        let lastMessageIds = new Set(); // Track displayed message IDs
-        let pollingInterval = null; // Store polling interval ID
-
-        function showSidebar() {
-            document.querySelector('.sideBar').style.display = 'flex';
-        }
-
-        function hideSidebar() {
-            document.querySelector('.sideBar').style.display = 'none';
-        }
+        
+        const contactsPanel = document.getElementById('contactsPanel');
+        const messengerContainer = document.getElementById('messengerContainer');
+        const closeContactsBtn = document.getElementById('closeContactsBtn');
+        
+        function closeContactsSidebar() { messengerContainer.classList.remove('sidebar-visible'); }
+        if (closeContactsBtn) closeContactsBtn.addEventListener('click', closeContactsSidebar);
 
         function updateNav() {
             const isLoggedIn = isAuthenticated();
-            document.getElementById('registerLink').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('loginLink').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('logoutLink').style.display = isLoggedIn ? 'block' : 'none';
-            document.getElementById('sideRegisterLink').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('sideLoginLink').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('sideLogoutLink').style.display = isLoggedIn ? 'block' : 'none';
+            ['registerLink', 'loginLink'].forEach(id => {
+                const el = document.getElementById(id); if (el) el.style.display = isLoggedIn ? 'none' : 'flex';
+            });
+            ['sideRegisterLink', 'sideLoginLink'].forEach(id => {
+                const el = document.getElementById(id); if (el) el.style.display = isLoggedIn ? 'none' : 'block';
+            });
+            ['logoutLink', 'sideLogoutLink'].forEach(id => {
+                const el = document.getElementById(id); if (el) el.style.display = isLoggedIn ? 'block' : 'none';
+            });
         }
-
-        function showMessage(elementId, message, type) {
-            const messageDiv = document.getElementById(elementId);
-            messageDiv.textContent = message;
-            messageDiv.className = `message ${type}`;
-            messageDiv.style.display = 'block';
-            setTimeout(() => {
-                messageDiv.style.display = 'none';
-            }, 3000);
-        }
-
-        async function loadUsers(page = 1, perPage = 10, query = '') {
+        
+        async function loadUsers(query = '') {
             const contactListDiv = document.getElementById('contactList');
             contactListDiv.innerHTML = `<div class="loading-spinner"><div class="spinner"></div></div>`;
             try {
-                const result = await apiSearchUsers({ name: query, page, per_page: perPage });
-                console.log('API Response:', result); // Debug log
+                const result = await apiSearchUsers({ name: query, page: 1, per_page: 50 });
                 if (result.ok && result.data) {
-                    const { results: users = [], total = 0, pages = 1 } = result.data;
-                    if (!Array.isArray(users)) {
-                        throw new Error('Users is not an array');
-                    }
+                    const { results: users = [] } = result.data;
                     if (users.length === 0) {
-                        contactListDiv.innerHTML = `
-                            <div class="no-contacts">
-                                <i class="fas fa-users-slash"></i>
-                                <p>No ${query ? 'matching ' : ''}users available.</p>
-                            </div>
-                        `;
+                        contactListDiv.innerHTML = `<div class="placeholder-view small"><i class="fas fa-user-slash"></i><p>No users found.</p></div>`;
                     } else {
                         contactListDiv.innerHTML = users.map(user => `
-                            <div class="contact ${user.id === currentRecipientId ? 'active' : ''}" onclick="selectContact(${user.id}, '${user.first_name} ${user.last_name}')">
-                                <img src="${user.photo || '/images/placeholder-avatar.jpg'}" alt="${user.first_name}">
-                                <p>${user.first_name} ${user.last_name}</p>
+                            <div class="contact-item" role="button" tabindex="0" 
+                                 onclick="selectContact(${user.id}, '${user.first_name}', '${user.last_name}', '${user.photo || '/images/placeholder-avatar.jpg'}')">
+                                <img src="${user.photo || '/images/placeholder-avatar.jpg'}" alt="${user.first_name} avatar">
+                                <div class="contact-info"><p class="contact-name">${user.first_name} ${user.last_name}</p></div>
                             </div>
                         `).join('');
                     }
                 } else {
-                    contactListDiv.innerHTML = `<p class="message error"><i class="fas fa-exclamation-circle"></i> ${result.error || 'Failed to load users'}</p>`;
+                    contactListDiv.innerHTML = `<div class="placeholder-view small"><i class="fas fa-exclamation-circle"></i><p>${result.error || 'Failed to load users'}</p></div>`;
                 }
             } catch (error) {
-                console.error('Error in loadUsers:', error);
-                contactListDiv.innerHTML = `<p class="message error"><i class="fas fa-exclamation-circle"></i> Error loading users: ${error.message}</p>`;
+                contactListDiv.innerHTML = `<div class="placeholder-view small"><i class="fas fa-exclamation-circle"></i><p>Error: ${error.message}</p></div>`;
             }
         }
 
-        async function selectContact(recipientId, recipientName) {
-            // Stop any existing polling
-            if (pollingInterval) {
-                clearInterval(pollingInterval);
-                pollingInterval = null;
-            }
-
+        async function selectContact(recipientId, firstName, lastName, photo) {
             currentRecipientId = recipientId;
-            currentRecipientName = recipientName;
-            currentPage = 1;
-            lastMessageIds.clear(); // Reset message tracking for new contact
-            document.querySelectorAll('.contact').forEach(contact => contact.classList.remove('active'));
-            const selectedContact = document.querySelector(`.contact[onclick="selectContact(${recipientId}, '${recipientName}')"]`);
-            if (selectedContact) selectedContact.classList.add('active');
-            document.getElementById('chatMessages').innerHTML = `
-                <div class="no-messages">
-                    <i class="fas fa-comment"></i>
-                    <p>Chatting with ${recipientName}</p>
-                </div>
-            `;
-            loadMessages();
+            isLoadingMessages = false;
 
-            // Start polling for new messages every 3 seconds
-            pollingInterval = setInterval(() => {
-                if (currentRecipientId) {
-                    loadMessages(currentPage);
+            document.querySelectorAll('.contact-item.active').forEach(c => c.classList.remove('active'));
+            const contactItems = document.querySelectorAll('.contact-item');
+            contactItems.forEach(item => {
+                if (item.getAttribute('onclick').includes(`selectContact(${recipientId},`)) {
+                    item.classList.add('active');
                 }
-            }, 3000);
+            });
+            
+            closeContactsSidebar();
+            messengerContainer.classList.add('chat-active');
+
+            const chatHeader = document.getElementById('chatHeader');
+            chatHeader.innerHTML = `
+                <button id="mobileBackToContacts" class="show-on-mobile-only" aria-label="Back to Contacts"><i class="fas fa-arrow-left"></i></button>
+                <img src="${photo}" alt="${firstName} avatar" class="chat-header-avatar">
+                <span class="chat-header-name">${firstName} ${lastName}</span>
+            `;
+            document.getElementById('mobileBackToContacts').addEventListener('click', () => { messengerContainer.classList.remove('chat-active'); });
+            
+            document.getElementById('chatHeader').style.display = 'flex';
+            document.getElementById('chatInputArea').style.display = 'flex';
+            
+            // KEY CHANGE: Load the very last page of messages first.
+            await loadInitialMessages();
+        }
+        
+        // KEY CHANGE: New function to find the last page and load it.
+        async function loadInitialMessages() {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = `<div class="loading-spinner"><div class="spinner"></div></div>`;
+
+            // First, call page 1 just to get the total number of pages
+            try {
+                const metaResult = await apiGetMessages(currentRecipientId, 1);
+                if (metaResult.ok && metaResult.data) {
+                    totalPages = metaResult.data.pages || 1;
+                    // Now, load the actual last page
+                    await loadMessages(totalPages, true);
+                } else {
+                    chatMessages.innerHTML = `<div class="placeholder-view"><i class="fas fa-exclamation-triangle"></i><h3>Error</h3><p>Could not load conversation.</p></div>`;
+                }
+            } catch (error) {
+                chatMessages.innerHTML = `<div class="placeholder-view"><i class="fas fa-exclamation-triangle"></i><h3>Error</h3><p>${error.message}</p></div>`;
+            }
         }
 
-        async function loadMessages(page = 1) {
-            if (!currentRecipientId || isLoadingMessages) return;
+        async function loadMessages(page, isInitialLoad = false) {
+            if (isLoadingMessages) return;
             isLoadingMessages = true;
-            const messagesDiv = document.getElementById('chatMessages');
+
+            const chatMessages = document.getElementById('chatMessages');
+            
+            if (!isInitialLoad) {
+                chatMessages.insertAdjacentHTML('afterbegin', `<div class="loading-spinner" id="history-spinner"><div class="spinner"></div></div>`);
+            }
+
             try {
                 const result = await apiGetMessages(currentRecipientId, page);
+                
+                const historySpinner = document.getElementById('history-spinner');
+                if (historySpinner) historySpinner.remove();
+
                 if (result.ok && result.data) {
-                    const { messages, total, pages, page: current } = result.data;
-                    currentPage = current;
-                    totalPages = pages;
+                    const messages = result.data.messages || result.data;
+                    currentPage = result.data.page || 1;
 
-                    // Filter out duplicates using lastMessageIds
-                    const newMessages = messages.filter(message => !lastMessageIds.has(message.id));
+                    const currentUserId = getUserId();
+                    const messagesHtml = messages.map(msg => {
+                        const type = msg.sender_id === currentUserId ? 'sent' : 'received';
+                        const sanitizedContent = msg.content.replace(/</g, "<").replace(/>/g, ">");
+                        return `
+                        <div class="message-bubble ${type}">
+                            <p>${sanitizedContent}</p>
+                            <div class="message-meta">${new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                        </div>`;
+                    }).join('');
 
-                    if (newMessages.length === 0 && lastMessageIds.size === 0) {
-                        messagesDiv.innerHTML = `
-                            <div class="no-messages">
-                                <i class="fas fa-comment-slash"></i>
-                                <p>No messages yet with ${currentRecipientName}</p>
-                            </div>
-                        `;
-                    } else if (newMessages.length > 0) {
-                        const currentUserId = getUserId();
-                        const messageHtml = newMessages.map(message => `
-                            <div class="message-bubble ${message.sender_id === currentUserId ? 'sent' : 'received'}">
-                                <p>${message.content}</p>
-                                <div class="message-meta ${message.sender_id === currentUserId ? 'sent' : 'received'}">
-                                    ${new Date(message.created_at).toLocaleTimeString()}
-                                </div>
-                            </div>
-                        `).join('');
-                        messagesDiv.innerHTML += messageHtml;
-                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                        newMessages.forEach(message => lastMessageIds.add(message.id));
+                    if (isInitialLoad) {
+                        chatMessages.innerHTML = messages.length > 0 ? messagesHtml : `<div class="placeholder-view"><i class="fas fa-hand-paper"></i><h3>Say hello!</h3></div>`;
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    } else {
+                        const oldScrollHeight = chatMessages.scrollHeight;
+                        chatMessages.insertAdjacentHTML('afterbegin', messagesHtml);
+                        chatMessages.scrollTop = chatMessages.scrollHeight - oldScrollHeight;
                     }
-                } else {
-                    messagesDiv.innerHTML = `<p class="message error"><i class="fas fa-exclamation-circle"></i> ${result.error}</p>`;
                 }
             } catch (error) {
-                console.error('Error in loadMessages:', error);
-                messagesDiv.innerHTML = `<p class="message error"><i class="fas fa-exclamation-circle"></i> Error loading messages: ${error.message}</p>`;
+                console.error("Error loading messages:", error);
             } finally {
                 isLoadingMessages = false;
             }
         }
-
+        
         async function sendMessage() {
-            if (!currentRecipientId) {
-                showMessage('messageMessage', 'Select a contact first.', 'error');
-                return;
-            }
-
-            const content = document.getElementById('messageContent').value.trim();
-            if (!content) {
-                showMessage('messageMessage', 'Message content is required.', 'error');
-                return;
-            }
-
+            if (!currentRecipientId) return;
+            const contentInput = document.getElementById('messageContent');
+            const content = contentInput.value.trim();
+            if (!content) return;
             try {
                 const result = await apiSendMessage(currentRecipientId, content);
                 if (result.ok) {
-                    document.getElementById('messageContent').value = '';
-                    document.getElementById('messageContent').focus();
-                    loadMessages();
-                    showMessage('messageMessage', 'Message sent successfully!', 'success');
+                    // Add message to UI instantly for better UX
+                    const chatMessages = document.getElementById('chatMessages');
+                    const messageHtml = `
+                        <div class="message-bubble sent">
+                            <p>${content.replace(/</g, "<").replace(/>/g, ">")}</p>
+                            <div class="message-meta">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                        </div>`;
+                    chatMessages.insertAdjacentHTML('beforeend', messageHtml);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                    
+                    contentInput.value = '';
+                    contentInput.dispatchEvent(new Event('input'));
                 } else {
-                    showMessage('messageMessage', result.error, 'error');
+                    alert(`Error: ${result.error}`);
                 }
             } catch (error) {
-                showMessage('messageMessage', `Error sending message: ${error.message}`, 'error');
+                alert(`Error: ${error.message}`);
             }
         }
-
+        
+        // KEY CHANGE: The condition now checks if we can go to a PREVIOUS page.
         function handleScroll() {
             const messagesDiv = document.getElementById('chatMessages');
-            if (messagesDiv.scrollTop === 0 && currentPage < totalPages && !isLoadingMessages) {
-                loadMessages(currentPage + 1);
+            if (messagesDiv.scrollTop === 0 && currentPage > 1 && !isLoadingMessages) {
+                loadMessages(currentPage - 1);
             }
         }
-
-        function handleKeyPress(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                sendMessage();
-            }
-        }
-
+        
         function debounce(func, wait) {
             let timeout;
-            return function (...args) {
+            return function(...args) {
                 clearTimeout(timeout);
                 timeout = setTimeout(() => func.apply(this, args), wait);
             };
         }
 
-        function handleSearch() {
-            searchQuery = document.getElementById('searchInput').value.trim();
-            currentPage = 1;
-            loadUsers(currentPage, 10, searchQuery);
-        }
-
-        const debouncedHandleSearch = debounce(handleSearch, 300);
+        const debouncedSearch = debounce((e) => loadUsers(e.target.value.trim()), 300);
 
         document.addEventListener('DOMContentLoaded', () => {
+            applyTheme(localStorage.getItem('theme') || 'light');
             updateNav();
-            if (redirectToLoginIfNotAuthenticated()) {
-                window.location.href = 'login.html';
-                return;
-            }
+            if (redirectToLoginIfNotAuthenticated()) return;
             loadUsers();
-            const messageInput = document.getElementById('messageContent');
-            messageInput.addEventListener('keypress', handleKeyPress);
-            document.getElementById('chatMessages').addEventListener('scroll', handleScroll);
-            const searchInput = document.getElementById('searchInput');
-            searchInput.addEventListener('input', debouncedHandleSearch);
-
-            // Clean up polling when the page is unloaded
-            window.addEventListener('beforeunload', () => {
-                if (pollingInterval) {
-                    clearInterval(pollingInterval);
-                    pollingInterval = null;
-                }
+            
+            const messageTextarea = document.getElementById('messageContent');
+            messageTextarea.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
             });
+            messageTextarea.addEventListener('input', () => {
+                document.getElementById('sendButton').disabled = messageTextarea.value.trim().length === 0;
+                messageTextarea.style.height = 'auto';
+                messageTextarea.style.height = (messageTextarea.scrollHeight) + 'px';
+            });
+
+            document.getElementById('searchInput').addEventListener('input', debouncedSearch);
+            document.getElementById('chatMessages').addEventListener('scroll', handleScroll);
         });
     </script>
 </body>
-
 </html>

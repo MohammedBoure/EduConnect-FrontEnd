@@ -1,35 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Posts - University Of JIJEL</title>
+    <title>Posts - EduConnect</title>
+    <!-- External Libraries -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- App Stylesheets -->
+    <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet" href="/css/posts.css">
 </head>
+
 <body>
     <header>
-        <nav id="navBar">
-            <ul class="sideBar" id="sideBarNav">
-                <li onclick="hideSidebar()"><a href="#"><i class="fas fa-times"></i></a></li>
-                <li><a href="index.html"><i class="fas fa-home"></i> HOME</a></li>
-                <li><a href="messenger.html"><i class="fas fa-comments"></i> MESSENGER</a></li>
-                <li><a href="profile.html"><i class="fas fa-user"></i> PROFILE</a></li>
-                <li><a href="posts.html"><i class="fas fa-blog"></i> BLOG</a></li>
-                <li class="auth-link" id="sideRegisterLink"><a href="register.html"><i class="fas fa-user-plus"></i> REGISTER</a></li>
-                <li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> LOGIN</a></li>
-                <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> LOGOUT</a></li>
-            </ul>
+        <nav id="navBar" role="navigation">
+            <div class="logo">
+                <a href="index.html" aria-label="EduConnect Home"><i class="fas fa-university"></i> EduConnect</a>
+            </div>
+            
+            <!-- Desktop Navigation -->
             <ul id="mainNav">
-                <li><a href="index.html"><i class="fas fa-home"></i> HOME</a></li>
-                <li class="hideOnMobile"><a href="messenger.html"><i class="fas fa-comments"></i> MESSENGER</a></li>
-                <li class="hideOnMobile"><a href="profile.html"><i class="fas fa-user"></i> PROFILE</a></li>
-                <li class="hideOnMobile"><a href="posts.html"><i class="fas fa-blog"></i> BLOG</a></li>
-                <li class="hideOnMobile auth-link" id="registerLink"><a href="register.html"><i class="fas fa-user-plus"></i> REGISTER</a></li>
-                <li class="hideOnMobile auth-link" id="loginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> LOGIN</a></li>
-                <li class="hideOnMobile auth-link" id="logoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> LOGOUT</a></li>
-                <li onclick="showSidebar()"><a href="#"><i class="fas fa-bars"></i></a></li>
+                <li class="hideOnMobile"><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li class="hideOnMobile"><a href="messenger.html"><i class="fas fa-comments"></i> Messenger</a></li>
+                <li class="hideOnMobile"><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
+                <li class="hideOnMobile"><a href="posts.html"><i class="fas fa-blog"></i> Blog</a></li>
+                <li class="auth-link hideOnMobile" id="registerLink"><a href="register.html"><i class="fas fa-user-plus"></i> Register</a></li>
+                <li class="auth-link hideOnMobile" id="loginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                <li class="auth-link hideOnMobile" id="logoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li class="hideOnMobile"><button id="themeToggleDesktop" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button></li>
             </ul>
+
+            <!-- Mobile Navigation -->
+            <div class="mobile-nav">
+                <div class="menu-btn">
+                    <button onclick="toggleMobileMenu()" aria-label="Toggle Navigation Menu" aria-controls="mobileMenu" aria-expanded="false">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+                <div class="dropdown-menu" id="mobileMenu">
+                    <ul>
+                        <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="messenger.html"><i class="fas fa-comments"></i> Messenger</a></li>
+                        <li><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
+                        <li><a href="posts.html"><i class="fas fa-blog"></i> Blog</a></li>
+                        <li class="auth-link" id="sideRegisterLink"><a href="register.html"><i class="fas fa-user-plus"></i> Register</a></li>
+                        <li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                        <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        <li><button id="themeToggle" aria-label="Toggle Theme"><i class="fas fa-moon"></i></button></li>
+                    </ul>
+                </div>
+            </div>
         </nav>
     </header>
 
@@ -37,11 +63,13 @@
         <div class="section">
             <h2><i class="fas fa-bullhorn"></i> Public Posts</h2>
             <div id="posts-container">
+                <!-- Posts will be injected here -->
                 <div id="userPosts">
                     <div class="loading-spinner">
                         <div class="spinner"></div>
                     </div>
                 </div>
+                <!-- Pagination will be injected here -->
             </div>
         </div>
     </div>
@@ -49,32 +77,76 @@
     <script src="/js/auth.js"></script>
     <script src="/js/api.js"></script>
     <script defer>
-        function showSidebar() {
-            document.querySelector('.sideBar').style.display = 'flex';
+        // --- Navigation and Theme Logic ---
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const button = document.querySelector('.mobile-nav .menu-btn button');
+            const isExpanded = menu.classList.toggle('active');
+            button.setAttribute('aria-expanded', isExpanded);
         }
+        
+        document.addEventListener('click', function(event) {
+            const mobileNav = document.querySelector('.mobile-nav');
+            if (mobileNav && !mobileNav.contains(event.target)) {
+                const mobileMenu = document.getElementById('mobileMenu');
+                if (mobileMenu.classList.contains('active')) {
+                    mobileMenu.classList.remove('active');
+                    document.querySelector('.mobile-nav .menu-btn button').setAttribute('aria-expanded', 'false');
+                }
+            }
+        });
 
-        function hideSidebar() {
-            document.querySelector('.sideBar').style.display = 'none';
+        const themeToggle = document.getElementById('themeToggle');
+        const themeToggleDesktop = document.getElementById('themeToggleDesktop');
+        function applyTheme(isDark) {
+            const iconClass = isDark ? 'fas fa-sun' : 'fas fa-moon';
+            if (isDark) { document.body.classList.add('dark-mode'); } 
+            else { document.body.classList.remove('dark-mode'); }
+            if(themeToggle) themeToggle.innerHTML = `<i class="${iconClass}"></i>`;
+            if(themeToggleDesktop) themeToggleDesktop.innerHTML = `<i class="${iconClass}"></i>`;
         }
+        function toggleTheme() {
+            const isDark = !document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            applyTheme(isDark);
+        }
+        if(themeToggle) themeToggle.addEventListener('click', toggleTheme);
+        if(themeToggleDesktop) themeToggleDesktop.addEventListener('click', toggleTheme);
 
+        // --- Page Logic (from the working example) ---
         function updateNav() {
             const isLoggedIn = isAuthenticated();
-            document.getElementById('registerLink').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('loginLink').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('logoutLink').style.display = isLoggedIn ? 'block' : 'none';
-            document.getElementById('sideRegisterLink').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('sideLoginLink').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('sideLogoutLink').style.display = isLoggedIn ? 'block' : 'none';
+            ['registerLink', 'loginLink'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = isLoggedIn ? 'none' : 'flex';
+            });
+            ['sideRegisterLink', 'sideLoginLink'].forEach(id => {
+                 const el = document.getElementById(id);
+                if (el) el.style.display = isLoggedIn ? 'none' : 'block';
+            });
+            ['logoutLink', 'sideLogoutLink'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = isLoggedIn ? 'block' : 'none';
+            });
         }
 
-        async function loadPublicPosts(page = 1, perPage = 10) {
-            const postsContainer = document.getElementById('userPosts');
+        async function loadPublicPosts(page = 1, perPage = 9) {
+            const postsGrid = document.getElementById('userPosts');
+            const postsContainer = document.getElementById('posts-container');
+            
+            // Clear previous pagination and show spinner
+            const existingPagination = postsContainer.querySelector('.pagination');
+            if (existingPagination) {
+                existingPagination.remove();
+            }
+            postsGrid.innerHTML = `<div class="loading-spinner"><div class="spinner"></div></div>`;
+
             try {
                 const result = await apiGetPosts(page, perPage);
                 if (result.ok) {
                     const { posts, total, pages } = result.data;
                     if (posts.length === 0) {
-                        postsContainer.innerHTML = `
+                        postsGrid.innerHTML = `
                             <div class="no-posts">
                                 <i class="fas fa-file-alt"></i>
                                 <h3>No Public Posts Yet</h3>
@@ -82,16 +154,12 @@
                             </div>
                         `;
                     } else {
-                        postsContainer.innerHTML = posts.map(post => `
+                        postsGrid.innerHTML = posts.map(post => `
                             <div class="user-post">
-                                ${post.image ? `
-                                    <div class="post-image-container">
-                                        <img src="${post.image}" alt="Post Image">
-                                    </div>
-                                ` : ''}
+                                ${post.image ? `<div class="post-image-container"><img src="${post.image}" alt="Post Image"></div>` : ''}
                                 <div class="post-content">
                                     <h3><a href="post.html?id=${post.id}">${post.title || 'Untitled'}</a></h3>
-                                    <p>${post.content.substring(0, 100)}${post.content.length > 100 ? '...' : ''}</p>
+                                    <p>${(post.content || '').substring(0, 100)}${(post.content || '').length > 100 ? '...' : ''}</p>
                                     <div class="post-meta">
                                         <span><i class="fas fa-user"></i> ${post.author.first_name} ${post.author.last_name}</span>
                                         <span><i class="fas fa-calendar-alt"></i> ${new Date(post.created_at).toLocaleDateString()}</span>
@@ -99,25 +167,28 @@
                                 </div>
                             </div>
                         `).join('');
+                        
                         if (pages > 1) {
-                            postsContainer.insertAdjacentHTML('afterend', `
+                            postsContainer.insertAdjacentHTML('beforeend', `
                                 <div class="pagination">
-                                    ${page > 1 ? `<button class="btn-primary" onclick="loadPublicPosts(${page - 1}, ${perPage})"><i class="fas fa-chevron-left"></i> Previous</button>` : ''}
+                                    ${page > 1 ? `<button class="btn-primary" onclick="loadPublicPosts(${page - 1}, ${perPage})"><i class="fas fa-chevron-left"></i> Previous</button>` : '<div></div>'}
                                     <span>Page ${page} of ${pages}</span>
-                                    ${page < pages ? `<button class="btn-primary" onclick="loadPublicPosts(${page + 1}, ${perPage})">Next <i class="fas fa-chevron-right"></i></button>` : ''}
+                                    ${page < pages ? `<button class="btn-primary" onclick="loadPublicPosts(${page + 1}, ${perPage})">Next <i class="fas fa-chevron-right"></i></button>` : '<div></div>'}
                                 </div>
                             `);
                         }
                     }
                 } else {
-                    postsContainer.innerHTML = `<p class="message error"><i class="fas fa-exclamation-circle"></i> ${result.error}</p>`;
+                    postsGrid.innerHTML = `<p class="message error"><i class="fas fa-exclamation-circle"></i> ${result.error}</p>`;
                 }
             } catch (error) {
-                postsContainer.innerHTML = `<p class="message error"><i class="fas fa-exclamation-circle"></i> Error loading posts: ${error.message}</p>`;
+                postsGrid.innerHTML = `<p class="message error"><i class="fas fa-exclamation-circle"></i> Error loading posts: ${error.message}</p>`;
             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            applyTheme(savedTheme === 'dark');
             updateNav();
             loadPublicPosts();
         });

@@ -1,138 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>University Social Network - Admin Posts</title>
+    <title>University Social Network</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet" href="/css/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
     <header>
         <nav id="navBar">
-            <ul class="sideBar" id="sideBarNav">
-                <li onclick="hideSidebar()"><a href="#"><i class="fas fa-times"></i></a></li>
-                <li><a href="index.html"><i class="fas fa-home"></i> HOME</a></li>
-                <li><a href="messenger.html"><i class="fas fa-comments"></i> MESSENGER</a></li>
-                <li><a href="profile.html"><i class="fas fa-user"></i> PROFILE</a></li>
-                <li><a href="posts.html"><i class="fas fa-blog"></i> BLOG</a></li>
-                <li class="auth-link" id="sideRegisterLink"><a href="register.html"><i class="fas fa-user-plus"></i>
-                        REGISTER</a></li>
-                <li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i>
-                        LOGIN</a></li>
-                <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i
-                            class="fas fa-sign-out-alt"></i> LOGOUT</a></li>
-            </ul>
+            <div class="logo">
+                <a href="index.html"><i class="fas fa-university"></i> UniSocial</a>
+            </div>
+            
+            <!-- Desktop Navigation -->
             <ul id="mainNav">
-                <li><a href="index.html"><i class="fas fa-home"></i> HOME</a></li>
-                <li class="hideOnMobile"><a href="messenger.html"><i class="fas fa-comments"></i> MESSENGER</a></li>
-                <li class="hideOnMobile"><a href="profile.html"><i class="fas fa-user"></i> PROFILE</a></li>
-                <li class="hideOnMobile"><a href="posts.html"><i class="fas fa-blog"></i> BLOG</a></li>
-                <li class="hideOnMobile auth-link" id="registerLink"><a href="register.html"><i
-                            class="fas fa-user-plus"></i> REGISTER</a></li>
-                <li class="hideOnMobile auth-link" id="loginLink"><a href="login.html"><i
-                            class="fas fa-sign-in-alt"></i> LOGIN</a></li>
-                <li class="hideOnMobile auth-link" id="logoutLink" style="display: none;"><a href="#"
-                        onclick="logout()"><i class="fas fa-sign-out-alt"></i> LOGOUT</a></li>
-                <li onclick="showSidebar()"><a href="#"><i class="fas fa-bars"></i></a></li>
+                <li class="hideOnMobile"><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li class="hideOnMobile"><a href="messenger.html"><i class="fas fa-comments"></i> Messages</a></li>
+                <li class="hideOnMobile"><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
+                <li class="hideOnMobile"><a href="posts.html"><i class="fas fa-blog"></i> Blog</a></li>
+                <li class="hideOnMobile auth-link" id="registerLink"><a href="register.html"><i class="fas fa-user-plus"></i> Register</a></li>
+                <li class="hideOnMobile auth-link" id="loginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                <li class="hideOnMobile auth-link" id="logoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li class="hideOnMobile">
+                    <button id="themeToggleDesktop" title="Toggle Theme">
+                        <i class="fas fa-sun"></i>
+                    </button>
+                </li>
             </ul>
+
+            <!-- Mobile Navigation -->
+            <div class="mobile-nav">
+                <div class="menu-btn">
+                    <button id="mobileMenuBtn" aria-label="Open Menu">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+                <div class="dropdown-menu" id="mobileDropdown">
+                    <ul>
+                        <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="messenger.html"><i class="fas fa-comments"></i> Messages</a></li>
+                        <li><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
+                        <li><a href="posts.html"><i class="fas fa-blog"></i> Blog</a></li>
+                        <li class="auth-link" id="sideRegisterLink"><a href="register.html"><i class="fas fa-user-plus"></i> Register</a></li>
+                        <li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                        <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        <li>
+                            <button id="themeToggleMobile" title="Toggle Theme">
+                                <i class="fas fa-moon"></i><span>Toggle Theme</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </nav>
     </header>
 
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1>Welcome to EduConnect</h1>
+            <p>Connect, collaborate, and grow with our vibrant university community.</p>
+            <a href="register.html" class="btn-primary">Join Now</a>
+        </div>
+    </div>
+
     <div class="container">
-        <div class="about-section">
+        <div class="section about-section" data-aos="fade-up">
             <div class="about-image">
-                <img src="/images/MainImage.jpg" alt="University Community">
+                <img src="/images/MainImage.jpg" alt="University Community" loading="lazy">
             </div>
             <div class="about-content">
-                <h2>Welcome to Our University Social Network</h2>
-                <p>Join a vibrant community of students, faculty, and alumni. Stay connected, share ideas, and stay
-                    updated with the latest university announcements. Our platform fosters collaboration, learning, and
-                    engagement for everyone in our academic family.</p>
-                <a href="aboutUS.html" class="btn-primary">Learn More About Us</a>
+                <h2>Our Mission</h2>
+                <p>EduConnect is dedicated to fostering a dynamic community where students, faculty, and alumni can share knowledge, collaborate on projects, and stay updated with university events. Join us to be part of an engaging academic network.</p>
+                <a href="aboutUS.html" class="btn-primary">Discover More</a>
             </div>
         </div>
 
-        <div class="section">
-            <h2><i class="fas fa-bullhorn"></i> Admin Announcements</h2>
+        <div class="section" data-aos="fade-up">
+            <h2><i class="fas fa-bullhorn"></i> Community Announcements</h2>
             <div id="adminPosts">
-                <div class="loading-spinner">
-                    <div class="spinner"></div>
+                <div class="post-skeleton">
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
                 </div>
             </div>
         </div>
     </div>
 
+    <footer>
+        <div class="container">
+            <p>© 2025 EduConnect. All rights reserved.</p>
+            <ul class="footer-links">
+                <li><a href="aboutUS.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="privacy.html">Privacy Policy</a></li>
+            </ul>
+        </div>
+    </footer>
+
     <script src="/js/auth.js"></script>
     <script src="/js/api.js"></script>
     <script defer>
-        function showSidebar() {
-            document.querySelector('.sideBar').style.display = 'flex';
+        // --- START: CORRECTED NAVIGATION AND THEME LOGIC ---
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileDropdown = document.getElementById('mobileDropdown'); // Corrected ID
+
+        if (mobileMenuBtn && mobileDropdown) {
+            mobileMenuBtn.addEventListener('click', (event) => { // Added event listener
+                event.stopPropagation();
+                const isExpanded = mobileDropdown.classList.toggle('active');
+                mobileMenuBtn.setAttribute('aria-expanded', isExpanded);
+            });
+        
+            // Close menu when clicking outside of it
+            document.addEventListener('click', function(event) {
+                if (mobileDropdown.classList.contains('active') && !mobileDropdown.contains(event.target) && event.target !== mobileMenuBtn) {
+                    mobileDropdown.classList.remove('active');
+                    mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                }
+            });
         }
 
-        function hideSidebar() {
-            document.querySelector('.sideBar').style.display = 'none';
+        // Theme toggle
+        const themeToggleMobile = document.getElementById('themeToggleMobile'); // Corrected ID
+        const themeToggleDesktop = document.getElementById('themeToggleDesktop');
+
+        function applyTheme(theme) {
+            const isDark = theme === 'dark';
+            document.body.classList.toggle('dark-mode', isDark);
+            const iconClass = isDark ? 'fa-sun' : 'fa-moon';
+            if (themeToggleDesktop) themeToggleDesktop.innerHTML = `<i class="fas ${iconClass}"></i>`;
+            if (themeToggleMobile) themeToggleMobile.innerHTML = `<i class="fas ${iconClass}"></i><span>Toggle Theme</span>`;
+        }
+        
+        function toggleTheme() {
+            const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
         }
 
+        if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
+        if (themeToggleDesktop) themeToggleDesktop.addEventListener('click', toggleTheme);
+        
+        // --- END: CORRECTED LOGIC ---
+
+        // Navigation update
         function updateNav() {
             const isLoggedIn = isAuthenticated();
-            document.getElementById('registerLink').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('loginLink').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('logoutLink').style.display = isLoggedIn ? 'block' : 'none';
-            document.getElementById('sideRegisterLink').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('sideLoginLink').style.display = isLoggedIn ? 'none' : 'block';
-            document.getElementById('sideLogoutLink').style.display = isLoggedIn ? 'block' : 'none';
+            ['registerLink', 'loginLink', 'sideRegisterLink', 'sideLoginLink'].forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.style.display = isLoggedIn ? 'none' : 'list-item';
+            });
+            ['logoutLink', 'sideLogoutLink'].forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.style.display = isLoggedIn ? 'list-item' : 'none';
+            });
         }
 
-        async function loadAdminPosts(page = 1, perPage = 10) {
+        // Load admin posts
+        async function loadAdminPosts(page = 1, perPage = 9) {
             const postsDiv = document.getElementById('adminPosts');
             try {
                 const result = await apiGetAdminUserPosts(page, perPage);
                 if (result.ok) {
                     const { posts, total, pages } = result.data;
+                    postsDiv.innerHTML = '';
                     if (posts.length === 0) {
                         postsDiv.innerHTML = `
                             <div class="no-posts">
                                 <i class="fas fa-file-alt"></i>
-                                <h3>No Admin Posts Yet</h3>
-                                <p>No admin announcements available at this time.</p>
+                                <h3>No Announcements Yet</h3>
+                                <p>No community announcements available at this time.</p>
                             </div>
                         `;
                     } else {
-                        postsDiv.innerHTML = `
-                            <div id="posts-container">
-                                <div id="userPosts">
-                                    ${posts.map(post => `
-                                        <div class="user-post">
-                                            ${post.image ? `
-                                                <div class="post-image-container">
-                                                    <img src="${post.image}" alt="Post Image">
-                                                </div>
-                                            ` : ''}
-                                            <div class="post-content">
-                                                <h3><a href="post.html?id=${post.id}">${post.title || 'Untitled'}</a></h3>
-                                                <p>${post.content.substring(0, 100)}${post.content.length > 100 ? '...' : ''}</p>
-                                                <div class="post-meta">
-                                                    <span><i class="fas fa-user"></i> ${post.author.first_name} ${post.author.last_name}</span>
-                                                    <span><i class="fas fa-calendar-alt"></i> ${new Date(post.created_at).toLocaleDateString()}</span>
-                                                </div>
+                        const postsContainer = document.createElement('div');
+                        postsContainer.id = 'posts-container';
+                        postsContainer.innerHTML = `
+                            <div id="userPosts">
+                                ${posts.map(post => `
+                                    <div class="user-post" data-aos="fade-up">
+                                        ${post.image ? `
+                                            <div class="post-image-container">
+                                                <img src="${post.image}" alt="${post.title || 'Post Image'}" loading="lazy">
+                                            </div>
+                                        ` : ''}
+                                        <div class="post-content">
+                                            <span class="post-badge">Announcement</span>
+                                            <h3><a href="post.html?id=${post.id}">${post.title || 'Untitled'}</a></h3>
+                                            <p>${(post.content || "").substring(0, 120)}${(post.content || "").length > 120 ? '...' : ''}</p>
+                                            <div class="post-meta">
+                                                <span><i class="fas fa-user"></i> ${post.author.first_name} ${post.author.last_name}</span>
+                                                <span><i class="fas fa-calendar-alt"></i> ${new Date(post.created_at).toLocaleDateString()}</span>
+                                            </div>
+                                            <div class="post-actions">
+                                                <a href="post.html?id=${post.id}" class="btn-primary">Read More</a>
                                             </div>
                                         </div>
-                                    `).join('')}
-                                </div>
+                                    </div>
+                                `).join('')}
                             </div>
                         `;
+                        postsDiv.appendChild(postsContainer);
                         if (pages > 1) {
-                            postsDiv.innerHTML += `
-                                <div class="pagination">
-                                    ${page > 1 ? `<button class="btn-primary" onclick="loadAdminPosts(${page - 1}, ${perPage})"><i class="fas fa-chevron-left"></i> Previous</button>` : ''}
-                                    <span>Page ${page} of ${pages}</span>
-                                    ${page < pages ? `<button class="btn-primary" onclick="loadAdminPosts(${page + 1}, ${perPage})">Next <i class="fas fa-chevron-right"></i></button>` : ''}
-                                </div>
+                            const pagination = document.createElement('div');
+                            pagination.className = 'pagination';
+                            pagination.innerHTML = `
+                                ${page > 1 ? `<button class="btn-primary" onclick="loadAdminPosts(${page - 1}, ${perPage})" aria-label="Previous Page"><i class="fas fa-chevron-left"></i></button>` : ''}
+                                ${Array.from({ length: pages }, (_, i) => i + 1).map(p => `
+                                    <button class="${p === page ? 'active' : ''}" onclick="loadAdminPosts(${p}, ${perPage})" aria-label="Page ${p}" ${p === page ? 'aria-current="page"' : ''}>${p}</button>
+                                `).join('')}
+                                ${page < pages ? `<button class="btn-primary" onclick="loadAdminPosts(${page + 1}, ${perPage})" aria-label="Next Page"><i class="fas fa-chevron-right"></i></button>` : ''}
                             `;
+                            postsDiv.appendChild(pagination);
                         }
                     }
                 } else {
@@ -143,11 +231,27 @@
             }
         }
 
+        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            // Load saved theme first
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            applyTheme(savedTheme);
+
             updateNav();
             loadAdminPosts();
+            // Smooth scroll
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', e => {
+                    e.preventDefault();
+                    document.querySelector(anchor.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+                });
+            });
         });
     </script>
+    <!-- AOS for animations -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+    </script>
 </body>
-
 </html>

@@ -1,2 +1,6 @@
-feat(admin): translate all files in src/admin to English
+feat: update UI with dark mode, responsive design improvements, and enhanced Markdown support
 
+- Refactored all site interfaces with a new design and added dark mode support
+- Updated the Markdown library to the latest version
+- Enabled support for math expressions (LaTeX) in post view
+- Improved mobile responsiveness and interactive UI elements

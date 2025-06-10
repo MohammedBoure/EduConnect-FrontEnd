@@ -1,9 +1,42 @@
+/* Pagination */
 .pagination {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 15px;
-    margin-top: 20px;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.pagination button {
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    background-color: var(--light-gray);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.pagination button:hover {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.pagination button:focus {
+    outline: 2px solid var(--secondary-color);
+    outline-offset: 2px;
+}
+
+.pagination button.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+body.dark-mode .pagination button {
+    background-color: #374151;
+    color: var(--text-dark);
 }
 
 .pagination span {
@@ -11,118 +44,206 @@
     color: var(--text-color);
 }
 
-/* About Section Styles */
+/* About Section */
 .about-section {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: linear-gradient(135deg, #ffffff 50%, #e6e7ee 100%);
     padding: 0;
-    /* Remove padding to blend with container */
-    margin-bottom: 30px;
-    border-radius: 10px;
+    margin-bottom: 40px;
+    border-radius: 12px;
     overflow: hidden;
-    /* Ensure image and content stay within rounded borders */
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow, 0 4px 20px rgba(0, 0, 0, 0.08)); /* Fallback shadow */
+}
+
+body.dark-mode .about-section {
+    background: linear-gradient(135deg, #1f2937 50%, #374151 100%);
 }
 
 .about-image {
     flex: 1;
     min-width: 300px;
-    max-width: 600px;
-    /* Increased max-width for larger image */
+    max-width: 640px;
     width: 100%;
-    margin: 0;
-    /* Remove margin to blend with container */
 }
 
 .about-image img {
     width: 100%;
-    height: 400px;
-    /* Fixed height for larger, consistent appearance */
+    height: 450px;
     object-fit: cover;
-    /* Ensure image covers area without distortion */
-    border-radius: 10px 0 0 10px;
-    /* Rounded only on left side to blend with content */
-    display: block;
-    /* Remove any default spacing */
+    border-radius: 12px 0 0 12px; /* Normalized radius */
+    transform: translateY(-20px);
+    transition: transform 0.5s ease;
+}
+
+.about-section:hover .about-image img {
+    transform: translateY(-10px);
 }
 
 .about-content {
     flex: 2;
     min-width: 300px;
-    padding: 40px;
-    background: #ffffff;
-    /* White background to match typical container styling */
-    border-radius: 0 10px 10px 0;
-    /* Rounded only on right side to blend with image */
+    padding: 50px;
+    background-color: #ffffff;
+    border-radius: 0 12px 12px 0;
+}
+
+body.dark-mode .about-content {
+    background-color: #1f2937;
 }
 
 .about-content h2 {
     font-size: 2.5rem;
-    /* Slightly larger for elegance */
-    color: #2c3e50;
+    color: var(--primary-color);
     margin-bottom: 20px;
     font-weight: 700;
-    text-transform: uppercase;
-    /* Add elegance with uppercase */
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
+}
+
+body.dark-mode .about-content h2 {
+    color: var(--text-dark);
 }
 
 .about-content p {
-    font-size: 1.2rem;
-    /* Slightly larger for readability */
-    color: #34495e;
+    font-size: 1.1rem;
+    color: #4b5563;
     line-height: 1.8;
-    /* Increased line height for elegance */
-    margin-bottom: 25px;
+    margin-bottom: 30px;
+}
+
+body.dark-mode .about-content p {
+    color: #d1d5db;
 }
 
 .about-content .btn-primary {
-    background-color: #3498db;
-    color: white;
-    padding: 12px 24px;
-    /* Slightly larger button */
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: 600;
+    padding: 14px 32px;
     font-size: 1.1rem;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-weight: 600;
 }
 
-.about-content .btn-primary:hover {
-    background-color: #2980b9;
-    transform: translateY(-2px);
-    /* Subtle lift effect for elegance */
+/* --- START: New Mobile Navigation Styles --- */
+.mobile-nav {
+    display: none; /* Hidden on desktop */
+    position: relative; /* For positioning the dropdown */
 }
+
+.mobile-nav .menu-btn button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: var(--text-color);
+    padding: 10px;
+}
+
+body.dark-mode .mobile-nav .menu-btn button {
+    color: var(--text-dark);
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px); /* Position below the button with a small gap */
+    right: 0;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    width: 240px;
+    padding: 8px;
+    z-index: 150; /* Ensure it's above other content */
+    border: 1px solid var(--border-color);
+}
+
+.dropdown-menu.active {
+    display: block;
+}
+
+body.dark-mode .dropdown-menu {
+    background-color: #1f2937;
+    border-color: #4b5563;
+}
+
+.dropdown-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown-menu li {
+    margin: 2px 0;
+}
+
+.dropdown-menu a, .dropdown-menu button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    text-decoration: none;
+    color: var(--text-color);
+    border-radius: 6px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    width: 100%;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+}
+
+body.dark-mode .dropdown-menu a,
+body.dark-mode .dropdown-menu button {
+    color: var(--text-dark);
+}
+
+.dropdown-menu a:hover,
+.dropdown-menu button:hover {
+    background-color: var(--light-gray);
+    color: var(--secondary-color);
+}
+
+body.dark-mode .dropdown-menu a:hover,
+body.dark-mode .dropdown-menu button:hover {
+    background-color: #374151;
+}
+/* --- END: New Mobile Navigation Styles --- */
+
 
 @media (max-width: 768px) {
+    /* --- START: Mobile Navigation Logic --- */
+    /* Hide desktop navigation and show mobile version */
+    #navBar #mainNav {
+        display: none;
+    }
+    .mobile-nav {
+        display: block;
+    }
+    /* --- END: Mobile Navigation Logic --- */
+
+    /* Original responsive styles for About Section */
     .about-section {
         flex-direction: column;
-        border-radius: 10px;
-        /* Maintain rounded corners on mobile */
+        border-radius: 12px;
     }
 
-    .about-image {
+    .about-image { 
         max-width: 100%;
     }
 
     .about-image img {
-        border-radius: 10px 10px 0 0;
-        /* Rounded only on top for mobile */
+        border-radius: 12px 12px 0 0;
         height: 300px;
-        /* Slightly smaller height for mobile */
+        transform: translateY(0);
+        transition: none; /* Disable transform on mobile for simplicity */
     }
 
     .about-content {
-        padding: 20px;
-        border-radius: 0 0 10px 10px;
-        /* Rounded only on bottom for mobile */
+        padding: 30px;
+        border-radius: 0 0 12px 12px;
     }
 
     .about-content h2 {
-        font-size: 1.8rem;
+        font-size: 2rem;
     }
 
     .about-content p {
