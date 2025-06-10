@@ -1,46 +1,46 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل مستخدم جديد</title>
+    <title>Register New User</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="/admin/css/shared_rules.css">
 </head>
 
 <body>
     <div class="container">
-        <h1>تسجيل مستخدم جديد</h1>
+        <h1>Register New User</h1>
         <div id="message" class="message" style="display: none;"></div>
 
         <form id="registerForm">
-            <label for="first_name">الاسم الأول:</label>
+            <label for="first_name">First Name:</label>
             <input type="text" id="first_name" name="first_name" required>
 
-            <label for="last_name">الاسم الأخير:</label>
+            <label for="last_name">Last Name:</label>
             <input type="text" id="last_name" name="last_name" required>
 
-            <label for="email">البريد الإلكتروني:</label>
+            <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
 
-            <label for="password">كلمة المرور (8 أحرف على الأقل):</label>
+            <label for="password">Password (at least 8 characters):</label>
             <input type="password" id="password" name="password" minlength="8" required>
 
-            <label for="department">القسم/التخصص:</label>
+            <label for="department">Department/Specialization:</label>
             <input type="text" id="department" name="department" required>
 
-            <label for="skills">المهارات (مثال: Java, Python):</label>
+            <label for="skills">Skills (e.g., Java, Python):</label>
             <input type="text" id="skills" name="skills" required>
 
-            <label for="photo">رابط الصورة (اختياري):</label>
+            <label for="photo">Photo URL (optional):</label>
             <input type="url" id="photo" name="photo">
 
-            <button type="submit" id="submitBtn">تسجيل</button>
+            <button type="submit" id="submitBtn">Register</button>
         </form>
-        <p>لديك حساب بالفعل؟ <a href="login.html">تسجيل الدخول</a></p>
+        <p>Already have an account? <a href="login.html">Login</a></p>
 
-        <!-- إضافة عنصر النتيجة -->
+        <!-- Add result element -->
         <p id="result"></p>
     </div>
 
@@ -57,7 +57,7 @@
             messageElement.style.display = 'none';
             resultElement.textContent = '';
             submitBtn.disabled = true;
-            submitBtn.textContent = 'جاري التسجيل...';
+            submitBtn.textContent = 'Registering...';
 
             const formData = new FormData(form);
             const userData = {};
@@ -77,28 +77,28 @@
                     const user = result.data;
 
                     messageElement.style.display = 'block';
-                    messageElement.textContent = '✅ تم التسجيل بنجاح! سيتم تحويلك إلى صفحة تسجيل الدخول خلال ثوان...';
+                    messageElement.textContent = '✅ Registration successful! You will be redirected to the login page in a few seconds...';
                     messageElement.style.color = 'green';
 
-                    resultElement.textContent = `الاسم: ${user.first_name} ${user.last_name}\nالبريد الإلكتروني: ${user.email}`;
+                    resultElement.textContent = `Name: ${user.first_name} ${user.last_name}\nEmail: ${user.email}`;
 
-                    // إعادة التوجيه بعد 3 ثوانٍ
+                    // Redirect after 3 seconds
                     setTimeout(() => {
                         window.location.href = 'login.html';
                     }, 3000);
                 } else {
                     messageElement.style.display = 'block';
-                    messageElement.textContent = `❌ خطأ: ${result.error}`;
+                    messageElement.textContent = `❌ Error: ${result.error}`;
                     messageElement.style.color = 'red';
                 }
             } catch (error) {
                 messageElement.style.display = 'block';
-                messageElement.textContent = `❌ خطأ في الاتصال: ${error.message}`;
+                messageElement.textContent = `❌ Connection error: ${error.message}`;
                 messageElement.style.color = 'red';
             }
 
             submitBtn.disabled = false;
-            submitBtn.textContent = 'تسجيل';
+            submitBtn.textContent = 'Register';
         });
     </script>
 </body>

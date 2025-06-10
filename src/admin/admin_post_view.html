@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عرض المنشور</title>
+    <title>View Post</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/admin/css/admin_post_view.css">
     <link rel="stylesheet" href="/admin/css/shared_rules.css">
@@ -11,43 +11,43 @@
 <body>
     <nav>
         <ul>
-            <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
-            <li><a href="admin_users.html"><i class="fas fa-users"></i> إدارة المستخدمين</a></li>
-            <li><a href="admin_posts.html" class="active"><i class="fas fa-file-alt"></i> إدارة المنشورات</a></li>
-            <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a></li>
+            <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="admin_users.html"><i class="fas fa-users"></i> Manage Users</a></li>
+            <li><a href="admin_posts.html" class="active"><i class="fas fa-file-alt"></i> Manage Posts</a></li>
+            <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
     </nav>
 
     <div class="container">
         <div class="header-section">
-            <h1>عرض المنشور</h1>
+            <h1>View Post</h1>
             <div class="tools">
                 <a href="admin_posts.html" class="btn btn-primary">
-                    <i class="fas fa-arrow-right"></i> العودة إلى المنشورات
+                    <i class="fas fa-arrow-left"></i> Back to Posts
                 </a>
             </div>
         </div>
 
         <div id="message" class="message" style="display: none;"></div>
         <div id="loading" class="loading" style="display: none;">
-            <i class="fas fa-spinner"></i> جاري تحميل المنشور...
+            <i class="fas fa-spinner"></i> Loading post...
         </div>
 
         <div id="postContainer" class="post-container" style="display: none;">
             <h2 id="postTitle" class="post-title"></h2>
-            <img id="postImage" class="post-image" src="" alt="صورة المنشور">
+            <img id="postImage" class="post-image" src="" alt="Post image">
             <div id="postContent" class="post-content"></div>
             <div id="postMeta" class="author-info">
-                <img id="authorPhoto" class="author-img" src="" alt="صورة المؤلف">
+                <img id="authorPhoto" class="author-img" src="" alt="Author's photo">
                 <div class="author-details">
                     <div id="authorName" class="author-name"></div>
                     <div id="createdAt" class="author-date"></div>
                 </div>
             </div>
             <div class="post-actions">
-                <button id="viewCommentsBtn" class="btn btn-primary"><i class="fas fa-comments"></i> عرض التعليقات</button>
-                <button id="editPostBtn" class="btn btn-warning"><i class="fas fa-edit"></i> تعديل المنشور</button>
-                <button id="deletePostBtn" class="btn btn-danger"><i class="fas fa-trash"></i> حذف المنشور</button>
+                <button id="viewCommentsBtn" class="btn btn-primary"><i class="fas fa-comments"></i> View Comments</button>
+                <button id="editPostBtn" class="btn btn-warning"><i class="fas fa-edit"></i> Edit Post</button>
+                <button id="deletePostBtn" class="btn btn-danger"><i class="fas fa-trash"></i> Delete Post</button>
             </div>
         </div>
     </div>
@@ -55,39 +55,39 @@
     <div id="viewCommentsModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="viewCommentsModalTitle"><i class="fas fa-comments"></i> تعليقات المنشور</h2>
+                <h2 id="viewCommentsModalTitle"><i class="fas fa-comments"></i> Post Comments</h2>
                 <button type="button" class="close-btn" data-modal-id="viewCommentsModal">×</button>
             </div>
             <div class="modal-body" id="viewCommentsModalBody">
                 <div class="add-comment-section">
-                    <h3><i class="fas fa-comment-medical"></i> إضافة تعليق جديد</h3>
+                    <h3><i class="fas fa-comment-medical"></i> Add New Comment</h3>
                     <form id="addCommentForm" class="add-comment-form">
                         <input type="hidden" id="addCommentPostId" value="">
                         <div>
-                            <label for="addCommentUserId">معرف المستخدم <span style="color: red">*</span></label>
-                            <input type="text" id="addCommentUserId" placeholder="أدخل معرف المستخدم" required>
+                            <label for="addCommentUserId">User ID <span style="color: red">*</span></label>
+                            <input type="text" id="addCommentUserId" placeholder="Enter user ID" required>
                         </div>
                         <div>
-                            <label for="addCommentContent">التعليق <span style="color: red">*</span></label>
-                            <textarea id="addCommentContent" placeholder="اكتب تعليقك هنا..." required></textarea>
+                            <label for="addCommentContent">Comment <span style="color: red">*</span></label>
+                            <textarea id="addCommentContent" placeholder="Write your comment here..." required></textarea>
                         </div>
                         <p id="addCommentError" class="form-error"></p>
-                        <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> إرسال التعليق</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Submit Comment</button>
                     </form>
                 </div>
                 <div id="modalLoading" class="loading-modal" style="display: none;">
-                    <i class="fas fa-spinner"></i> جاري تحميل التعليقات...
+                    <i class="fas fa-spinner"></i> Loading comments...
                 </div>
                 <div id="modalNoComments" class="no-data-modal" style="display: none;">
-                    <p>لا توجد تعليقات لهذا المنشور.</p>
+                    <p>No comments for this post.</p>
                 </div>
                 <table id="modalCommentsTable" style="display: none;">
                     <thead>
                         <tr>
-                            <th width="150">المؤلف</th>
-                            <th>التعليق</th>
-                            <th>تاريخ الإنشاء</th>
-                            <th width="100">إجراءات</th>
+                            <th width="150">Author</th>
+                            <th>Comment</th>
+                            <th>Created Date</th>
+                            <th width="100">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="modalCommentsTbody"></tbody>
@@ -100,7 +100,7 @@
     <div id="editCommentModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2><i class="fas fa-edit"></i> تعديل التعليق</h2>
+                <h2><i class="fas fa-edit"></i> Edit Comment</h2>
                 <button type="button" class="close-btn" data-modal-id="editCommentModal">×</button>
             </div>
             <div class="modal-body">
@@ -108,12 +108,12 @@
                     <input type="hidden" id="editCommentId">
                     <input type="hidden" id="editCommentPostId">
                     <div>
-                        <label for="editContent">محتوى التعليق <span style="color: red">*</span></label>
+                        <label for="editContent">Comment Content <span style="color: red">*</span></label>
                         <textarea id="editContent" rows="5" required></textarea>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> حفظ التعديلات</button>
-                        <button type="button" class="btn btn-secondary close-btn" data-modal-id="editCommentModal"><i class="fas fa-times"></i> إلغاء</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Changes</button>
+                        <button type="button" class="btn btn-secondary close-btn" data-modal-id="editCommentModal"><i class="fas fa-times"></i> Cancel</button>
                     </div>
                 </form>
             </div>
@@ -189,16 +189,16 @@
         function escapeHtml(unsafe) {
             if (!unsafe) return '';
             return unsafe
-                .replace(/&/g, "&")
-                .replace(/</g, "<")
-                .replace(/>/g, ">")
-                .replace(/'/g, "'");
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/'/g, "&#039;");
         }
 
         function formatDate(dateString) {
-            if (!dateString) return 'غير متاح';
+            if (!dateString) return 'Not available';
             try {
-                return new Date(dateString).toLocaleString('ar-EG', {
+                return new Date(dateString).toLocaleString('en-US', {
                     year: 'numeric',
                     month: 'short',
                     day: 'numeric',
@@ -216,7 +216,7 @@
             postId = urlParams.get('id');
         
             if (!postId) {
-                showMessage('message', 'لم يتم تحديد معرف المنشور.', 'error');
+                showMessage('message', 'Post ID not specified.', 'error');
                 loadingDiv.style.display = 'none';
                 return;
             }
@@ -229,21 +229,21 @@
         
             if (result.ok && result.data) {
                 const post = result.data.post || result.data;
-                postTitle.textContent = escapeHtml(post.title) || 'بدون عنوان';
-                postImage.src = post.image || 'https://via.placeholder.com/600x400?text=لا+توجد+صورة';
+                postTitle.textContent = escapeHtml(post.title) || 'No title';
+                postImage.src = post.image || 'https://via.placeholder.com/600x400?text=No+Image';
         
-                // تقسيم المحتوى إلى فقرات بناءً على الفواصل السطرية
-                const paragraphs = (post.content || 'لا يوجد محتوى').split('\n').filter(p => p.trim());
+                // Split content into paragraphs based on line breaks
+                const paragraphs = (post.content || 'No content').split('\n').filter(p => p.trim());
                 postContent.innerHTML = paragraphs
                     .map(paragraph => `<p>${escapeHtml(paragraph)}</p>`)
                     .join('');
         
                 if (post.author) {
                     const fullName = `${post.author.first_name || ''} ${post.author.last_name || ''}`.trim();
-                    authorName.textContent = fullName || 'غير معروف';
-                    authorPhoto.src = post.author.photo || 'https://via.placeholder.com/50?text=مستخدم';
+                    authorName.textContent = fullName || 'Unknown';
+                    authorPhoto.src = post.author.photo || 'https://via.placeholder.com/50?text=User';
                 } else {
-                    authorName.textContent = 'غير معروف';
+                    authorName.textContent = 'Unknown';
                     authorPhoto.style.display = 'none';
                 }
         
@@ -256,25 +256,25 @@
                 editPostBtn.onclick = () => window.location.href = `admin_post_edit.html?id=${post.id}`;
                 deletePostBtn.onclick = () => deletePost(post.id, post.title);
             } else {
-                showMessage('message', `فشل تحميل بيانات المنشور: ${result.error || 'حدث خطأ في تحميل البيانات.'}`, 'error');
+                showMessage('message', `Failed to load post details: ${result.error || 'An error occurred while loading the data.'}`, 'error');
                 postContainer.style.display = 'none';
             }
         }
 
         // Delete Post
         async function deletePost(postId, postTitle) {
-            if (confirm(`هل أنت متأكد من حذف المنشور "${postTitle}"؟`)) {
+            if (confirm(`Are you sure you want to delete the post "${postTitle}"?`)) {
                 loadingDiv.style.display = 'flex';
                 postContainer.style.display = 'none';
                 const result = await apiDeletePost(postId);
                 loadingDiv.style.display = 'none';
                 if (result.ok) {
-                    showMessage('message', `تم حذف المنشور "${postTitle}" بنجاح`, 'success');
+                    showMessage('message', `Post "${postTitle}" deleted successfully`, 'success');
                     setTimeout(() => {
                         window.location.href = 'admin_posts.html';
                     }, 2000);
                 } else {
-                    showMessage('message', `فشل حذف المنشور: ${result.error || 'خطأ غير معروف'}`, 'error');
+                    showMessage('message', `Failed to delete post: ${result.error || 'Unknown error'}`, 'error');
                     postContainer.style.display = 'block';
                 }
             }
@@ -283,7 +283,7 @@
         // Comments Modal Functions
         function openViewCommentsModal(postId) {
             currentModalCommentsPage = 1;
-            viewCommentsModalTitle.innerHTML = `<i class="fas fa-comments"></i> تعليقات المنشور #${postId}`;
+            viewCommentsModalTitle.innerHTML = `<i class="fas fa-comments"></i> Post Comments #${postId}`;
             addCommentPostIdInput.value = postId;
             addCommentUserIdInput.value = '';
             addCommentContentInput.value = '';
@@ -313,7 +313,7 @@
                 renderModalPagination(postId, result.data.page, totalPages);
             } else {
                 modalCommentsTbody.innerHTML = '';
-                modalNoComments.innerHTML = `<p class="text-danger">فشل تحميل التعليقات: ${result.error || 'خطأ غير معروف'}</p>`;
+                modalNoComments.innerHTML = `<p class="text-danger">Failed to load comments: ${result.error || 'Unknown error'}</p>`;
                 modalNoComments.style.display = 'block';
                 modalPaginationDiv.innerHTML = '';
             }
@@ -330,21 +330,21 @@
                     const row = modalCommentsTbody.insertRow();
                     const author = comment.author || {};
                     const photoHtml = author.photo
-                        ? `<img src="${escapeHtml(author.photo)}" alt="صورة المؤلف" class="author-img-sm">`
-                        : `<span style="display:inline-block;width:30px;height:30px;line-height:30px;text-align:center;background:#eee;border-radius:50%;font-size:14px;vertical-align:middle;margin-left:5px;"><i class="fas fa-user"></i></span>`;
+                        ? `<img src="${escapeHtml(author.photo)}" alt="Author's photo" class="author-img-sm">`
+                        : `<span style="display:inline-block;width:30px;height:30px;line-height:30px;text-align:center;background:#eee;border-radius:50%;font-size:14px;vertical-align:middle;margin-right:5px;"><i class="fas fa-user"></i></span>`;
 
                     row.innerHTML = `
                         <td>
                             ${photoHtml}
-                            <span>${escapeHtml(author.first_name || '')} ${escapeHtml(author.last_name || '(غير معروف)')}</span>
+                            <span>${escapeHtml(author.first_name || '')} ${escapeHtml(author.last_name || '(Unknown)')}</span>
                         </td>
                         <td class="comment-content">${escapeHtml(comment.content) || ''}</td>
                         <td>${formatDate(comment.created_at)}</td>
                         <td class="actions">
-                            <button class="btn btn-sm btn-edit modal-edit-comment-btn" data-comment-id="${comment.id}" data-comment-content="${escapeHtml(comment.content)}" title="تعديل التعليق">
+                            <button class="btn btn-sm btn-edit modal-edit-comment-btn" data-comment-id="${comment.id}" data-comment-content="${escapeHtml(comment.content)}" title="Edit Comment">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn btn-sm btn-delete modal-delete-comment-btn" data-comment-id="${comment.id}" title="حذف التعليق">
+                            <button class="btn btn-sm btn-delete modal-delete-comment-btn" data-comment-id="${comment.id}" title="Delete Comment">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </td>
@@ -354,7 +354,7 @@
                 });
             } else {
                 modalCommentsTable.style.display = 'none';
-                modalNoComments.innerHTML = '<p>لا توجد تعليقات لهذا المنشور.</p>';
+                modalNoComments.innerHTML = '<p>No comments for this post.</p>';
                 modalNoComments.style.display = 'block';
             }
         }
@@ -365,20 +365,20 @@
             if (totalPages <= 1) return;
 
             const prevButton = document.createElement('button');
-            prevButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
             prevButton.disabled = currentPage === 1;
-            prevButton.title = 'الصفحة السابقة';
+            prevButton.title = 'Previous Page';
             prevButton.onclick = () => loadPostCommentsForModal(postId, currentPage - 1);
             modalPaginationDiv.appendChild(prevButton);
 
             const pageInfo = document.createElement('span');
-            pageInfo.textContent = `صفحة ${currentPage} من ${totalPages}`;
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
             modalPaginationDiv.appendChild(pageInfo);
 
             const nextButton = document.createElement('button');
-            nextButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
             nextButton.disabled = currentPage >= totalPages;
-            nextButton.title = 'الصفحة التالية';
+            nextButton.title = 'Next Page';
             nextButton.onclick = () => loadPostCommentsForModal(postId, currentPage + 1);
             modalPaginationDiv.appendChild(nextButton);
         }
@@ -391,13 +391,13 @@
             const content = addCommentContentInput.value.trim();
 
             if (!userId) {
-                addCommentError.textContent = 'معرف المستخدم لا يمكن أن يكون فارغًا.';
+                addCommentError.textContent = 'User ID cannot be empty.';
                 addCommentError.style.display = 'block';
                 return;
             }
 
             if (!content) {
-                addCommentError.textContent = 'محتوى التعليق لا يمكن أن يكون فارغًا.';
+                addCommentError.textContent = 'Comment content cannot be empty.';
                 addCommentError.style.display = 'block';
                 return;
             }
@@ -407,7 +407,7 @@
             const submitButton = addCommentForm.querySelector('button[type="submit"]');
             const originalButtonText = submitButton.innerHTML;
             submitButton.disabled = true;
-            submitButton.innerHTML = '<i class="fas fa-spinner"></i> جاري الإرسال...';
+            submitButton.innerHTML = '<i class="fas fa-spinner"></i> Submitting...';
 
             const commentData = {
                 content: content,
@@ -420,12 +420,12 @@
             submitButton.innerHTML = originalButtonText;
 
             if (result.ok) {
-                showMessage('message', 'تم إضافة التعليق بنجاح.', 'success');
+                showMessage('message', 'Comment added successfully.', 'success');
                 addCommentUserIdInput.value = '';
                 addCommentContentInput.value = '';
                 loadPostCommentsForModal(postId, 1);
             } else {
-                addCommentError.textContent = `فشل إضافة التعليق: ${result.error || 'خطأ غير معروف'}`;
+                addCommentError.textContent = `Failed to add comment: ${result.error || 'Unknown error'}`;
                 addCommentError.style.display = 'block';
             }
         });
@@ -450,7 +450,7 @@
             const content = editContentInput.value.trim();
 
             if (!content) {
-                addCommentError.textContent = 'محتوى التعليق لا يمكن أن يكون فارغًا.';
+                addCommentError.textContent = 'Comment content cannot be empty.';
                 addCommentError.style.display = 'block';
                 return;
             }
@@ -459,7 +459,7 @@
             const submitButton = editCommentForm.querySelector('button[type="submit"]');
             const originalButtonText = submitButton.innerHTML;
             submitButton.disabled = true;
-            submitButton.innerHTML = '<i class="fas fa-spinner"></i> جاري الحفظ...';
+            submitButton.innerHTML = '<i class="fas fa-spinner"></i> Saving...';
 
             const result = await apiAdminUpdateComment(commentId, commentData);
 
@@ -468,12 +468,12 @@
 
             if (result.ok) {
                 closeModal('editCommentModal');
-                showMessage('message', 'تم تحديث التعليق بنجاح.', 'success');
+                showMessage('message', 'Comment updated successfully.', 'success');
                 if (postId) {
                     loadPostCommentsForModal(postId, currentModalCommentsPage);
                 }
             } else {
-                addCommentError.textContent = `فشل تحديث التعليق: ${result.error || 'خطأ غير معروف'}`;
+                addCommentError.textContent = `Failed to update comment: ${result.error || 'Unknown error'}`;
                 addCommentError.style.display = 'block';
             }
         });
@@ -483,11 +483,11 @@
             const button = event.currentTarget;
             const commentId = button.dataset.commentId;
 
-            if (confirm(`هل أنت متأكد من حذف التعليق رقم ${commentId}؟`)) {
+            if (confirm(`Are you sure you want to delete comment #${commentId}?`)) {
                 const result = await apiAdminDeleteComment(commentId);
 
                 if (result.ok) {
-                    showMessage('message', `تم حذف التعليق ${commentId} بنجاح.`, 'success');
+                    showMessage('message', `Comment ${commentId} deleted successfully.`, 'success');
                     if (postId) {
                         const currentCommentRows = modalCommentsTbody.rows.length - 1;
                         if (currentCommentRows === 0 && currentModalCommentsPage > 1) {
@@ -497,7 +497,7 @@
                         }
                     }
                 } else {
-                    showMessage('message', `فشل حذف التعليق: ${result.error || 'خطأ غير معروف'}`, 'error');
+                    showMessage('message', `Failed to delete comment: ${result.error || 'Unknown error'}`, 'error');
                 }
             }
         }
@@ -530,7 +530,7 @@
         // Logout
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+            if (confirm('Are you sure you want to log out?')) {
                 logout();
             }
         });

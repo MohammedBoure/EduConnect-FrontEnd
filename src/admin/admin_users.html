@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة المستخدمين</title>
+    <title>Users Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/admin/css/admin_users.css">
     <link rel="stylesheet" href="/admin/css/shared_rules.css">
@@ -13,23 +13,23 @@
 <body>
     <nav>
         <ul>
-            <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
-            <li><a href="admin_users.html" class="active"><i class="fas fa-users"></i> إدارة المستخدمين</a></li>
-            <li><a href="admin_posts.html"><i class="fas fa-file-alt"></i> إدارة المنشورات</a></li>
-            <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a></li>
+            <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="admin_users.html" class="active"><i class="fas fa-users"></i> Users Management</a></li>
+            <li><a href="admin_posts.html"><i class="fas fa-file-alt"></i> Posts Management</a></li>
+            <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
     </nav>
 
     <div class="container">
         <div class="header-section">
-            <h1>إدارة المستخدمين</h1>
+            <h1>Users Management</h1>
             <div class="tools">
                 <div class="search-container">
-                    <input type="text" id="searchInput" placeholder="البحث عن مستخدم...">
+                    <input type="text" id="searchInput" placeholder="Search for a user...">
                     <i class="fas fa-search"></i>
                 </div>
                 <button class="btn btn-primary" id="addUserBtn">
-                    <i class="fas fa-plus"></i> إضافة مستخدم
+                    <i class="fas fa-plus"></i> Add User
                 </button>
             </div>
         </div>
@@ -37,43 +37,43 @@
         <div id="message" class="message" style="display: none;"></div>
 
         <div id="loading" class="loading" style="display: none;">
-            <i class="fas fa-spinner"></i> جاري تحميل المستخدمين...
+            <i class="fas fa-spinner"></i> Loading users...
         </div>
 
         <div class="table-container" id="tableContainer" style="display: none;">
             <table id="usersTable">
                 <thead>
                     <tr>
-                        <th width="60">الصورة</th>
-                        <th width="80">ID User</th>
-                        <th>الاسم</th>
-                        <th>البريد الإلكتروني</th>
-                        <th>القسم</th>
-                        <th>المهارات</th>
-                        <th>الدور</th>
-                        <th width="150">إجراءات</th>
+                        <th width="60">Photo</th>
+                        <th width="80">User ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Skills</th>
+                        <th>Role</th>
+                        <th width="150">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="usersTbody">
-                    <!-- سيتم ملء الصفوف هنا بواسطة JavaScript -->
+                    <!-- Rows will be populated here by JavaScript -->
                 </tbody>
             </table>
         </div>
 
         <div id="noUsers" class="no-data" style="display: none;">
             <i class="fas fa-users-slash"></i>
-            <p>لا يوجد مستخدمون لعرضهم حالياً.</p>
+            <p>No users available to display at the moment.</p>
         </div>
 
         <div id="pagination" class="pagination">
-            <!-- أزرار الترقيم هنا -->
+            <!-- Pagination buttons here -->
         </div>
     </div>
 
     <script src="js/auth.js"></script>
     <script src="js/api.js"></script>
     <script>
-        // حماية الصفحة
+        // Protect the page
         redirectToLoginIfNotAuthenticated();
 
         const usersTbody = document.getElementById('usersTbody');
@@ -89,25 +89,25 @@
         let currentPage = 1;
         const perPage = 10;
         let currentSearchQuery = '';
-        let usersData = []; // تخزين بيانات المستخدمين للبحث المحلي
+        let usersData = []; // Store user data for local search
 
-        // إضافة مستخدم جديد
+        // Add new user
         addUserBtn.addEventListener('click', () => {
             window.location.href = 'register.html';
         });
 
-        // البحث عن المستخدمين
+        // Search for users
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.trim().toLowerCase();
             currentSearchQuery = query;
         
             if (usersData.length > 0) {
-                // تنفيذ البحث المحلي
+                // Perform local search
                 const filteredUsers = usersData.filter(user => {
                     const fullName = `${user.first_name || ''} ${user.last_name || ''}`.toLowerCase();
                     const email = (user.email || '').toLowerCase();
                     const department = (user.department || '').toLowerCase();
-                    const userId = user.id.toString(); // تحويل ID إلى نص للبحث
+                    const userId = user.id.toString(); // Convert ID to string for search
         
                     return fullName.includes(query) ||
                         email.includes(query) ||
@@ -134,18 +134,18 @@
 
             if (result.ok && result.data.users) {
                 const users = result.data.users;
-                usersData = users; // تخزين البيانات للبحث المحلي
+                usersData = users; // Store data for local search
                 renderUsers(users);
                 renderPagination(result.data.page, result.data.pages);
             } else {
-                showMessage(`فشل تحميل المستخدمين: ${result.error}`, 'error');
+                showMessage(`Failed to load users: ${result.error}`, 'error');
                 tableContainer.style.display = 'none';
                 noUsersP.style.display = 'block';
             }
         }
 
         function renderUsers(users) {
-            usersTbody.innerHTML = ''; // مسح الصفوف القديمة
+            usersTbody.innerHTML = ''; // Clear old rows
         
             if (users.length > 0) {
                 tableContainer.style.display = 'block';
@@ -155,7 +155,7 @@
                     const row = usersTbody.insertRow();
                     row.classList.add('fade-in');
         
-                    // تحويل المهارات إلى نص أو عناصر HTML
+                    // Convert skills to text or HTML elements
                     let skillsHtml = '';
                     if (Array.isArray(user.skills) && user.skills.length > 0) {
                         skillsHtml = '<div class="skill-tags">';
@@ -167,7 +167,7 @@
                         skillsHtml = '<span class="text-muted">-</span>';
                     }
         
-                    // تحديد لون الدور
+                    // Determine role color
                     let roleClass = 'role-user';
                     if (user.role === 'admin') {
                         roleClass = 'role-admin';
@@ -175,9 +175,9 @@
                         roleClass = 'role-editor';
                     }
         
-                    // تحضير صورة المستخدم
+                    // Prepare user photo
                     const photoHtml = user.photo
-                        ? `<img src="${user.photo}" alt="صورة ${user.first_name}">`
+                        ? `<img src="${user.photo}" alt="Photo of ${user.first_name}">`
                         : `<div style="width:40px;height:40px;border-radius:50%;background:#ddd;display:flex;align-items:center;justify-content:center;color:#888;">
                             <i class="fas fa-user"></i>
                            </div>`;
@@ -189,15 +189,15 @@
                         <td><a href="mailto:${user.email}">${user.email || ''}</a></td>
                         <td>${user.department || '<span class="text-muted">-</span>'}</td>
                         <td>${skillsHtml}</td>
-                        <td><span class="user-role ${roleClass}">${user.role || 'مستخدم'}</span></td>
+                        <td><span class="user-role ${roleClass}">${user.role || 'User'}</span></td>
                         <td class="actions">
-                            <button class="btn btn-sm btn-message" onclick="messageUser(${user.id})" title="مراسلة">
+                            <button class="btn btn-sm btn-message" onclick="messageUser(${user.id})" title="Message">
                                 <i class="fas fa-envelope"></i>
                             </button>
-                            <button class="btn btn-sm btn-edit" onclick="editUser(${user.id})" title="تعديل">
+                            <button class="btn btn-sm btn-edit" onclick="editUser(${user.id})" title="Edit">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn btn-sm btn-delete" onclick="deleteUser(${user.id}, '${user.first_name} ${user.last_name}')" title="حذف">
+                            <button class="btn btn-sm btn-delete" onclick="deleteUser(${user.id}, '${user.first_name} ${user.last_name}')" title="Delete">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </td>
@@ -210,7 +210,7 @@
         }
 
         function renderPagination(currentPage, totalPages) {
-            paginationDiv.innerHTML = ''; // مسح الأزرار القديمة
+            paginationDiv.innerHTML = ''; // Clear old buttons
 
             if (totalPages <= 1) {
                 paginationDiv.style.display = 'none';
@@ -219,15 +219,15 @@
 
             paginationDiv.style.display = 'flex';
 
-            // زر السابق
+            // Previous button
             const prevButton = document.createElement('button');
-            prevButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
             prevButton.disabled = currentPage === 1;
-            prevButton.title = 'الصفحة السابقة';
+            prevButton.title = 'Previous page';
             prevButton.onclick = () => loadUsers(currentPage - 1, currentSearchQuery);
             paginationDiv.appendChild(prevButton);
 
-            // أزرار الصفحات
+            // Page buttons
             let startPage = Math.max(1, currentPage - 2);
             let endPage = Math.min(totalPages, startPage + 4);
 
@@ -243,18 +243,18 @@
                 paginationDiv.appendChild(pageButton);
             }
 
-            // زر التالي
+            // Next button
             const nextButton = document.createElement('button');
-            nextButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
             nextButton.disabled = currentPage >= totalPages;
-            nextButton.title = 'الصفحة التالية';
+            nextButton.title = 'Next page';
             nextButton.onclick = () => loadUsers(currentPage + 1, currentSearchQuery);
             paginationDiv.appendChild(nextButton);
 
-            // إضافة نص عدد الصفحات
+            // Add page count text
             const pageInfo = document.createElement('span');
-            pageInfo.textContent = `${currentPage} من ${totalPages}`;
-            pageInfo.style.marginRight = '10px';
+            pageInfo.textContent = `${currentPage} of ${totalPages}`;
+            pageInfo.style.marginLeft = '10px';
             paginationDiv.appendChild(pageInfo);
         }
 
@@ -276,7 +276,7 @@
             messageDiv.innerHTML = icon + text;
             messageDiv.style.display = 'flex';
 
-            // إخفاء الرسالة بعد 5 ثوانٍ
+            // Hide message after 5 seconds
             setTimeout(() => {
                 messageDiv.style.display = 'none';
             }, 5000);
@@ -295,33 +295,33 @@
         }
 
         async function deleteUser(userId, userName) {
-            if (confirm(`هل أنت متأكد من حذف المستخدم "${userName}"؟`)) {
+            if (confirm(`Are you sure you want to delete the user "${userName}"?`)) {
                 showLoading(true);
                 const result = await apiDeleteUser(userId);
                 showLoading(false);
 
                 if (result.ok) {
-                    showMessage(`تم حذف المستخدم ${userName} بنجاح`, 'success');
+                    showMessage(`User ${userName} deleted successfully`, 'success');
                     loadUsers(currentPage, currentSearchQuery);
                 } else {
-                    showMessage(`فشل حذف المستخدم: ${result.error}`, 'error');
+                    showMessage(`Failed to delete user: ${result.error}`, 'error');
                 }
             }
         }
 
-        // تسجيل الخروج
+        // Logout
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+            if (confirm('Are you sure you want to log out?')) {
                 logout();
             }
         });
 
-        // تحميل المستخدمين عند تحميل الصفحة
+        // Load users on page load
         document.addEventListener('DOMContentLoaded', () => {
             loadUsers(currentPage);
 
-            // تحديد الرابط النشط في القائمة
+            // Highlight active link in navigation
             const navLinks = document.querySelectorAll('nav a');
             navLinks.forEach(link => {
                 if (link.href.includes(window.location.pathname)) {

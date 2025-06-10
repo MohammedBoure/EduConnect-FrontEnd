@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduConnect - تعديل المنشور</title>
+    <title>EduConnect - Edit Post</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/admin/css/admin_post_edit.css">
     <link rel="stylesheet" href="/admin/css/shared_rules.css">
@@ -11,37 +11,37 @@
 <body>
     <nav>
         <ul>
-            <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
-            <li><a href="admin_users.html"><i class="fas fa-users"></i> إدارة المستخدمين</a></li>
-            <li><a href="admin_posts.html" class="active"><i class="fas fa-file-alt"></i> إدارة المنشورات</a></li>
-            <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a></li>
+            <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="admin_users.html"><i class="fas fa-users"></i> Manage Users</a></li>
+            <li><a href="admin_posts.html" class="active"><i class="fas fa-file-alt"></i> Manage Posts</a></li>
+            <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
     </nav>
 
     <div class="container">
         <div class="header-section">
-            <h1>تعديل المنشور</h1>
+            <h1>Edit Post</h1>
         </div>
 
         <div id="message" class="message" style="display: none;"></div>
-        <div id="loading" class="loading"><i class="fas fa-spinner"></i> جاري تحميل بيانات المنشور...</div>
+        <div id="loading" class="loading"><i class="fas fa-spinner"></i> Loading post details...</div>
 
         <div id="postMeta" class="post-meta" style="display: none;">
-            <p><strong>الكاتب:</strong> <span id="authorName"></span></p>
-            <p><strong>تاريخ النشر:</strong> <span id="createdAt"></span></p>
-            <img id="authorPhoto" src="" alt="صورة الكاتب">
+            <p><strong>Author:</strong> <span id="authorName"></span></p>
+            <p><strong>Published Date:</strong> <span id="createdAt"></span></p>
+            <img id="authorPhoto" src="" alt="Author's photo">
         </div>
 
         <form id="editPostForm" style="display: none;">
             <input type="hidden" id="post_id" name="id">
-            <label for="title">العنوان:</label>
+            <label for="title">Title:</label>
             <input type="text" id="title" name="title" required>
-            <label for="content">المحتوى:</label>
+            <label for="content">Content:</label>
             <textarea id="content" name="content" rows="6" required></textarea>
-            <label for="image">رابط الصورة:</label>
+            <label for="image">Image URL:</label>
             <input type="url" id="image" name="image">
-            <button type="submit" id="submitBtn">حفظ التغييرات</button>
-            <a href="admin_posts.html"><button type="button">إلغاء</button></a>
+            <button type="submit" id="submitBtn">Save Changes</button>
+            <a href="admin_posts.html"><button type="button">Cancel</button></a>
         </form>
     </div>
 
@@ -76,7 +76,7 @@
 
         async function loadPostDetails() {
             if (!postId) {
-                showMessage('message', 'لم يتم تحديد معرف المنشور.', 'error');
+                showMessage('message', 'Post ID not specified.', 'error');
                 loadingDiv.style.display = 'none';
                 return;
             }
@@ -99,23 +99,23 @@
 
                 if (post.author) {
                     const fullName = `${post.author.first_name || ''} ${post.author.last_name || ''}`.trim();
-                    authorName.textContent = fullName || 'غير معروف';
+                    authorName.textContent = fullName || 'Unknown';
                     authorPhoto.src = post.author.photo || 'default-profile.png';
                 } else {
-                    authorName.textContent = 'غير معروف';
+                    authorName.textContent = 'Unknown';
                     authorPhoto.style.display = 'none';
                 }
 
                 if (post.created_at) {
                     const date = new Date(post.created_at);
-                    createdAt.textContent = date.toLocaleString('ar-EG');
+                    createdAt.textContent = date.toLocaleString('en-US');
                 } else {
-                    createdAt.textContent = 'غير متاح';
+                    createdAt.textContent = 'Not available';
                 }
 
                 postMetaDiv.style.display = 'block';
             } else {
-                showMessage('message', `فشل تحميل بيانات المنشور: ${result.error || 'حدث خطأ في تحميل البيانات.'}`, 'error');
+                showMessage('message', `Failed to load post details: ${result.error || 'An error occurred while loading the data.'}`, 'error');
             }
         }
 
@@ -123,7 +123,7 @@
             event.preventDefault();
             hideMessage('message');
             submitBtn.disabled = true;
-            submitBtn.textContent = 'جاري الحفظ...';
+            submitBtn.textContent = 'Saving...';
 
             const formData = new FormData(form);
             const updatedData = {
@@ -136,18 +136,18 @@
             const result = await apiUpdatePost(currentPostId, updatedData);
 
             if (result.ok) {
-                showMessage('message', 'تم تحديث المنشور بنجاح!', 'success');
+                showMessage('message', 'Post updated successfully!', 'success');
             } else {
-                showMessage('message', `فشل تحديث المنشور: ${result.error}`, 'error');
+                showMessage('message', `Failed to update post: ${result.error}`, 'error');
             }
 
             submitBtn.disabled = false;
-            submitBtn.textContent = 'حفظ التغييرات';
+            submitBtn.textContent = 'Save Changes';
         });
 
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+            if (confirm('Are you sure you want to log out?')) {
                 logout();
             }
         });

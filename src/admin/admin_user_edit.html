@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduConnect - تعديل بيانات المستخدم</title>
+    <title>EduConnect - Edit User Details</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/admin/css/admin_user_edit.css">
     <link rel="stylesheet" href="/admin/css/shared_rules.css">
@@ -11,43 +11,43 @@
 <body>
     <nav>
         <ul>
-            <li><a href="index.html"><i class="fas fa-home"></i> الرئيسية</a></li>
-            <li><a href="admin_users.html" class="active"><i class="fas fa-users"></i> إدارة المستخدمين</a></li>
-            <li><a href="admin_posts.html"><i class="fas fa-file-alt"></i> إدارة المنشورات</a></li>
-            <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a></li>
+            <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="admin_users.html" class="active"><i class="fas fa-users"></i> Users Management</a></li>
+            <li><a href="admin_posts.html"><i class="fas fa-file-alt"></i> Posts Management</a></li>
+            <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
     </nav>
 
     <div class="container">
         <div class="header-section">
-            <h1>تعديل بيانات المستخدم</h1>
+            <h1>Edit User Details</h1>
         </div>
 
         <div id="message" class="message" style="display: none;"></div>
-        <div id="loading" class="loading"><i class="fas fa-spinner"></i> جاري تحميل بيانات المستخدم...</div>
+        <div id="loading" class="loading"><i class="fas fa-spinner"></i> Loading user details...</div>
 
         <form id="editUserForm" style="display: none;">
             <input type="hidden" id="user_id" name="id">
-            <label for="first_name">الاسم الأول:</label>
+            <label for="first_name">First Name:</label>
             <input type="text" id="first_name" name="first_name" required>
-            <label for="last_name">الاسم الأخير:</label>
+            <label for="last_name">Last Name:</label>
             <input type="text" id="last_name" name="last_name" required>
-            <label for="email">البريد الإلكتروني:</label>
+            <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
-            <label for="department">القسم/التخصص:</label>
+            <label for="department">Department/Specialization:</label>
             <input type="text" id="department" name="department" required>
-            <label for="skills">المهارات (مثال: Java, Python):</label>
-            <input type="text" id="skills" name="skills" placeholder="أدخل المهارات مفصولة بفواصل" required>
-            <label for="photo">رابط الصورة:</label>
+            <label for="skills">Skills (e.g., Java, Python):</label>
+            <input type="text" id="skills" name="skills" placeholder="Enter skills separated by commas" required>
+            <label for="photo">Photo URL:</label>
             <input type="url" id="photo" name="photo">
-            <label for="role">الدور:</label>
+            <label for="role">Role:</label>
             <select id="role" name="role" required>
-                <option value="user">مستخدم</option>
-                <option value="admin">مشرف</option>
-                <option value="editor">محرر</option>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+                <option value="editor">Editor</option>
             </select>
-            <button type="submit" id="submitBtn">حفظ التغييرات</button>
-            <a href="admin_users.html"><button type="button">إلغاء</button></a>
+            <button type="submit" id="submitBtn">Save Changes</button>
+            <a href="admin_users.html"><button type="button">Cancel</button></a>
         </form>
     </div>
 
@@ -82,7 +82,7 @@
 
         async function loadUserDetails() {
             if (!userId) {
-                showMessage('message', 'لم يتم تحديد معرف المستخدم.', 'error');
+                showMessage('message', 'No user ID specified.', 'error');
                 loadingDiv.style.display = 'none';
                 return;
             }
@@ -103,7 +103,7 @@
                 document.getElementById('role').value = user.role || 'user';
                 form.style.display = 'block';
             } else {
-                showMessage('message', `فشل تحميل بيانات المستخدم: ${result.error}`, 'error');
+                showMessage('message', `Failed to load user details: ${result.error}`, 'error');
             }
         }
 
@@ -126,33 +126,33 @@
         
             // Client-side validation
             if (!updatedData.email || !/^\S+@\S+\.\S+$/.test(updatedData.email)) {
-                showMessage('message', 'الرجاء إدخال بريد إلكتروني صالح', 'error');
+                showMessage('message', 'Please enter a valid email address.', 'error');
                 return;
             }
             if (!updatedData.first_name || !updatedData.last_name) {
-                showMessage('message', 'الرجاء إدخال الاسم الأول واسم العائلة', 'error');
+                showMessage('message', 'Please enter both first name and last name.', 'error');
                 return;
             }
         
             submitBtn.disabled = true;
-            submitBtn.textContent = 'جاري الحفظ...';
+            submitBtn.textContent = 'Saving...';
         
             const currentUserId = formData.get('id');
             const result = await apiUpdateUser(currentUserId, updatedData);
         
             submitBtn.disabled = false;
-            submitBtn.textContent = 'حفظ';
+            submitBtn.textContent = 'Save Changes';
         
             if (result.ok) {
-                showMessage('message', 'تم تحديث المستخدم بنجاح', 'success');
+                showMessage('message', 'User updated successfully.', 'success');
             } else {
-                showMessage('message', `فشل تحديث المستخدم: ${result.error}`, 'error');
+                showMessage('message', `Failed to update user: ${result.error}`, 'error');
             }
         });
 
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+            if (confirm('Are you sure you want to log out?')) {
                 logout();
             }
         });

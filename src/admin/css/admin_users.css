@@ -1,6 +1,6 @@
-/* الشريط العلوي */
-/* الحاوية الرئيسية */
-/* العنوان والأدوات */
+/* Top Bar */
+/* Main Container */
+/* Header and Tools */
 .header-section {
   display: flex;
   justify-content: space-between;
@@ -8,103 +8,103 @@
   margin-bottom: 2rem;
   flex-wrap: wrap;
   gap: 1rem;
-  }
+}
 .tools {
   display: flex;
   gap: 0.5rem;
-  }
+}
 .search-container {
   position: relative;
-  margin-left: 1rem;
-  }
+  margin-right: 1rem; /* Changed from margin-left to margin-right for LTR */
+}
 .search-container input {
-  padding: 0.6rem 2.5rem 0.6rem 1rem;
+  padding: 0.6rem 1rem 0.6rem 2.5rem; /* Adjusted padding for LTR */
   border: 1px solid #ddd;
   border-radius: 50px;
   width: 250px;
   font-size: 0.9rem;
   transition: all 0.3s;
-  }
-/* الرسائل */
-/* التحميل */
+}
+/* Messages */
+/* Loading */
 @keyframes spin {
   from {
     transform: rotate(0deg);
-    } to {
+  } to {
     transform: rotate(360deg);
-    }
   }
-/* جدول المستخدمين */
+}
+/* Users Table */
 .table-container {
   background-color: white;
   border-radius: 8px;
   box-shadow: var(--shadow);
   overflow: hidden;
   margin-bottom: 1.5rem;
-  }
+}
 table {
   width: 100%;
   border-collapse: collapse;
-  }
+}
 thead {
   background-color: var(--light-color);
   border-bottom: 2px solid #ddd;
-  }
+}
 th {
   padding: 1rem;
   font-weight: 600;
-  text-align: right;
+  text-align: left; /* Changed from text-align: right for LTR */
   color: var(--dark-color);
-  }
+}
 td {
   padding: 1rem;
   border-bottom: 1px solid #eee;
   vertical-align: middle;
-  }
+}
 tr:hover {
   background-color: rgba(52, 152, 219, 0.05);
-  }
+}
 td.actions {
   display: flex;
   gap: 0.5rem;
-  justify-content: flex-end;
-  }
-/* صور المستخدمين */
+  justify-content: flex-start; /* Changed from flex-end for LTR */
+}
+/* User Photos */
 td img {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--light-color);
-  }
-/* أزرار الإجراءات */
+}
+/* Action Buttons */
 .btn-sm {
   padding: 0.3rem 0.6rem;
   font-size: 0.85rem;
   border-radius: 3px;
-  }
+}
 .btn-edit {
   background-color: var(--secondary-color);
   color: white;
-  }
+}
 .btn-edit:hover {
   background-color: #2980b9;
-  }
+}
 .btn-message {
   background-color: var(--success-color);
   color: white;
-  }
+}
 .btn-message:hover {
   background-color: #27ae60;
-  }
-/* الترقيم */
+}
+/* Pagination */
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
   margin-top: 1.5rem;
-  }
+}
 .pagination button {
   padding: 0.5rem 1rem;
   border: 1px solid #ddd;
@@ -113,87 +113,87 @@ td img {
   cursor: pointer;
   border-radius: 4px;
   transition: all 0.3s;
-  }
+}
 .pagination span {
   color: var(--text-color);
   font-weight: 500;
-  }
-/* حالة عدم وجود مستخدمين */
+}
+/* No Users State */
 .no-data {
   text-align: center;
   padding: 3rem 1rem;
   background-color: white;
   border-radius: 8px;
   box-shadow: var(--shadow);
-  }
+}
 .no-data p {
   color: #777;
   font-size: 1.1rem;
-  }
-/* كلاسات للنص */
-/* الإستجابة للشاشات المختلفة */
+}
+/* Text Classes */
+/* Responsive Design */
 @media (max-width: 992px) {
   .search-container input {
     width: 200px;
-    }
   }
+}
 @media (max-width: 768px) {
   .header-section {
     flex-direction: column;
     align-items: flex-start;
-    }
+  }
   .tools {
     width: 100%;
     justify-content: space-between;
-    }
+  }
   .search-container {
-    margin-left: 0;
+    margin-right: 0; /* Changed from margin-left to margin-right for LTR */
     width: 100%;
-    }
+  }
   .search-container input {
     width: 100%;
-    }
+  }
   table {
     display: block;
     overflow-x: auto;
-    }
+  }
   th, td {
     min-width: 120px;
-    }
   }
+}
 @media (max-width: 576px) {
   nav ul {
     flex-wrap: wrap;
-    }
   }
-/* تنسيقات إضافية للمهارات */
+}
+/* Additional Skill Styling */
 .skill-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 0.3rem;
-  }
+}
 .skill-tag {
   background-color: #f0f0f0;
   padding: 0.1rem 0.5rem;
   border-radius: 20px;
   font-size: 0.8rem;
   display: inline-block;
-  }
+}
 th:nth-child(2), td:nth-child(2) {
   text-align: center;
   font-weight: 500;
   color: var(--dark-color);
-  }
-/* تأثيرات متحركة */
+}
+/* Animation Effects */
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(-10px);
-    } to {
+  } to {
     opacity: 1;
     transform: translateY(0);
-    }
   }
+}
 .fade-in {
   animation: fadeIn 0.3s ease;
-  }
+}

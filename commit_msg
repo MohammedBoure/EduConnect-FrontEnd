@@ -1,1 +1,2 @@
-Remove ProjectLens folder, update README, and add .gitignore
+feat(admin): translate all files in src/admin to English
+

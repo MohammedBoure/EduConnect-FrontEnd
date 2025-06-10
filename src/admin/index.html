@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduConnect - لوحة التحكم</title>
+    <title>EduConnect - Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/admin/css/index.css">
     <link rel="stylesheet" href="/admin/css/shared_rules.css">
@@ -13,21 +13,21 @@
 <body>
     <nav>
         <ul>
-            <li><a href="index.html" class="active"><i class="fas fa-home"></i> الرئيسية</a></li>
-            <li><a href="admin_users.html"><i class="fas fa-users"></i> إدارة المستخدمين</a></li>
-            <li><a href="admin_posts.html"><i class="fas fa-file-alt"></i> إدارة المنشورات</a></li>
-            <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a></li>
+            <li><a href="index.html" class="active"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="admin_users.html"><i class="fas fa-users"></i> Users Management</a></li>
+            <li><a href="admin_posts.html"><i class="fas fa-file-alt"></i> Posts Management</a></li>
+            <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
     </nav>
 
     <div class="container">
         <div class="header-section">
-            <h1>لوحة تحكم EduConnect</h1>
+            <h1>EduConnect Dashboard</h1>
         </div>
 
         <div id="message" class="message" style="display: none;"></div>
         <div id="loading" class="loading" style="display: none;">
-            <i class="fas fa-spinner"></i> جاري تحميل معلومات المستخدم...
+            <i class="fas fa-spinner"></i> Loading user information...
         </div>
 
         <div id="userInfo" class="user-profile-container" style="display: none;"></div>
@@ -45,7 +45,7 @@
 
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+            if (confirm('Are you sure you want to log out?')) {
                 logout();
             }
         });
@@ -69,11 +69,11 @@
         document.addEventListener('DOMContentLoaded', async () => {
             showLoading(true);
             const userId = getUserId();
-            console.log('Retrieved userId:', userId); // للتأكد من القيمة
+            console.log('Retrieved userId:', userId); // For debugging
             if (!userId) {
                 console.error('No userId found in localStorage');
                 showLoading(false);
-                showMessage('لم يتم العثور على معرف المستخدم. يرجى تسجيل الدخول.', 'error');
+                showMessage('No user ID found. Please log in.', 'error');
                 setTimeout(() => {
                     window.location.href = 'login.html';
                 }, 2000);
@@ -91,35 +91,35 @@
                 if (user.role === 'admin') roleClass = 'role-admin';
                 else if (user.role === 'editor') roleClass = 'role-editor';
                 const photoHtml = user.photo
-                    ? `<img src="${user.photo}" alt="صورة ${user.first_name}" class="user-photo">`
+                    ? `<img src="${user.photo}" alt="Photo of ${user.first_name}" class="user-photo">`
                     : `<div class="user-photo" style="background:#ddd;display:flex;align-items:center;justify-content:center;color:#888;"><i class="fas fa-user"></i></div>`;
                 userInfoDiv.innerHTML = `
                     <div class="user-profile-header">
                         <div class="user-photo-container">${photoHtml}</div>
                         <div class="user-name-role">
                             <h2 class="user-name">${user.first_name || ''} ${user.last_name || ''}</h2>
-                            <span class="user-role ${roleClass}">${user.role || 'مستخدم'}</span>
+                            <span class="user-role ${roleClass}">${user.role || 'User'}</span>
                         </div>
-                        <a href="admin_user_edit.html?id=${user.id}"><button class="edit-profile-btn"><i class="fas fa-edit"></i> تعديل الملف الشخصي</button></a>
+                        <a href="admin_user_edit.html?id=${user.id}"><button class="edit-profile-btn"><i class="fas fa-edit"></i> Edit Profile</button></a>
                     </div>
                     <div class="user-details">
                         <div class="user-detail-item">
-                            <div class="detail-label">البريد الإلكتروني</div>
+                            <div class="detail-label">Email</div>
                             <div class="detail-value"><a href="mailto:${user.email}">${user.email || '-'}</a></div>
                         </div>
                         <div class="user-detail-item">
-                            <div class="detail-label">القسم</div>
+                            <div class="detail-label">Department</div>
                             <div class="detail-value">${user.department || '-'}</div>
                         </div>
                         <div class="user-detail-item">
-                            <div class="detail-label">المهارات</div>
+                            <div class="detail-label">Skills</div>
                             <div class="detail-value skills-container">${skillsHtml}</div>
                         </div>
                     </div>
                 `;
                 userInfoDiv.style.display = 'block';
             } else {
-                showMessage(`فشل تحميل معلومات المستخدم: ${result.error}`, 'error');
+                showMessage(`Failed to load user information: ${result.error}`, 'error');
             }
         });
     </script>
