@@ -135,11 +135,13 @@
         if (themeToggleDesktop) themeToggleDesktop.addEventListener('click', toggleTheme);
         // --- END: NAVIGATION AND THEME LOGIC ---
 
-        // --- START: MESSENGER PAGE LOGIC (REVISED AND CORRECTED) ---
+        // --- START: MESSENGER PAGE LOGIC ---
         let currentRecipientId = null;
         let currentPage = 1;
         let totalPages = 1;
         let isLoadingMessages = false;
+        let lastMessageId = null; // Store the ID of the last message fetched
+        let syncInterval = null; // Store the synchronization interval ID
         
         const contactsPanel = document.getElementById('contactsPanel');
         const messengerContainer = document.getElementById('messengerContainer');
@@ -188,8 +190,15 @@
         }
 
         async function selectContact(recipientId, firstName, lastName, photo) {
+            // Stop any existing synchronization
+            if (syncInterval) {
+                clearInterval(syncInterval);
+                syncInterval = null;
+            }
+            
             currentRecipientId = recipientId;
             isLoadingMessages = false;
+            lastMessageId = null; // Reset last message ID
 
             document.querySelectorAll('.contact-item.active').forEach(c => c.classList.remove('active'));
             const contactItems = document.querySelectorAll('.contact-item');
@@ -208,26 +217,33 @@
                 <img src="${photo}" alt="${firstName} avatar" class="chat-header-avatar">
                 <span class="chat-header-name">${firstName} ${lastName}</span>
             `;
-            document.getElementById('mobileBackToContacts').addEventListener('click', () => { messengerContainer.classList.remove('chat-active'); });
+            document.getElementById('mobileBackToContacts').addEventListener('click', () => { 
+                messengerContainer.classList.remove('chat-active');
+                // Stop synchronization when returning to contacts list
+                if (syncInterval) {
+                    clearInterval(syncInterval);
+                    syncInterval = null;
+                }
+            });
             
             document.getElementById('chatHeader').style.display = 'flex';
             document.getElementById('chatInputArea').style.display = 'flex';
             
-            // KEY CHANGE: Load the very last page of messages first.
+            // Load initial messages
             await loadInitialMessages();
+            
+            // Start periodic synchronization
+            syncInterval = setInterval(syncMessages, 3000);
         }
         
-        // KEY CHANGE: New function to find the last page and load it.
         async function loadInitialMessages() {
             const chatMessages = document.getElementById('chatMessages');
             chatMessages.innerHTML = `<div class="loading-spinner"><div class="spinner"></div></div>`;
 
-            // First, call page 1 just to get the total number of pages
             try {
                 const metaResult = await apiGetMessages(currentRecipientId, 1);
                 if (metaResult.ok && metaResult.data) {
                     totalPages = metaResult.data.pages || 1;
-                    // Now, load the actual last page
                     await loadMessages(totalPages, true);
                 } else {
                     chatMessages.innerHTML = `<div class="placeholder-view"><i class="fas fa-exclamation-triangle"></i><h3>Error</h3><p>Could not load conversation.</p></div>`;
@@ -257,10 +273,15 @@
                     const messages = result.data.messages || result.data;
                     currentPage = result.data.page || 1;
 
+                    // Update lastMessageId if there are messages
+                    if (messages.length > 0) {
+                        lastMessageId = Math.max(...messages.map(msg => msg.id));
+                    }
+
                     const currentUserId = getUserId();
                     const messagesHtml = messages.map(msg => {
                         const type = msg.sender_id === currentUserId ? 'sent' : 'received';
-                        const sanitizedContent = msg.content.replace(/</g, "<").replace(/>/g, ">");
+                        const sanitizedContent = msg.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
                         return `
                         <div class="message-bubble ${type}">
                             <p>${sanitizedContent}</p>
@@ -283,6 +304,47 @@
                 isLoadingMessages = false;
             }
         }
+
+        async function syncMessages() {
+            if (!currentRecipientId || isLoadingMessages) return;
+
+            try {
+                // Fetch only new messages (after lastMessageId)
+                const result = await apiGetMessages(currentRecipientId, 1, lastMessageId);
+                if (result.ok && result.data) {
+                    const messages = result.data.messages || result.data;
+                    if (messages.length === 0) return; // No new messages
+
+                    const chatMessages = document.getElementById('chatMessages');
+                    const wasScrolledToBottom = chatMessages.scrollTop + chatMessages.clientHeight >= chatMessages.scrollHeight - 10;
+
+                    const currentUserId = getUserId();
+                    const messagesHtml = messages
+                        .filter(msg => msg.id > lastMessageId) // Only new messages
+                        .map(msg => {
+                            const type = msg.sender_id === currentUserId ? 'sent' : 'received';
+                            const sanitizedContent = msg.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                            return `
+                            <div class="message-bubble ${type}">
+                                <p>${sanitizedContent}</p>
+                                <div class="message-meta">${new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                            </div>`;
+                        }).join('');
+
+                    if (messagesHtml) {
+                        chatMessages.insertAdjacentHTML('beforeend', messagesHtml);
+                        // Update lastMessageId
+                        lastMessageId = Math.max(...messages.map(msg => msg.id));
+                        // Scroll to bottom only if user is at the end of the conversation
+                        if (wasScrolledToBottom) {
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("Error syncing messages:", error);
+            }
+        }
         
         async function sendMessage() {
             if (!currentRecipientId) return;
@@ -296,7 +358,7 @@
                     const chatMessages = document.getElementById('chatMessages');
                     const messageHtml = `
                         <div class="message-bubble sent">
-                            <p>${content.replace(/</g, "<").replace(/>/g, ">")}</p>
+                            <p>${content.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
                             <div class="message-meta">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
                         </div>`;
                     chatMessages.insertAdjacentHTML('beforeend', messageHtml);
@@ -312,7 +374,6 @@
             }
         }
         
-        // KEY CHANGE: The condition now checks if we can go to a PREVIOUS page.
         function handleScroll() {
             const messagesDiv = document.getElementById('chatMessages');
             if (messagesDiv.scrollTop === 0 && currentPage > 1 && !isLoadingMessages) {
@@ -331,6 +392,11 @@
         const debouncedSearch = debounce((e) => loadUsers(e.target.value.trim()), 300);
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Stop any existing synchronization
+            if (syncInterval) {
+                clearInterval(syncInterval);
+                syncInterval = null;
+            }
             applyTheme(localStorage.getItem('theme') || 'light');
             updateNav();
             if (redirectToLoginIfNotAuthenticated()) return;
@@ -349,6 +415,17 @@
             document.getElementById('searchInput').addEventListener('input', debouncedSearch);
             document.getElementById('chatMessages').addEventListener('scroll', handleScroll);
         });
+
+        // Override logout function to stop synchronization
+        function logout() {
+            if (syncInterval) {
+                clearInterval(syncInterval);
+                syncInterval = null;
+            }
+            localStorage.removeItem('token');
+            updateNav();
+            window.location.href = 'login.html';
+        }
     </script>
 </body>
 </html>

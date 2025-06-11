@@ -1,1 +1,2 @@
-docs(changelog): update changelog for version 1.2.0
+Set message sync interval in src/messenger.html to every 3 seconds
+ 
