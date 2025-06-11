@@ -1,6 +1,5 @@
-feat: update UI with dark mode, responsive design improvements, and enhanced Markdown support
+feat: add PWA support with service worker, manifest, and icons
 
-- Refactored all site interfaces with a new design and added dark mode support
-- Updated the Markdown library to the latest version
-- Enabled support for math expressions (LaTeX) in post view
-- Improved mobile responsiveness and interactive UI elements
+- Added src/service-worker.js to handle caching and offline support
+- Created src/manifest.json with app metadata for PWA features
+- Added src/icons folder containing icon-512x512.png and icon-192x192.png for install prompt
