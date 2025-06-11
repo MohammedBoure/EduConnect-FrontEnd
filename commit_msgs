@@ -20,3 +20,10 @@ feat: add PWA support with service worker, manifest, and icons
 - Added src/service-worker.js to handle caching and offline support
 - Created src/manifest.json with app metadata for PWA features
 - Added src/icons folder containing icon-512x512.png and icon-192x192.png for install prompt
+
+-----
+
+feat: add main pages to service worker cache and set favicon
+
+- Included all main pages in `src/service-worker.js` for caching.
+- Added favicon to display in the browser tab.

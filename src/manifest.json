@@ -1,20 +1,45 @@
 {
   "name": "EduConnect",
-  "short_name": "EduCon",
+  "short_name": "EduConnect",
+  "description": "A vibrant university community platform to connect, collaborate, and grow.",
   "start_url": "/index.html",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
   "background_color": "#ffffff",
-  "theme_color": "#0a74da",
+  "theme_color": "#007bff",
+  "scope": "/",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "orientation": "portrait",
+  "prefer_related_applications": false,
+  "protocol_handlers": [
+    {
+      "protocol": "web+educonnect",
+      "url": "/index.html?source=%s"
     }
   ]
 }
