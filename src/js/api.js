@@ -1,4 +1,3 @@
-
 async function fetchApi(endpoint, options = {}, expectedResponseType = 'json') {
     const headers = {
         ...options.headers,
@@ -17,7 +16,7 @@ async function fetchApi(endpoint, options = {}, expectedResponseType = 'json') {
         });
 
         if (response.status === 204) {
-            return { ok: true, data: { message: "تمت العملية بنجاح (لا يوجد محتوى)" } };
+            return { ok: true, data: { message: "Operation completed successfully (no content)" } };
         }
 
         const rawResponse = await response.text();
@@ -27,7 +26,7 @@ async function fetchApi(endpoint, options = {}, expectedResponseType = 'json') {
             if (contentType && !contentType.includes('application/json')) {
                 if (!response.ok) {
                     console.warn(`API Error (Not JSON): Status ${response.status}, Response: ${rawResponse}`);
-                    return { ok: false, error: `خطأ ${response.status}: ${rawResponse || response.statusText}` };
+                    return { ok: false, error: `Error ${response.status}: ${rawResponse || response.statusText}` };
                 } else {
                     console.warn(`API Warning: Expected JSON but received ${contentType}. Response: ${rawResponse}`);
                     return { ok: true, data: rawResponse };
@@ -40,9 +39,9 @@ async function fetchApi(endpoint, options = {}, expectedResponseType = 'json') {
             } catch (jsonError) {
                 console.error('JSON Parsing Error:', jsonError, 'Raw Response:', rawResponse);
                 if (!response.ok) {
-                    return { ok: false, error: `خطأ ${response.status}: ${rawResponse || response.statusText} (فشل تحليل JSON)` };
+                    return { ok: false, error: `Error ${response.status}: ${rawResponse || response.statusText} (JSON parsing failed)` };
                 } else {
-                    return { ok: false, error: `فشل تحليل استجابة JSON ناجحة: ${rawResponse}` };
+                    return { ok: false, error: `Failed to parse successful JSON response: ${rawResponse}` };
                 }
             }
 
@@ -52,23 +51,23 @@ async function fetchApi(endpoint, options = {}, expectedResponseType = 'json') {
                     removeAuthData();
                     window.location.href = 'login.html';
                 } else if (response.status === 403) {
-                    return { ok: false, error: data.error || 'ممنوع: ليس لديك الصلاحيات الكافية' };
+                    return { ok: false, error: data.error || 'Forbidden: You do not have sufficient permissions' };
                 }
-                return { ok: false, error: data.error || data.message || `خطأ HTTP! الحالة: ${response.status}` };
+                return { ok: false, error: data.error || data.message || `HTTP Error! Status: ${response.status}` };
             }
 
             return { ok: true, data };
         } else {
             if (!response.ok) {
-                return { ok: false, error: `خطأ ${response.status}: ${rawResponse || response.statusText}` };
+                return { ok: false, error: `Error ${response.status}: ${rawResponse || response.statusText}` };
             }
             return { ok: response.ok, data: rawResponse };
         }
     } catch (error) {
         console.error(`API call failed for ${endpoint}: ${error.message}`, error);
-        let errorMessage = error.message || 'خطأ في الشبكة أو الخادم غير متاح';
+        let errorMessage = error.message || 'Network error or server unavailable';
         if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-            errorMessage = 'فشل الاتصال بالخادم. يرجى التحقق من اتصال الشبكة وعنوان الخادم.';
+            errorMessage = 'Failed to connect to the server. Please check your network connection and server address.';
         }
         return { ok: false, error: errorMessage };
     }
@@ -118,7 +117,7 @@ async function apiDeleteProfile(userId) {
 }
 
 async function apiSearchUsers({ name = '', department = '', skill = '', page = 1, per_page = 10 }) {
-    const query = `nom=${encodeURIComponent(name)}&filiere=${encodeURIComponent(department)}&competence=${encodeURIComponent(skill)}&page=${page}&per_page=${per_page}`;
+    const query = `name=${encodeURIComponent(name)}&department=${encodeURIComponent(department)}&skill=${encodeURIComponent(skill)}&page=${page}&per_page=${per_page}`;
     return await fetchApi(`/search?${query}`, {
         method: 'GET',
     }, 'json');
@@ -130,7 +129,7 @@ async function apiGetUsers(page = 1, perPage = 10) {
     }, 'json');
 }
 
-//Post APIs
+// Post APIs
 async function apiGetUserPosts(userId, page = 1, perPage = 10) {
     return await fetchApi(`/posts/user/${userId}?page=${page}&per_page=${perPage}`, {
         method: 'GET',
@@ -196,7 +195,6 @@ async function postComment(postId, content) {
 
     return response;
 }
-
 
 // Message APIs
 async function apiSendMessage(recipientId, content) {

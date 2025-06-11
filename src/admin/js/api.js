@@ -18,7 +18,7 @@ async function fetchApi(endpoint, options = {}, expectedResponseType = 'json') {
         });
 
         if (response.status === 204) {
-            return { ok: true, data: { message: "تمت العملية بنجاح (لا يوجد محتوى)" } };
+            return { ok: true, data: { message: "Operation completed successfully (no content)" } };
         }
 
         const rawResponse = await response.text();
@@ -28,7 +28,7 @@ async function fetchApi(endpoint, options = {}, expectedResponseType = 'json') {
             if (contentType && !contentType.includes('application/json')) {
                 if (!response.ok) {
                     console.warn(`API Error (Not JSON): Status ${response.status}, Response: ${rawResponse}`);
-                    return { ok: false, error: `خطأ ${response.status}: ${rawResponse || response.statusText}` };
+                    return { ok: false, error: `Error ${response.status}: ${rawResponse || response.statusText}` };
                 } else {
                     console.warn(`API Warning: Expected JSON but received ${contentType}. Response: ${rawResponse}`);
                     return { ok: true, data: rawResponse };
@@ -41,9 +41,9 @@ async function fetchApi(endpoint, options = {}, expectedResponseType = 'json') {
             } catch (jsonError) {
                 console.error('JSON Parsing Error:', jsonError, 'Raw Response:', rawResponse);
                 if (!response.ok) {
-                    return { ok: false, error: `خطأ ${response.status}: ${rawResponse || response.statusText} (فشل تحليل JSON)` };
+                    return { ok: false, error: `Error ${response.status}: ${rawResponse || response.statusText} (JSON parsing failed)` };
                 } else {
-                    return { ok: false, error: `فشل تحليل استجابة JSON ناجحة: ${rawResponse}` };
+                    return { ok: false, error: `Failed to parse successful JSON response: ${rawResponse}` };
                 }
             }
 
@@ -53,23 +53,23 @@ async function fetchApi(endpoint, options = {}, expectedResponseType = 'json') {
                     removeAuthData();
                     window.location.href = 'login.html';
                 } else if (response.status === 403) {
-                    return { ok: false, error: data.error || 'ممنوع: ليس لديك الصلاحيات الكافية' };
+                    return { ok: false, error: data.error || 'Forbidden: You do not have sufficient permissions' };
                 }
-                return { ok: false, error: data.error || data.message || `خطأ HTTP! الحالة: ${response.status}` };
+                return { ok: false, error: data.error || data.message || `HTTP Error! Status: ${response.status}` };
             }
 
             return { ok: true, data };
         } else {
             if (!response.ok) {
-                return { ok: false, error: `خطأ ${response.status}: ${rawResponse || response.statusText}` };
+                return { ok: false, error: `Error ${response.status}: ${rawResponse || response.statusText}` };
             }
             return { ok: response.ok, data: rawResponse };
         }
     } catch (error) {
         console.error(`API call failed for ${endpoint}: ${error.message}`, error);
-        let errorMessage = error.message || 'خطأ في الشبكة أو الخادم غير متاح';
+        let errorMessage = error.message || 'Network error or server unavailable';
         if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-            errorMessage = 'فشل الاتصال بالخادم. يرجى التحقق من اتصال الشبكة وعنوان الخادم.';
+            errorMessage = 'Failed to connect to the server. Please check your network connection and server address.';
         }
         return { ok: false, error: errorMessage };
     }
@@ -80,7 +80,7 @@ async function apiRegister(userData) {
     const result = await fetchApi('/register', {
         method: 'POST',
         body: userData,
-    }, 'json'); k
+    }, 'json');
     if (result.ok) {
         setAuthData(result.data.user.id, result.data.user.role);
     }
@@ -102,7 +102,7 @@ async function apiLogin(credentials) {
 // --- User Management APIs ---
 async function apiGetUsers(page = 1, perPage = 10, searchQuery = '') {
     if (!isAdmin()) {
-        return { ok: false, error: 'ممنوع: يتطلب صلاحيات مدير' };
+        return { ok: false, error: 'Forbidden: Admin privileges required' };
     }
     let endpoint = `/admin/users?page=${page}&per_page=${perPage}`;
     if (searchQuery) {
@@ -123,7 +123,6 @@ async function apiUpdateUser(userId, userData) {
     return result;
 }
 
-
 async function apiDeleteUser(userId) {
     const result = await fetchApi(`/admin/users/${userId}`, {
         method: 'DELETE',
@@ -134,7 +133,7 @@ async function apiDeleteUser(userId) {
 // --- Profile Search API ---
 async function apiSearchProfiles({ nom = '', filiere = '', competence = '', page = 1, perPage = 10 }) {
     if (!isAuthenticated()) {
-        return { ok: false, error: 'يجب تسجيل الدخول للبحث عن الملفات الشخصية' };
+        return { ok: false, error: 'You must be logged in to search profiles' };
     }
     const params = new URLSearchParams({
         nom,
@@ -149,7 +148,7 @@ async function apiSearchProfiles({ nom = '', filiere = '', competence = '', page
 // --- Post Management APIs ---
 async function apiCreatePost(postData) {
     if (!isAuthenticated()) {
-        return { ok: false, error: 'يجب تسجيل الدخول لإنشاء منشور' };
+        return { ok: false, error: 'You must be logged in to create a post' };
     }
     const payload = { ...postData };
     if (!payload.user_id) {
@@ -178,7 +177,7 @@ async function apiGetPostDetails(postId, isAdmin = false) {
 
 async function apiUpdatePost(postId, postData) {
     if (!isAdmin()) {
-        return { ok: false, error: 'ممنوع: يتطلب صلاحيات مدير' };
+        return { ok: false, error: 'Forbidden: Admin privileges required' };
     }
     const validData = { ...postData };
     delete validData.id;
@@ -196,7 +195,7 @@ async function apiUpdatePost(postId, postData) {
 
 async function apiDeletePost(postId) {
     if (!isAdmin()) {
-        return { ok: false, error: 'ممنوع: يتطلب صلاحيات مدير' };
+        return { ok: false, error: 'Forbidden: Admin privileges required' };
     }
     return fetchApi(`/admin/posts/${postId}`, { method: 'DELETE' });
 }
@@ -208,7 +207,7 @@ async function apiGetPostComments(postId, page = 1, perPage = 10) {
 
 async function apiCreateComment(postId, commentData) {
     if (!isAuthenticated()) {
-        return { ok: false, error: 'يجب تسجيل الدخول لإضافة تعليق' };
+        return { ok: false, error: 'You must be logged in to add a comment' };
     }
     const payload = { ...commentData };
     if (!payload.user_id) {
@@ -233,7 +232,7 @@ async function apiCreateComment(postId, commentData) {
 
 async function apiUpdateComment(postId, commentId, commentData) {
     if (!isAuthenticated()) {
-        return { ok: false, error: 'يجب تسجيل الدخول لتحديث تعليق' };
+        return { ok: false, error: 'You must be logged in to update a comment' };
     }
     return fetchApi(`/posts/${postId}/comments/${commentId}`, {
         method: 'PUT',
@@ -243,7 +242,7 @@ async function apiUpdateComment(postId, commentId, commentData) {
 
 async function apiDeleteComment(postId, commentId) {
     if (!isAuthenticated()) {
-        return { ok: false, error: 'يجب تسجيل الدخول لحذف تعليق' };
+        return { ok: false, error: 'You must be logged in to delete a comment' };
     }
     return fetchApi(`/posts/${postId}/comments/${commentId}`, { method: 'DELETE' });
 }
@@ -255,14 +254,14 @@ async function apiGetPostLikes(postId) {
 
 async function apiLikePost(postId) {
     if (!isAuthenticated()) {
-        return { ok: false, error: 'يجب تسجيل الدخول للإعجاب بالمنشور' };
+        return { ok: false, error: 'You must be logged in to like a post' };
     }
     return fetchApi(`/posts/${postId}/likes`, { method: 'POST' });
 }
 
 async function apiUnlikePost(postId) {
     if (!isAuthenticated()) {
-        return { ok: false, error: 'يجب تسجيل الدخول لإلغاء الإعجاب' };
+        return { ok: false, error: 'You must be logged in to unlike a post' };
     }
     return fetchApi(`/posts/${postId}/likes`, { method: 'DELETE' });
 }
@@ -270,14 +269,14 @@ async function apiUnlikePost(postId) {
 // --- Admin Comment Management APIs ---
 async function apiAdminGetComments(page = 1, perPage = 10) {
     if (!isAdmin()) {
-        return { ok: false, error: 'ممنوع: يتطلب صلاحيات مدير' };
+        return { ok: false, error: 'Forbidden: Admin privileges required' };
     }
     return fetchApi(`/admin/comments?page=${page}&per_page=${perPage}`, { method: 'GET' });
 }
 
 async function apiAdminAddComment(postId, commentData) {
     if (!isAdmin()) {
-        return { ok: false, error: 'ممنوع: يتطلب صلاحيات مدير' };
+        return { ok: false, error: 'Forbidden: Admin privileges required' };
     }
     const payload = { ...commentData };
     if (!payload.created_at) {
@@ -287,7 +286,7 @@ async function apiAdminAddComment(postId, commentData) {
             payload.created_at = new Date(payload.created_at).toISOString();
         } catch (e) {
             console.error('Invalid date format for created_at', payload.created_at);
-            return { ok: false, error: 'تنسيق تاريخ الإنشاء غير صالح.' };
+            return { ok: false, error: 'Invalid creation date format.' };
         }
     } else {
         payload.created_at = payload.created_at.toISOString();
@@ -303,7 +302,7 @@ async function apiAdminAddComment(postId, commentData) {
 
 async function apiAdminUpdateComment(commentId, commentData) {
     if (!isAdmin()) {
-        return { ok: false, error: 'ممنوع: يتطلب صلاحيات مدير' };
+        return { ok: false, error: 'Forbidden: Admin privileges required' };
     }
     const updatePayload = { content: commentData.content };
     return fetchApi(`/admin/comments/${commentId}`, {
@@ -314,21 +313,21 @@ async function apiAdminUpdateComment(commentId, commentData) {
 
 async function apiAdminDeleteComment(commentId) {
     if (!isAdmin()) {
-        return { ok: false, error: 'ممنوع: يتطلب صلاحيات مدير' };
+        return { ok: false, error: 'Forbidden: Admin privileges required' };
     }
     return fetchApi(`/admin/comments/${commentId}`, { method: 'DELETE' });
 }
 
 async function apiAdminGetPostComments(postId, page = 1, perPage = 5) {
     if (!isAdmin()) {
-        return { ok: false, error: 'ممنوع: يتطلب صلاحيات مدير' };
+        return { ok: false, error: 'Forbidden: Admin privileges required' };
     }
     return fetchApi(`/posts/${postId}/comments?page=${page}&per_page=${perPage}`, { method: 'GET' });
 }
 
 async function apiAdminCreateComment(postId, commentData) {
     if (!isAdmin()) {
-        return { ok: false, error: 'ممنوع: يتطلب صلاحيات مدير' };
+        return { ok: false, error: 'Forbidden: Admin privileges required' };
     }
     const payload = { ...commentData };
     if (!payload.created_at) {
@@ -338,7 +337,7 @@ async function apiAdminCreateComment(postId, commentData) {
             payload.created_at = new Date(payload.created_at).toISOString();
         } catch (e) {
             console.error('Invalid date format for created_at', payload.created_at);
-            return { ok: false, error: 'تنسيق تاريخ الإنشاء غير صالح.' };
+            return { ok: false, error: 'Invalid creation date format.' };
         }
     } else {
         payload.created_at = payload.created_at.toISOString();
@@ -355,21 +354,21 @@ async function apiAdminCreateComment(postId, commentData) {
 // --- Message Management APIs ---
 async function getAllMessages(page = 1, perPage = 30) {
     if (!isAdmin()) {
-        return { ok: false, error: 'ممنوع: يتطلب صلاحيات مدير' };
+        return { ok: false, error: 'Forbidden: Admin privileges required' };
     }
     return fetchApi(`/admin/messages?page=${page}&per_page=${perPage}`, { method: 'GET' });
 }
 
 async function getMessagesBetweenUsers(currentUserId, otherUserId, page = 1, perPage = 30) {
     if (!isAdmin()) {
-        return { ok: false, error: 'ممنوع: يتطلب صلاحيات مدير' };
+        return { ok: false, error: 'Forbidden: Admin privileges required' };
     }
     return fetchApi(`/admin/messages/${currentUserId}/${otherUserId}?page=${page}&per_page=${perPage}`, { method: 'GET' });
 }
 
 async function sendMessage(senderId, receiverId, content) {
     if (!isAuthenticated()) {
-        return { ok: false, error: 'يجب تسجيل الدخول لإرسال رسالة' };
+        return { ok: false, error: 'You must be logged in to send a message' };
     }
     return fetchApi(`/admin/messages`, {
         method: 'POST',
@@ -383,7 +382,7 @@ async function sendMessage(senderId, receiverId, content) {
 
 async function deleteMessage(messageId) {
     if (!isAdmin()) {
-        return { ok: false, error: 'ممنوع: يتطلب صلاحيات مدير' };
+        return { ok: false, error: 'Forbidden: Admin privileges required' };
     }
     return fetchApi(`/admin/messages/${messageId}`, { method: 'DELETE' });
 }

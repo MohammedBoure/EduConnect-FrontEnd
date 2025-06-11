@@ -27,3 +27,17 @@ feat: add main pages to service worker cache and set favicon
 
 - Included all main pages in `src/service-worker.js` for caching.
 - Added favicon to display in the browser tab.
+
+-----
+
+refactor: translate API handling modules to English
+
+Translated all API and authentication modules from Arabic to English to enhance code readability and maintainability. This includes renaming functions, variables, and in-code comments.
+
+Affected files:
+- src/js/api.js
+- src/js/auth.js
+- src/admin/js/api.js
+- src/admin/js/auth.js
+
+This change is part of the ongoing effort to standardize codebase language and improve collaboration for non-Arabic speaking developers.

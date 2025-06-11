@@ -1,6 +1,7 @@
 // http://127.0.0.1:5000/api
 // https://educonnect-wp9t.onrender.com/api
 const API_BASE_URL = 'https://educonnect-wp9t.onrender.com/api';
+
 function setAuthData(userId, role) {
     if (userId === undefined || userId === null || !role) {
         console.error('setAuthData: userId or role is undefined or null');
@@ -42,18 +43,18 @@ async function logout() {
         window.location.href = 'login.html';
     } else {
         console.error('Logout failed:', result.error);
-        alert(result.error || 'فشل تسجيل الخروج. حاول مرة أخرى.');
+        alert(result.error || 'Logout failed. Please try again.');
     }
 }
 
 function redirectToLoginIfNotAuthenticated(requireAdmin = false) {
     if (!isAuthenticated()) {
-        alert('يجب تسجيل الدخول للوصول إلى هذه الصفحة.');
+        alert('You must be logged in to access this page.');
         window.location.href = 'login.html';
         return true;
     }
     if (requireAdmin && !isAdmin()) {
-        alert('يجب أن تكون مديرًا للوصول إلى هذه الصفحة.');
+        alert('You must be an admin to access this page.');
         window.location.href = 'index.html';
         return true;
     }

@@ -2,7 +2,6 @@
 // https://educonnect-wp9t.onrender.com/api
 const API_BASE_URL = 'https://educonnect-wp9t.onrender.com/api';
 
-
 function setAuthData(userId, role) {
     if (userId === undefined || userId === null || !role) {
         console.error('setAuthData: userId or role is undefined or null');
@@ -45,11 +44,11 @@ async function logout() {
             window.location.href = 'login.html';
         } else {
             console.error('Logout failed:', await response.json());
-            alert('فشل تسجيل الخروج. حاول مرة أخرى.');
+            alert('Logout failed. Please try again.');
         }
     } catch (error) {
         console.error('Logout error:', error);
-        alert('حدث خطأ أثناء تسجيل الخروج.');
+        alert('An error occurred during logout.');
     }
 }
 
@@ -58,7 +57,7 @@ function redirectToLoginIfNotAuthenticated(requireAdmin = false) {
     const role = getRole();
 
     if (!userId || !role) {
-        alert('يجب تسجيل الدخول للوصول إلى هذه الصفحة.');
+        alert('You must be logged in to access this page.');
         window.location.href = 'login.html';
         return true;
     }
@@ -69,14 +68,13 @@ function redirectToLoginIfNotAuthenticated(requireAdmin = false) {
     }
 
     if (requireAdmin && role !== 'admin') {
-        alert('يجب أن تكون مديرًا للوصول إلى هذه الصفحة.');
+        alert('You must be an admin to access this page.');
         window.location.href = 'login.html';
         return true;
     }
 
     return false;
 }
-
 
 function showMessage(elementId, message, type = 'error') {
     const messageDiv = document.getElementById(elementId);
