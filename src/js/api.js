@@ -72,17 +72,20 @@ async function fetchApi(endpoint, options = {}, expectedResponseType = 'json') {
         return { ok: false, error: errorMessage };
     }
 }
-
-// Authentication APIs
-async function apiRegister(userData) {
-    const result = await fetchApi('/register', {
-        method: 'POST',
-        body: userData,
-    }, 'json');
-    if (result.ok) {
-        setAuthData(result.data.user.id, result.data.user.role);
+async function apiRegister(formData) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/register`, {
+            method: 'POST',
+            body: formData
+        });
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error(result.error || 'Request failed');
+        }
+        return result;
+    } catch (error) {
+        throw new Error('Network error: ' + error.message);
     }
-    return result;
 }
 
 async function apiLogin(credentials) {

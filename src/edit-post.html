@@ -1,239 +1,523 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Post - University Social Network</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/styles.css">
-    <link rel="stylesheet" href="/css/edit-post.css">
-    <link rel="icon" href="/icons/icon-192x192.png" type="image/png" sizes="192x192">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post Editor - University Social Network</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.5/purify.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js" async></script>
+<link rel="icon" href="/icons/icon-192x192.png" type="image/png" sizes="192x192">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/edit-post.css">
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
 </head>
 <body>
-    <header>
-        <!-- NEW: Modern Navigation Bar with Theme Toggle -->
-        <nav id="navBar">
-            <div class="logo">
-                <a href="index.html"><i class="fas fa-university"></i> UniSocial</a>
-            </div>
-            <ul id="mainNav">
-                <li class="hideOnMobile"><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
-                <li class="hideOnMobile"><a href="messenger.html"><i class="fas fa-comments"></i> Messages</a></li>
-                <li class="hideOnMobile"><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
-                <li class="hideOnMobile"><a href="posts.html"><i class="fas fa-blog"></i> Blog</a></li>
-                <li class="hideOnMobile auth-link" id="registerLink"><a href="register.html"><i class="fas fa-user-plus"></i> Register</a></li>
-                <li class="hideOnMobile auth-link" id="loginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-                <li class="hideOnMobile auth-link" id="logoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                <li class="hideOnMobile">
-                    <button id="themeToggleDesktop" aria-label="Toggle Theme" title="Toggle Theme">
-                        <i class="fas fa-moon" aria-hidden="true"></i>
-                    </button>
-                </li>
-            </ul>
-            <div class="mobile-nav">
-                <div class="menu-btn">
-                    <button id="mobileMenuBtn" aria-label="Toggle Menu">
-                        <i class="fas fa-bars" aria-hidden="true"></i>
-                    </button>
+<header class="header">
+<nav id="navBar">
+<div class="logo">
+<a href="index.html"><i class="fas fa-university"></i> UniSocial</a>
+</div>
+<ul id="mainNav">
+<li class="hideOnMobile"><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+<li class="hideOnMobile"><a href="messenger.html"><i class="fas fa-comments"></i> Messages</a></li>
+<li class="hideOnMobile"><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
+<li class="hideOnMobile"><a href="posts.html"><i class="fas fa-blog"></i> Blog</a></li>
+<li class="hideOnMobile auth-link" id="registerLink"><a href="register.html"><i class="fas fa-user-plus"></i> Register</a></li>
+<li class="hideOnMobile auth-link" id="loginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+<li class="hideOnMobile auth-link" id="logoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+<li class="hideOnMobile">
+<button id="themeToggleDesktop" class="theme-toggle" aria-label="Toggle Theme" title="Toggle Theme">
+<i class="fas fa-moon" aria-hidden="true"></i>
+</button>
+</li>
+</ul>
+<div class="mobile-nav">
+<div class="menu-btn">
+<button id="mobileMenuBtn" class="menu-btn" aria-label="Toggle Menu">
+<i class="fas fa-bars" aria-hidden="true"></i>
+</button>
+</div>
+<div class="dropdown-menu" id="mobileDropdown">
+<ul>
+<li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+<li><a href="messenger.html"><i class="fas fa-comments"></i> Messages</a></li>
+<li><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
+<li><a href="posts.html"><i class="fas fa-blog"></i> Blog</a></li>
+<li class="auth-link" id="sideRegisterLink"><a href="register.html"><i class="fas fa-user-plus"></i> Register</a></li>
+<li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+<li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+<li>
+<button id="themeToggleMobile" class="theme-toggle" aria-label="Toggle Theme" title="Toggle Theme">
+<i class="fas fa-moon" aria-hidden="true"></i><span>Toggle Theme</span>
+</button>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+</header>
+<main class="main-content">
+    <section class="editor-container">
+        <h1 id="page-title"><i class="fas fa-pen-nib"></i> Create New Post</h1>
+        <form id="post-form" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="post-content"><i class="fas fa-file-alt"></i> Content (Supports Markdown and LaTeX)</label>
+                <div class="toolbar">
+                    <button type="button" onclick="insertText('# ', '')" title="Heading 1">H1</button>
+                    <button type="button" onclick="insertText('## ', '')" title="Heading 2">H2</button>
+                    <button type="button" onclick="insertText('### ', '')" title="Heading 3">H3</button>
+                    <button type="button" onclick="insertText('**', '**')" title="Bold"><i class="fas fa-bold"></i></button>
+                    <button type="button" onclick="insertText('*', '*')" title="Italic"><i class="fas fa-italic"></i></button>
+                    <button type="button" onclick="insertText('~~', '~~')" title="Strikethrough"><i class="fas fa-strikethrough"></i></button>
+                    <button type="button" onclick="insertText('`', '`')" title="Code">`</button>
+                    <button type="button" onclick="insertText('```\\n', '\\n```')" title="Code Block"><i class="fas fa-code"></i></button>
+                    <button type="button" onclick="insertText('> ', '')" title="Quote"><i class="fas fa-quote-right"></i></button>
+                    <button type="button" onclick="insertText('- ', '')" title="Unordered List"><i class="fas fa-list-ul"></i></button>
+                    <button type="button" onclick="insertText('1. ', '')" title="Ordered List"><i class="fas fa-list-ol"></i></button>
+                    <button type="button" onclick="insertText('[', '](https://)')" title="Link"><i class="fas fa-link"></i></button>
+                    <button type="button" onclick="insertText('![', '](https://)')" title="Image"><i class="fas fa-image"></i></button>
+                    <button type="button" onclick="insertTable()" title="Table"><i class="fas fa-table"></i></button>
+                    <button type="button" onclick="insertText('---\\n', '')" title="Horizontal Rule"><i class="fas fa-minus"></i></button>
+                    <button type="button" onclick="insertText('$', '$')" title="Inline LaTeX"><i class="fas fa-square-root"></i></button>
+                    <button type="button" onclick="insertText('$$', '$$')" title="LaTeX Block"><i class="fas fa-square-root-alt"></i></button>
+                    <button type="button" onclick="insertText('- [ ] ', '')" title="Task List"><i class="fas fa-tasks"></i></button>
                 </div>
-                <div class="dropdown-menu" id="mobileDropdown">
-                    <ul>
-                        <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
-                        <li><a href="messenger.html"><i class="fas fa-comments"></i> Messages</a></li>
-                        <li><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
-                        <li><a href="posts.html"><i class="fas fa-blog"></i> Blog</a></li>
-                        <li class="auth-link" id="sideRegisterLink"><a href="register.html"><i class="fas fa-user-plus"></i> Register</a></li>
-                        <li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-                        <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                        <li>
-                            <button id="themeToggleMobile" aria-label="Toggle Theme" title="Toggle Theme">
-                                <i class="fas fa-moon" aria-hidden="true"></i><span>Toggle Theme</span>
-                            </button>
-                        </li>
-                    </ul>
-                </div>
+                <textarea id="post-content" name="content" placeholder="Write your content here..." required></textarea>
             </div>
-        </nav>
-    </header>
+            
+            <div class="form-group">
+                <label for="post-title"><i class="fas fa-heading"></i> Post Title</label>
+                <input type="text" id="post-title" name="title" placeholder="Enter an engaging title here..." required>
+            </div>
 
-    <main class="container">
-        <div class="section" id="postSection">
-            <h2 id="pageTitle"><i class="fas fa-edit"></i> Create a Post</h2>
-            <div class="edit-form" id="postForm">
-                <div class="form-group">
-                    <label for="postTitle"><i class="fas fa-heading"></i> Post Title</label>
-                    <input type="text" id="postTitle" placeholder="Enter post title">
+            <div class="form-group">
+                <label><i class="fas fa-image"></i> Post Image (Optional)</label>
+                <div class="photo-toggle">
+                    <button type="button" class="toggle-btn active" data-target="image-upload" aria-label="Upload Image File">Upload File</button>
+                    <button type="button" class="toggle-btn" data-target="image-url" aria-label="Use Image URL">Use URL</button>
                 </div>
-                <div class="form-group">
-                    <label for="postContent"><i class="fas fa-align-left"></i> Post Content (Markdown supported)</label>
-                    <textarea id="postContent" rows="10" placeholder="Write your post here..."></textarea>
+                <div id="image-upload" class="photo-input">
+                    <input type="file" id="image-file" name="image" accept="image/png,image/jpeg,image/gif">
+                    <p class="help-text">Supported formats: PNG, JPEG, GIF. Max size: 5MB.</p>
                 </div>
-                <div class="form-group">
-                    <label for="postImage"><i class="fas fa-image"></i> Image URL (optional)</label>
-                    <input type="url" id="postImage" placeholder="https://example.com/image.jpg">
+                <div id="image-url" class="photo-input" style="display: none;">
+                    <input type="url" id="image-url-input" name="image_url" placeholder="https://example.com/image.jpg">
                 </div>
-                <div class="form-actions">
-                    <button class="btn btn-primary" onclick="savePost()"><i class="fas fa-save"></i> Save Post</button>
-                    <a href="profile.html" class="btn btn-secondary"><i class="fas fa-times"></i> Cancel</a>
+                <div id="preview-image-container" class="photo-preview">
+                    <img id="preview-image" src="" alt="Image Preview" style="display: none;">
                 </div>
-                <div id="postMessage" class="message" style="display: none;"></div>
             </div>
-        </div>
-    </main>
 
-    <!-- Modal for displaying API response -->
-    <div id="responseModal" class="modal">
-        <div class="modal-content">
-            <h3><i class="fas fa-code"></i> API Response</h3>
-            <pre id="responseContent"></pre>
-            <div id="modalMessage" class="message" style="display: none;"></div>
-            <div class="modal-actions">
-                <button class="btn btn-primary" onclick="copyResponse()"><i class="fas fa-copy"></i> Copy</button>
-                <button class="btn btn-secondary" onclick="closeModal()"><i class="fas fa-times"></i> Close</button>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Post</button>
+                <a href="profile.html" class="btn btn-secondary"><i class="fas fa-times"></i> Cancel</a>
             </div>
+        </form>
+        <div id="message-container" class="message"></div>
+    </section>
+
+    <aside class="preview-container" id="desktop-preview">
+        <h2 id="preview-title" class="preview-title">Post Preview</h2>
+        <div id="preview-content" class="preview-content">
+            <p>Your content preview will appear here as you type...</p>
         </div>
+    </aside>
+</main>
+
+<button id="mobile-preview-toggle" class="mobile-preview-toggle"><i class="fas fa-eye"></i></button>
+
+<div id="mobile-preview" class="mobile-preview">
+    <h2 id="mobile-preview-title" class="preview-title">Post Preview</h2>
+    <div id="mobile-preview-image-container" style="display: none;">
+        <img id="mobile-preview-image" src="" alt="Image Preview">
     </div>
+    <div id="mobile-preview-content" class="preview-content"></div>
+</div>
 
-    <script src="/js/auth.js"></script>
-    <script src="/js/api.js"></script>
-    <script defer>
-        // --- START: NAVIGATION AND THEME LOGIC ---
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileDropdown = document.getElementById('mobileDropdown');
-        if (mobileMenuBtn && mobileDropdown) {
-            mobileMenuBtn.addEventListener('click', (event) => {
-                event.stopPropagation();
-                mobileDropdown.classList.toggle('active');
-                mobileMenuBtn.setAttribute('aria-expanded', mobileDropdown.classList.contains('active'));
+<script>
+    // Authentication functions (assumed to be in auth.js)
+    function isAuthenticated() {
+        return !!sessionStorage.getItem('user_id');
+    }
+
+    function logout() {
+        removeAuthData();
+        window.location.href = 'login.html';
+    }
+
+    function redirectToLoginIfNotAuthenticated() {
+        if (!isAuthenticated()) {
+            window.location.href = 'login.html';
+            return true;
+        }
+        return false;
+    }
+
+    // --- START: NAVIGATION AND THEME LOGIC ---
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileDropdown = document.getElementById('mobileDropdown');
+    if (mobileMenuBtn && mobileDropdown) {
+        mobileMenuBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            mobileDropdown.classList.toggle('active');
+            mobileMenuBtn.setAttribute('aria-expanded', mobileDropdown.classList.contains('active'));
+        });
+        document.addEventListener('click', (event) => {
+            if (mobileDropdown.classList.contains('active') && !mobileDropdown.contains(event.target) && event.target !== mobileMenuBtn) {
+                mobileDropdown.classList.remove('active');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+            }
+        });
+        mobileDropdown.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileDropdown.classList.remove('active');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
             });
-            document.addEventListener('click', (event) => {
-                if (mobileDropdown.classList.contains('active') && !mobileDropdown.contains(event.target) && event.target !== mobileMenuBtn) {
-                    mobileDropdown.classList.remove('active');
-                    mobileMenuBtn.setAttribute('aria-expanded', 'false');
+        });
+    }
+
+    const themeToggleMobile = document.getElementById('themeToggleMobile');
+    const themeToggleDesktop = document.getElementById('themeToggleDesktop');
+    function applyTheme(theme) {
+        document.body.classList.remove('dark-mode', 'light-mode');
+        document.body.classList.add(`${theme}-mode`);
+        const icon = theme === 'dark' ? 'fa-sun' : 'fa-moon';
+        if (themeToggleDesktop) themeToggleDesktop.innerHTML = `<i class="fas ${icon}" aria-hidden="true"></i>`;
+        if (themeToggleMobile) themeToggleMobile.innerHTML = `<i class="fas ${icon}" aria-hidden="true"></i><span>Toggle Theme</span>`;
+    }
+    function toggleTheme() {
+        const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+        localStorage.setItem('theme', newTheme);
+        applyTheme(newTheme);
+    }
+    if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
+    if (themeToggleDesktop) themeToggleDesktop.addEventListener('click', toggleTheme);
+
+    function updateNav() {
+        const isLoggedIn = isAuthenticated();
+        ['registerLink', 'loginLink'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = isLoggedIn ? 'none' : 'flex';
+        });
+        ['sideRegisterLink', 'sideLoginLink'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = isLoggedIn ? 'none' : 'block';
+        });
+        ['logoutLink', 'sideLogoutLink'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = isLoggedIn ? 'block' : 'none';
+        });
+    }
+
+    // --- END: NAVIGATION AND THEME LOGIC ---
+
+    // --- START: POST EDITOR LOGIC ---
+    const postForm = document.getElementById('post-form');
+    const pageTitle = document.getElementById('page-title');
+    const postTitleInput = document.getElementById('post-title');
+    const postContentInput = document.getElementById('post-content');
+    const imageFileInput = document.getElementById('image-file');
+    const imageUrlInput = document.getElementById('image-url-input');
+    const messageContainer = document.getElementById('message-container');
+    const previewImage = document.getElementById('preview-image');
+    const previewImageContainer = document.getElementById('preview-image-container');
+    const desktopPreviewTitle = document.getElementById('preview-title');
+    const desktopPreviewContent = document.getElementById('preview-content');
+    const mobilePreviewToggle = document.getElementById('mobile-preview-toggle');
+    const mobilePreview = document.getElementById('mobile-preview');
+    const mobilePreviewTitle = document.getElementById('mobile-preview-title');
+    const mobilePreviewImageContainer = document.getElementById('mobile-preview-image-container');
+    const mobilePreviewImage = document.getElementById('mobile-preview-image');
+    const mobilePreviewContent = document.getElementById('mobile-preview-content');
+
+    let currentImageUrlObject = null;
+
+    // Initialize libraries
+    if (typeof marked !== 'undefined') {
+        marked.setOptions({
+            breaks: true,
+            gfm: true,
+            tables: true,
+            sanitize: false
+        });
+    } else {
+        console.error('Marked library not loaded. Preview will not render Markdown.');
+    }
+
+    if (typeof DOMPurify === 'undefined') {
+        console.error('DOMPurify library not loaded. Preview will not sanitize content.');
+    }
+
+    // Helper functions
+    function showMessage(message, type) {
+        messageContainer.textContent = message;
+        messageContainer.className = `message ${type}`;
+        messageContainer.style.display = 'block';
+        setTimeout(() => { messageContainer.style.display = 'none'; }, 5000);
+    }
+
+    function hideMessage() {
+        messageContainer.style.display = 'none';
+    }
+
+    function insertText(startTag, endTag) {
+        const textarea = postContentInput;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        const selected = text.substring(start, end);
+        textarea.value = text.substring(0, start) + startTag + selected + endTag + text.substring(end);
+        textarea.focus();
+        textarea.selectionStart = textarea.selectionEnd = start + startTag.length + selected.length;
+        updatePreview();
+    }
+
+    function insertTable() {
+        const rows = prompt('Enter number of rows (excluding header):', '2');
+        const cols = prompt('Enter number of columns:', '2');
+        if (!rows || !cols || isNaN(rows) || isNaN(cols) || rows < 1 || cols < 1) {
+            showMessage('Please enter valid numbers for rows and columns.', 'error');
+            return;
+        }
+        const rowCount = parseInt(rows);
+        const colCount = parseInt(cols);
+        let table = '|';
+        for (let i = 1; i <= colCount; i++) {
+            table += ` Column ${i} |`;
+        }
+        table += '\n|';
+        for (let i = 0; i < colCount; i++) {
+            table += '---|';
+        }
+        table += '\n';
+        for (let i = 0; i < rowCount; i++) {
+            table += '|';
+            for (let j = 0; j < colCount; j++) {
+                table += ' |';
+            }
+            table += '\n';
+        }
+        insertText(table, '');
+    }
+
+    function switchImageInput(mode) {
+        const uploadContainer = document.getElementById('image-upload');
+        const urlContainer = document.getElementById('image-url');
+        const btnUpload = document.querySelector('.toggle-btn[data-target="image-upload"]');
+        const btnUrl = document.querySelector('.toggle-btn[data-target="image-url"]');
+        btnUpload.classList.toggle('active', mode === 'upload');
+        btnUrl.classList.toggle('active', mode === 'url');
+        uploadContainer.style.display = mode === 'upload' ? 'block' : 'none';
+        urlContainer.style.display = mode === 'url' ? 'block' : 'none';
+        imageFileInput.value = '';
+        imageUrlInput.value = '';
+        if (currentImageUrlObject) {
+            URL.revokeObjectURL(currentImageUrlObject);
+            currentImageUrlObject = null;
+        }
+        previewImage.src = '';
+        previewImageContainer.style.display = 'none';
+        mobilePreviewImage.src = '';
+        mobilePreviewImageContainer.style.display = 'none';
+        updatePreview();
+    }
+
+    // THIS IS THE MAIN FUNCTION FOR LIVE PREVIEW
+    function updatePreview() {
+        if (!desktopPreviewContent || !mobilePreviewContent) return;
+
+        // Update titles
+        const title = postTitleInput.value || 'Post Preview';
+        if (desktopPreviewTitle) desktopPreviewTitle.textContent = title;
+        if (mobilePreviewTitle) mobilePreviewTitle.textContent = title;
+
+        // Update image
+        const file = imageFileInput.files[0];
+        const url = imageUrlInput.value.trim();
+        let imageSource = null;
+        if (file) {
+            if (currentImageUrlObject) {
+                URL.revokeObjectURL(currentImageUrlObject);
+            }
+            currentImageUrlObject = URL.createObjectURL(file);
+            imageSource = currentImageUrlObject;
+        } else if (url) {
+            imageSource = url;
+        }
+        if (imageSource) {
+            previewImage.src = imageSource;
+            mobilePreviewImage.src = imageSource;
+            previewImageContainer.style.display = 'block';
+            mobilePreviewImageContainer.style.display = 'block';
+        } else {
+            previewImage.src = '';
+            mobilePreviewImage.src = '';
+            previewImageContainer.style.display = 'none';
+            mobilePreviewImageContainer.style.display = 'none';
+        }
+
+        // Update content
+        const content = postContentInput.value || '';
+        const placeholderText = '<p>Your content preview will appear here as you type...</p>';
+        if (content.trim() === '') {
+            desktopPreviewContent.innerHTML = placeholderText;
+            mobilePreviewContent.innerHTML = placeholderText;
+            return;
+        }
+
+        if (typeof marked !== 'undefined' && typeof DOMPurify !== 'undefined') {
+            try {
+                const dirtyHtml = marked.parse(content);
+                const sanitizedHtml = DOMPurify.sanitize(dirtyHtml);
+                desktopPreviewContent.innerHTML = sanitizedHtml;
+                mobilePreviewContent.innerHTML = sanitizedHtml;
+                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                    MathJax.typesetPromise([desktopPreviewContent, mobilePreviewContent]).catch(err => {
+                        console.warn('MathJax Error:', err);
+                    });
                 }
-            });
+            } catch (err) {
+                console.error('Error rendering preview:', err);
+                desktopPreviewContent.textContent = content; // Fallback to plain text
+                mobilePreviewContent.textContent = content;
+            }
+        } else {
+            desktopPreviewContent.textContent = content; // Fallback to plain text
+            mobilePreviewContent.textContent = content;
         }
-        
-        const themeToggleMobile = document.getElementById('themeToggleMobile');
-        const themeToggleDesktop = document.getElementById('themeToggleDesktop');
-        function applyTheme(theme) {
-            document.body.classList.toggle('dark-mode', theme === 'dark');
-            const icon = theme === 'dark' ? 'fa-sun' : 'fa-moon';
-            if (themeToggleDesktop) themeToggleDesktop.innerHTML = `<i class="fas ${icon}" aria-hidden="true"></i>`;
-            if (themeToggleMobile) themeToggleMobile.innerHTML = `<i class="fas ${icon}" aria-hidden="true"></i><span>Toggle Theme</span>`;
-        }
-        function toggleTheme() {
-            const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
-            localStorage.setItem('theme', newTheme);
-            applyTheme(newTheme);
-        }
-        if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
-        if (themeToggleDesktop) themeToggleDesktop.addEventListener('click', toggleTheme);
-        // --- END: NAVIGATION AND THEME LOGIC ---
+    }
 
-        // --- START: EDIT POST PAGE LOGIC ---
-        function updateNav() {
-            const isLoggedIn = isAuthenticated();
-            ['registerLink', 'loginLink'].forEach(id => {
-                const el = document.getElementById(id); if (el) el.style.display = isLoggedIn ? 'none' : 'flex';
-            });
-            ['sideRegisterLink', 'sideLoginLink'].forEach(id => {
-                const el = document.getElementById(id); if (el) el.style.display = isLoggedIn ? 'none' : 'block';
-            });
-            ['logoutLink', 'sideLogoutLink'].forEach(id => {
-                const el = document.getElementById(id); if (el) el.style.display = isLoggedIn ? 'block' : 'none';
-            });
+    async function loadPostForEdit(postId) {
+        if (!postId) return;
+        pageTitle.innerHTML = '<i class="fas fa-edit"></i> Edit Post';
+        document.title = 'Edit Post - University Social Network';
+        try {
+            const result = await apiGetPost(postId);
+            if (result.ok) {
+                const post = result.data.post || result.data;
+                postTitleInput.value = post.title || '';
+                postContentInput.value = post.content || '';
+                if (post.image) {
+                    switchImageInput('url');
+                    imageUrlInput.value = post.image;
+                }
+                updatePreview(); // Update preview with loaded data
+            } else {
+                showMessage('Failed to load post: ' + (result.error || 'Unknown error'), 'error');
+            }
+        } catch (error) {
+            showMessage('Failed to load post: ' + error.message, 'error');
         }
+    }
 
-        function showMessage(message, type) {
-            const messageEl = document.getElementById('postMessage');
-            messageEl.textContent = message;
-            messageEl.className = `message ${type}`;
-            messageEl.style.display = 'block';
-        }
-        function hideMessage() { document.getElementById('postMessage').style.display = 'none'; }
-        
-        // Modal functions
-        function showModal(content) {
-            document.getElementById('responseContent').textContent = content;
-            document.getElementById('modalMessage').style.display = 'none';
-            document.getElementById('responseModal').style.display = 'flex';
-        }
-        function closeModal() { document.getElementById('responseModal').style.display = 'none'; }
-        function copyResponse() {
-            const content = document.getElementById('responseContent').textContent;
-            navigator.clipboard.writeText(content).then(() => {
-                const modalMessage = document.getElementById('modalMessage');
-                modalMessage.textContent = 'Response copied!';
-                modalMessage.className = 'message success';
-                modalMessage.style.display = 'block';
-                setTimeout(() => { modalMessage.style.display = 'none'; }, 2000);
-            }).catch(err => {
-                const modalMessage = document.getElementById('modalMessage');
-                modalMessage.textContent = 'Failed to copy: ' + err.message;
-                modalMessage.className = 'message error';
-                modalMessage.style.display = 'block';
-            });
+    async function handleFormSubmit(event) {
+        event.preventDefault();
+        hideMessage();
+        const title = postTitleInput.value.trim();
+        const content = postContentInput.value.trim();
+        if (!title || !content) {
+            showMessage('Title and content are required.', 'error');
+            return;
         }
 
+        const formData = new FormData(postForm);
+        // Ensure only one image source is sent
+        if (formData.get('image') && formData.get('image').size > 0) {
+            formData.delete('image_url');
+        } else if (!formData.get('image_url')) {
+            formData.delete('image_url');
+            formData.delete('image');
+        }
+
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const postId = urlParams.get('id');
+            const result = postId ? await apiUpdatePost(postId, formData) : await apiCreatePost(formData);
+            if (result.ok && (result.data.message === 'Post created successfully' || result.data.message === 'Post updated successfully')) {
+                showMessage(postId ? 'Post updated successfully!' : 'Post created successfully!', 'success');
+                setTimeout(() => { window.location.href = 'profile.html'; }, 1500);
+            } else {
+                showMessage(result.error || 'Failed to save post.', 'error');
+            }
+        } catch (error) {
+            showMessage('Error saving post: ' + error.message, 'error');
+        }
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const postId = urlParams.get('id');
+        if (postId && redirectToLoginIfNotAuthenticated()) return;
+        
+        applyTheme(localStorage.getItem('theme') || 'light');
+        updateNav();
 
-        async function loadPost() {
-            if (!postId) return; // Creating a new post, nothing to load
-            document.getElementById('pageTitle').innerHTML = '<i class="fas fa-edit"></i> Edit Post';
-            try {
-                const result = await apiGetPost(postId);
-                // showModal(JSON.stringify(result, null, 2)); // Uncomment for debugging API
-                if (result.ok) {
-                    const post = result.data.post || result.data;
-                    document.getElementById('postTitle').value = post.title || '';
-                    document.getElementById('postContent').value = post.content || '';
-                    document.getElementById('postImage').value = post.image || '';
-                } else {
-                    showMessage('Failed to load post: ' + result.error, 'error');
-                }
-            } catch (error) {
-                showMessage('Error loading post: ' + error.message, 'error');
-            }
-        }
-
-        async function savePost() {
-            hideMessage();
-            const title = document.getElementById('postTitle').value.trim();
-            const content = document.getElementById('postContent').value.trim();
-            if (!content) {
-                showMessage('Content is required.', 'error');
-                return;
-            }
-            const payload = { 
-                title: title || undefined, 
-                content, 
-                image: document.getElementById('postImage').value.trim() || undefined, 
-                is_admin_post: isAdmin() 
-            };
-            try {
-                const result = postId ? await apiUpdatePost(postId, payload) : await apiCreatePost(payload);
-                if (result.ok) {
-                    showMessage(postId ? 'Post updated successfully!' : 'Post created successfully!', 'success');
-                    setTimeout(() => { window.location.href = 'profile.html'; }, 1500);
-                } else {
-                    showMessage(result.error, 'error');
-                }
-            } catch (error) {
-                showMessage('Error saving post: ' + error.message, 'error');
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            if (redirectToLoginIfNotAuthenticated()) return;
-            applyTheme(localStorage.getItem('theme') || 'light');
-            updateNav();
-            loadPost();
+        // Image toggle logic
+        document.querySelectorAll('.photo-toggle .toggle-btn').forEach(button => {
+            button.addEventListener('click', () => switchImageInput(button.dataset.target === 'image-upload' ? 'upload' : 'url'));
         });
-    </script>
+
+        // Image file input validation and preview update
+        imageFileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    showMessage('File size exceeds 5MB.', 'error');
+                    imageFileInput.value = '';
+                    return;
+                }
+                if (!['image/png', 'image/jpeg', 'image/gif'].includes(file.type)) {
+                    showMessage('Please upload a valid image file (PNG, JPEG, or GIF).', 'error');
+                    imageFileInput.value = '';
+                    return;
+                }
+            }
+            updatePreview();
+        });
+        
+        // Image URL input validation and preview update
+        imageUrlInput.addEventListener('input', () => {
+            const url = imageUrlInput.value.trim();
+            if (url) {
+                previewImage.onerror = () => {
+                    // This handles cases where the URL is valid syntax but doesn't point to an image
+                    previewImage.src = '';
+                    mobilePreviewImage.src = '';
+                    previewImageContainer.style.display = 'none';
+                    mobilePreviewImageContainer.style.display = 'none';
+                };
+            }
+            updatePreview();
+        });
+
+        // Mobile preview toggle
+        mobilePreviewToggle.addEventListener('click', () => {
+            mobilePreview.classList.toggle('show');
+            const icon = mobilePreview.classList.contains('show') ? 'fa-times' : 'fa-eye';
+            mobilePreviewToggle.innerHTML = `<i class="fas ${icon}"></i>`;
+        });
+
+        // --- ATTACHING LIVE PREVIEW LISTENERS ---
+        // These listeners call updatePreview whenever the user types in the title or content fields.
+        postTitleInput.addEventListener('input', updatePreview);
+        postContentInput.addEventListener('input', updatePreview);
+        
+        // Form submission
+        postForm.addEventListener('submit', handleFormSubmit);
+
+        // Initial setup
+        if (postId) {
+            loadPostForEdit(postId);
+        } else {
+            updatePreview(); // Set initial state for new post
+        }
+    });
+</script>
 </body>
 </html>

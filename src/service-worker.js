@@ -16,6 +16,7 @@ const urlsToCache = [
   '/css/post.css',
   '/css/posts.css',
   '/css/login.css',
+  '/css/profile.css',
   '/css/register.css',
   '/js/auth.js',
   '/js/api.js',
@@ -25,7 +26,7 @@ const urlsToCache = [
   '/icons/icon-512x512.png',
   '/manifest.json',
   '/vendor/idb/index.js',
-  '/offline.html' // صفحة مخصصة لعدم الاتصال
+  '/offline.html'
 ];
 
 // Install Service Worker

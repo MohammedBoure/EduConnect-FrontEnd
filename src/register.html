@@ -6,29 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - University Social Network</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Link to your main styles if you have one -->
     <link rel="stylesheet" href="/styles.css"> 
     <link rel="stylesheet" href="/css/register.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="/icons/icon-192x192.png" type="image/png" sizes="192x192">
+    <link rel="icon" href="/static/icons/icon-192x192.png" type="image/png" sizes="192x192">
 </head>
 
 <body>
     <header>
-        <!-- NEW: Modern Navigation Bar with Theme Toggle -->
         <nav id="navBar">
             <div class="logo">
-                <a href="index.html"><i class="fas fa-university"></i> UniSocial</a>
+                <a href="/"><i class="fas fa-university"></i> UniSocial</a>
             </div>
             <ul id="mainNav">
-                <li class="hideOnMobile"><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
-                <li class="hideOnMobile"><a href="messenger.html"><i class="fas fa-comments"></i> Messages</a></li>
-                <li class="hideOnMobile"><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
-                <li class="hideOnMobile"><a href="posts.html"><i class="fas fa-blog"></i> Blog</a></li>
-                <li class="hideOnMobile auth-link" id="registerLink"><a href="register.html" aria-current="page"><i class="fas fa-user-plus"></i> Register</a></li>
-                <li class="hideOnMobile auth-link" id="loginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                <li class="hideOnMobile"><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                <li class="hideOnMobile"><a href="/messenger"><i class="fas fa-comments"></i> Messages</a></li>
+                <li class="hideOnMobile"><a href="/profile"><i class="fas fa-user"></i> Profile</a></li>
+                <li class="hideOnMobile"><a href="/posts"><i class="fas fa-blog"></i> Blog</a></li>
+                <li class="hideOnMobile auth-link" id="registerLink"><a href="/register" aria-current="page"><i class="fas fa-user-plus"></i> Register</a></li>
+                <li class="hideOnMobile auth-link" id="loginLink"><a href="/login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
                 <li class="hideOnMobile auth-link" id="logoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                 <li class="hideOnMobile">
                     <button id="themeToggleDesktop" aria-label="Toggle Theme" title="Toggle Theme">
@@ -44,12 +42,12 @@
                 </div>
                 <div class="dropdown-menu" id="mobileDropdown">
                     <ul>
-                        <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
-                        <li><a href="messenger.html"><i class="fas fa-comments"></i> Messages</a></li>
-                        <li><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
-                        <li><a href="posts.html"><i class="fas fa-blog"></i> Blog</a></li>
-                        <li class="auth-link" id="sideRegisterLink"><a href="register.html" aria-current="page"><i class="fas fa-user-plus"></i> Register</a></li>
-                        <li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                        <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="/messenger"><i class="fas fa-comments"></i> Messages</a></li>
+                        <li><a href="/profile"><i class="fas fa-user"></i> Profile</a></li>
+                        <li><a href="/posts"><i class="fas fa-blog"></i> Blog</a></li>
+                        <li class="auth-link" id="sideRegisterLink"><a href="/register" aria-current="page"><i class="fas fa-user-plus"></i> Register</a></li>
+                        <li class="auth-link" id="sideLoginLink"><a href="/login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
                         <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                         <li>
                             <button id="themeToggleMobile" aria-label="Toggle Theme" title="Toggle Theme">
@@ -65,7 +63,7 @@
     <main class="container">
         <div class="section">
             <h2><i class="fas fa-user-plus"></i> Register</h2>
-            <form id="registerForm">
+            <form id="registerForm" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="first_name">First Name</label>
                     <input type="text" id="first_name" name="first_name" placeholder="Enter your first name" required aria-label="First Name">
@@ -90,14 +88,27 @@
                     <label for="skills">Skills (e.g., Java, Python)</label>
                     <input type="text" id="skills" name="skills" placeholder="Enter your skills" required aria-label="Skills">
                 </div>
-                <div class="form-group">
-                    <label for="photo">Photo URL (optional)</label>
-                    <input type="url" id="photo" name="photo" placeholder="Enter a photo URL" aria-label="Photo URL">
+                <div class="form-group photo-section">
+                    <label>Profile Photo (optional)</label>
+                    <div class="photo-toggle">
+                        <button type="button" class="toggle-btn active" data-target="upload">Upload File</button>
+                        <button type="button" class="toggle-btn" data-target="url">Use URL</button>
+                    </div>
+                    <div id="upload-section" class="photo-input active">
+                        <input type="file" id="photo" name="photo" accept="image/png,image/jpeg,image/gif" aria-label="Upload Photo">
+                        <p class="help-text">Supported formats: PNG, JPEG, GIF. Max size: 5MB.</p>
+                    </div>
+                    <div id="url-section" class="photo-input">
+                        <input type="url" id="photo_url" name="photo_url" placeholder="Enter a photo URL" aria-label="Photo URL">
+                    </div>
+                    <div id="photo-preview" class="photo-preview">
+                        <img id="preview-img" src="" alt="Photo Preview" style="display: none;">
+                    </div>
                 </div>
                 <div id="message" class="message" style="display: none;"></div>
                 <button type="submit" id="submitBtn" class="btn-primary">Register</button>
             </form>
-            <p>Already have an account? <a href="login.html">Login here</a>.</p>
+            <p>Already have an account? <a href="/login.html">Login here</a>.</p>
         </div>
     </main>
 
@@ -120,7 +131,7 @@
                 }
             });
         }
-        
+
         const themeToggleMobile = document.getElementById('themeToggleMobile');
         const themeToggleDesktop = document.getElementById('themeToggleDesktop');
         function applyTheme(theme) {
@@ -159,9 +170,86 @@
             messageDiv.style.display = 'block';
             setTimeout(() => {
                 messageDiv.style.display = 'none';
-            }, 3000);
+            }, 5000);
         }
 
+        // Photo toggle logic
+        const toggleButtons = document.querySelectorAll('.toggle-btn');
+        const uploadSection = document.getElementById('upload-section');
+        const urlSection = document.getElementById('url-section');
+        const photoInput = document.getElementById('photo');
+        const photoUrlInput = document.getElementById('photo_url');
+        const previewImg = document.getElementById('preview-img');
+
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                toggleButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                uploadSection.classList.toggle('active', button.dataset.target === 'upload');
+                urlSection.classList.toggle('active', button.dataset.target === 'url');
+                if (photoInput) photoInput.value = '';
+                if (photoUrlInput) photoUrlInput.value = '';
+                previewImg.src = '';
+                previewImg.style.display = 'none';
+            });
+        });
+
+        // Photo preview for file upload
+        if (photoInput) {
+            photoInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    if (file.size > 5 * 1024 * 1024) {
+                        showMessage('message', 'File size exceeds 5MB.', 'error');
+                        photoInput.value = '';
+                        return;
+                    }
+                    if (!['image/png', 'image/jpeg', 'image/gif'].includes(file.type)) {
+                        showMessage('message', 'Please upload a valid image file (PNG, JPEG, or GIF).', 'error');
+                        photoInput.value = '';
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        previewImg.src = e.target.result;
+                        previewImg.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    previewImg.src = '';
+                    previewImg.style.display = 'none';
+                }
+            });
+        }
+
+        // Photo preview for URL
+        if (photoUrlInput) {
+            photoUrlInput.addEventListener('input', (event) => {
+                const url = event.target.value;
+                if (url) {
+                    // Less restrictive regex to allow URLs with query parameters
+                    const urlPattern = /^https?:\/\/.*\.(?:png|jpg|jpeg|gif)(\?.*)?$/i;
+                    if (!urlPattern.test(url)) {
+                        showMessage('message', 'Please enter a valid image URL ending in .png, .jpg, .jpeg, or .gif.', 'error');
+                        previewImg.src = '';
+                        previewImg.style.display = 'none';
+                        return;
+                    }
+                    previewImg.src = url;
+                    previewImg.style.display = 'block';
+                    previewImg.onerror = () => {
+                        showMessage('message', 'The image URL is invalid or inaccessible.', 'error');
+                        previewImg.src = '';
+                        previewImg.style.display = 'none';
+                    };
+                } else {
+                    previewImg.src = '';
+                    previewImg.style.display = 'none';
+                }
+            });
+        }
+
+        // Form submission
         const form = document.getElementById('registerForm');
         const submitBtn = document.getElementById('submitBtn');
 
@@ -173,17 +261,20 @@
             submitBtn.textContent = 'Registering...';
 
             const formData = new FormData(form);
-            const userData = {};
-            formData.forEach((value, key) => { userData[key] = value; });
-            if (!userData.photo) { delete userData.photo; }
+            if (formData.get('photo') && formData.get('photo').size > 0) {
+                formData.delete('photo_url');
+            } else if (!formData.get('photo_url')) {
+                formData.delete('photo_url');
+                formData.delete('photo');
+            }
 
             try {
-                const result = await apiRegister(userData);
-                if (result.ok) {
+                const result = await apiRegister(formData);
+                if (result.message === 'User registered successfully') {
                     showMessage('message', 'Registration successful! Redirecting to login...', 'success');
-                    setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+                    setTimeout(() => { window.location.href = '/login.html'; }, 2000);
                 } else {
-                    showMessage('message', `Error: ${result.error}`, 'error');
+                    showMessage('message', `Error: ${result.error || 'Unknown error'}`, 'error');
                 }
             } catch (error) {
                 showMessage('message', `Connection error: ${error.message}`, 'error');
@@ -197,7 +288,7 @@
             applyTheme(localStorage.getItem('theme') || 'light');
             updateNav();
         });
-        // --- END: REGISTER PAGE LOGIC ---
+        // --- END: Register ---
     </script>
 </body>
 

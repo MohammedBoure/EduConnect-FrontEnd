@@ -1,2 +1,6 @@
-Set message sync interval in src/messenger.html to every 3 seconds
- 
+feat(ui): redesign edit-post.html with Markdown & LaTeX live preview and image upload support
+
+- Implemented live preview for both Markdown and LaTeX in the post editor
+- Added ability to upload images from device or provide image URLs for posts
+- Enabled profile image upload (via file or URL) during account creation and update
+- Fully revamped src/edit-post.html structure for better UX and extensibility
