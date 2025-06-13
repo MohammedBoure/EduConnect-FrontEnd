@@ -1,6 +1,6 @@
 // http://127.0.0.1:5000/api
 // https://educonnect-wp9t.onrender.com/api
-const API_BASE_URL = 'https://educonnect-wp9t.onrender.com/api';
+const API_BASE_URL = 'http://127.0.0.1:5000/api';
 
 function setAuthData(userId, role) {
     if (userId === undefined || userId === null || !role) {

@@ -13,3 +13,7 @@ feat(ui): redesign edit-post.html with Markdown & LaTeX live preview and image u
 - Added ability to upload images from device or provide image URLs for posts
 - Enabled profile image upload (via file or URL) during account creation and update
 - Fully revamped src/edit-post.html structure for better UX and extensibility
+
+-----
+
+fix(ui,edit): adjust AboutUs.html to match site theme and fix post editing issue in edit-post.html

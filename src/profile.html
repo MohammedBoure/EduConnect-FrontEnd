@@ -10,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="/icons/icon-192x192.png" type="image/png" sizes="192x192">
     <link rel="stylesheet" href="/css/profile.css">
-    
 </head>
 <body>
     <header>
@@ -139,14 +138,14 @@
                 }
             });
         }
-        
+
         const themeToggleMobile = document.getElementById('themeToggleMobile');
         const themeToggleDesktop = document.getElementById('themeToggleDesktop');
         function applyTheme(theme) {
             document.body.classList.toggle('dark-mode', theme === 'dark');
             const icon = theme === 'dark' ? 'fa-sun' : 'fa-moon';
-            if(themeToggleDesktop) themeToggleDesktop.innerHTML = `<i class="fas ${icon}"></i>`;
-            if(themeToggleMobile) themeToggleMobile.innerHTML = `<i class="fas ${icon}"></i><span>Toggle Theme</span>`;
+            if (themeToggleDesktop) themeToggleDesktop.innerHTML = `<i class="fas ${icon}"></i>`;
+            if (themeToggleMobile) themeToggleMobile.innerHTML = `<i class="fas ${icon}"></i><span>Toggle Theme</span>`;
         }
         function toggleTheme() {
             const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
@@ -176,12 +175,14 @@
 
         function showMessage(message, type) {
             const messageEl = document.getElementById('messageContainer');
-            messageEl.innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
-            messageEl.className = `message ${type}`;
-            messageEl.style.display = 'flex';
-            setTimeout(() => {
-                messageEl.style.display = 'none';
-            }, 5000);
+            if (messageEl) {
+                messageEl.innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
+                messageEl.className = `message ${type}`;
+                messageEl.style.display = 'flex';
+                setTimeout(() => {
+                    messageEl.style.display = 'none';
+                }, 5000);
+            }
         }
 
         if (redirectToLoginIfNotAuthenticated()) {
@@ -293,9 +294,9 @@
         // Photo preview for URL
         if (photoUrlInput) {
             photoUrlInput.addEventListener('input', (event) => {
-                const url = event.target.value;
+                const url = event.target.value.trim();
                 if (url) {
-                    const urlPattern = /^(data:image\/(png|jpeg|gif);base64,|https?:\/\/.*)$/i;
+                    const urlPattern = /^(data:image\/(png|jpeg|gif);base64,|https?:\/\/.*\.(png|jpg|jpeg|gif))$/i;
                     if (!urlPattern.test(url)) {
                         showMessage('Please enter a valid image URL or Base64 data URL.', 'error');
                         previewImg.src = '';
@@ -323,7 +324,9 @@
             const firstName = document.getElementById('editFirstName').value.trim();
             const lastName = document.getElementById('editLastName').value.trim();
             const email = document.getElementById('editEmail').value.trim();
-            
+            const password = document.getElementById('editPassword').value.trim();
+            const skills = document.getElementById('editSkills').value.trim();
+
             if (!firstName || !lastName || !email) {
                 showMessage('First Name, Last Name, and Email are required.', 'error');
                 return;
@@ -332,16 +335,25 @@
                 showMessage('Please enter a valid email address.', 'error');
                 return;
             }
+            if (skills && skills.split(',').map(s => s.trim()).filter(Boolean).length === 0) {
+                showMessage('Skills cannot be empty if provided.', 'error');
+                return;
+            }
 
             try {
                 const formData = new FormData(form);
+                // Remove password from formData if it's empty
+                if (!password) {
+                    formData.delete('password');
+                }
+                // Handle photo: prioritize file upload over URL
                 if (formData.get('photo') && formData.get('photo').size > 0) {
                     formData.delete('photo_url');
-                } else if (!formData.get('photo_url')) {
+                } else if (!formData.get('photo_url') || !formData.get('photo_url').trim()) {
                     formData.delete('photo_url');
                     formData.delete('photo');
                 }
-                const skills = formData.get('skills')?.trim();
+                // Handle skills
                 if (skills) {
                     formData.set('skills', skills.split(',').map(s => s.trim()).filter(Boolean));
                 } else {
@@ -365,8 +377,11 @@
             if (!confirm('Are you sure you want to delete your profile? This action cannot be undone.')) return;
             try {
                 const result = await apiDeleteProfile(currentUserId);
-                if (result.ok) { logout(); } 
-                else { showMessage(`Failed to delete profile: ${result.error}`, 'error'); }
+                if (result.ok) {
+                    logout();
+                } else {
+                    showMessage(`Failed to delete profile: ${result.error}`, 'error');
+                }
             } catch (error) {
                 showMessage(`Error deleting profile: ${error.message}`, 'error');
             }
