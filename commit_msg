@@ -1,1 +1,1 @@
-fix(ui,edit): adjust AboutUs.html to match site theme and fix post editing issue in edit-post.html
+fix(frontend): correct backend URL path integration in frontend
