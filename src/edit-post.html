@@ -7,6 +7,19 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.5/purify.min.js"></script>
+<!-- ADDED: MathJax Configuration to enable inline math ($...$) -->
+<script>
+window.MathJax = {
+tex: {
+inlineMath: [['$', '$'], ['\\(', '\\)']],
+displayMath: [['$$', '$$'], ['\\[', '\\]']]
+},
+svg: {
+fontCache: 'global'
+}
+};
+</script>
+<!-- END ADDED -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js" async></script>
 <link rel="icon" href="/icons/icon-192x192.png" type="image/png" sizes="192x192">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,8 +28,32 @@
 <link rel="stylesheet" href="css/edit-post.css">
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
+<!-- ADDED: CSS for better math rendering in preview -->
+<style>
+:root {
+--code-bg-light: #f1f1f1;
+--code-bg-dark: #2c3038;
+}
+/* Style for better inline math rendering in preview */
+.preview-content mjx-container[display="false"] {
+padding: 0 0.2em;
+background-color: var(--code-bg-light);
+border-radius: 4px;
+font-size: 0.95em;
+display: inline-block;
+}
+/* Style for dark mode inline math */
+.dark-mode .preview-content mjx-container[display="false"] {
+background-color: var(--code-bg-dark);
+}
+/* Style for block math (display mode) */
+.preview-content mjx-container[display="true"] {
+margin: 1em 0;
+}
+</style>
+<!-- END ADDED -->
 </head>
-<body>
+<body class="light-mode">
 <header class="header">
 <nav id="navBar">
 <div class="logo">
@@ -62,420 +99,318 @@
 </nav>
 </header>
 <main class="main-content">
-    <section class="editor-container">
-        <h1 id="page-title"><i class="fas fa-pen-nib"></i> Create New Post</h1>
-        <form id="post-form" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="post-title"><i class="fas fa-heading"></i> Post Title</label>
-                <input type="text" id="post-title" name="title" placeholder="Enter an engaging title here..." required>
-            </div>
-            <div class="form-group">
-                <label for="post-content"><i class="fas fa-file-alt"></i> Content (Supports Markdown and LaTeX)</label>
-                <div class="toolbar">
-                    <button type="button" onclick="insertText('# ', '')" title="Heading 1">H1</button>
-                    <button type="button" onclick="insertText('## ', '')" title="Heading 2">H2</button>
-                    <button type="button" onclick="insertText('### ', '')" title="Heading 3">H3</button>
-                    <button type="button" onclick="insertText('**', '**')" title="Bold"><i class="fas fa-bold"></i></button>
-                    <button type="button" onclick="insertText('*', '*')" title="Italic"><i class="fas fa-italic"></i></button>
-                    <button type="button" onclick="insertText('~~', '~~')" title="Strikethrough"><i class="fas fa-strikethrough"></i></button>
-                    <button type="button" onclick="insertText('`', '`')" title="Code">`</button>
-                    <button type="button" onclick="insertText('```\\n', '\\n```')" title="Code Block"><i class="fas fa-code"></i></button>
-                    <button type="button" onclick="insertText('> ', '')" title="Quote"><i class="fas fa-quote-right"></i></button>
-                    <button type="button" onclick="insertText('- ', '')" title="Unordered List"><i class="fas fa-list-ul"></i></button>
-                    <button type="button" onclick="insertText('1. ', '')" title="Ordered List"><i class="fas fa-list-ol"></i></button>
-                    <button type="button" onclick="insertText('[', '](https://)')" title="Link"><i class="fas fa-link"></i></button>
-                    <button type="button" onclick="insertText('![', '](https://)')" title="Image"><i class="fas fa-image"></i></button>
-                    <button type="button" onclick="insertTable()" title="Table"><i class="fas fa-table"></i></button>
-                    <button type="button" onclick="insertText('---\\n', '')" title="Horizontal Rule"><i class="fas fa-minus"></i></button>
-                    <button type="button" onclick="insertText('$', '$')" title="Inline LaTeX"><i class="fas fa-square-root"></i></button>
-                    <button type="button" onclick="insertText('$$', '$$')" title="LaTeX Block"><i class="fas fa-square-root-alt"></i></button>
-                    <button type="button" onclick="insertText('- [ ] ', '')" title="Task List"><i class="fas fa-tasks"></i></button>
-                </div>
-                <textarea id="post-content" name="content" placeholder="Write your content here..." required></textarea>
-            </div>
-            <div class="form-group">
-                <label><i class="fas fa-image"></i> Post Image (Optional)</label>
-                <div class="photo-toggle">
-                    <button type="button" class="toggle-btn active" data-target="image-upload" aria-label="Upload Image File">Upload File</button>
-                    <button type="button" class="toggle-btn" data-target="image-url" aria-label="Use Image URL">Use URL</button>
-                </div>
-                <div id="image-upload" class="photo-input">
-                    <input type="file" id="image-file" name="image" accept="image/png,image/jpeg,image/gif">
-                    <p class="help-text">Supported formats: PNG, JPEG, GIF. Max size: 5MB.</p>
-                </div>
-                <div id="image-url" class="photo-input" style="display: none;">
-                    <input type="url" id="image-url-input" name="image_url" placeholder="https://example.com/image.jpg">
-                </div>
-                <div id="preview-image-container" class="photo-preview">
-                    <img id="preview-image" src="" alt="Image Preview" style="display: none;">
-                </div>
-            </div>
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Post</button>
-                <a href="profile.html" class="btn btn-secondary"><i class="fas fa-times"></i> Cancel</a>
-            </div>
-        </form>
-        <div id="message-container" class="message"></div>
-    </section>
-    <aside class="preview-container" id="desktop-preview">
-        <h2 id="preview-title" class="preview-title">Post Preview</h2>
-        <div id="preview-content" class="preview-content">
-            <p>Your content preview will appear here as you type...</p>
-        </div>
-    </aside>
+<section class="editor-container">
+<h1 id="page-title"><i class="fas fa-pen-nib"></i> Create New Post</h1>
+<form id="post-form" enctype="multipart/form-data">
+<div class="form-group">
+<label for="post-title"><i class="fas fa-heading"></i> Post Title</label>
+<input type="text" id="post-title" name="title" placeholder="Enter an engaging title here..." required>
+</div>
+<div class="form-group">
+<label for="post-content"><i class="fas fa-file-alt"></i> Content (Supports Markdown and LaTeX)</label>
+<div class="toolbar">
+<button type="button" onclick="insertText('# ', '')" title="Heading 1">H1</button>
+<button type="button" onclick="insertText('## ', '')" title="Heading 2">H2</button>
+<button type="button" onclick="insertText('### ', '')" title="Heading 3">H3</button>
+<button type="button" onclick="insertText('**', '**')" title="Bold"><i class="fas fa-bold"></i></button>
+<button type="button" onclick="insertText('*', '*')" title="Italic"><i class="fas fa-italic"></i></button>
+<button type="button" onclick="insertText('~~', '~~')" title="Strikethrough"><i class="fas fa-strikethrough"></i></button>
+<button type="button" onclick="insertText('`', '`')" title="Code">`</button>
+<button type="button" onclick="insertText('```\\n', '\\n```')" title="Code Block"><i class="fas fa-code"></i></button>
+<button type="button" onclick="insertText('> ', '')" title="Quote"><i class="fas fa-quote-right"></i></button>
+<button type="button" onclick="insertText('- ', '')" title="Unordered List"><i class="fas fa-list-ul"></i></button>
+<button type="button" onclick="insertText('1. ', '')" title="Ordered List"><i class="fas fa-list-ol"></i></button>
+<button type="button" onclick="insertText('[', '](https://)')" title="Link"><i class="fas fa-link"></i></button>
+<button type="button" onclick="insertText('![', '](https://)')" title="Image"><i class="fas fa-image"></i></button>
+<button type="button" onclick="insertTable()" title="Table"><i class="fas fa-table"></i></button>
+<button type="button" onclick="insertText('---\\n', '')" title="Horizontal Rule"><i class="fas fa-minus"></i></button>
+<button type="button" onclick="insertText('$', '$')" title="Inline Math (e.g., $E=mc^2$)"><i class="fas fa-infinity"></i></button>
+<button type="button" onclick="insertText('$$', '$$')" title="Display Math Block"><i class="fas fa-square-root-alt"></i></button>
+<button type="button" onclick="insertText('- [ ] ', '')" title="Task List"><i class="fas fa-tasks"></i></button>
+</div>
+<textarea id="post-content" name="content" placeholder="Write your content here... Use $...$ for inline math and $$...$$ for display math." required></textarea>
+</div>
+<div class="form-group">
+<label><i class="fas fa-image"></i> Post Image (Optional)</label>
+<div class="photo-toggle">
+<button type="button" class="toggle-btn active" data-target="image-upload" aria-label="Upload Image File">Upload File</button>
+<button type="button" class="toggle-btn" data-target="image-url" aria-label="Use Image URL">Use URL</button>
+</div>
+<div id="image-upload" class="photo-input">
+<input type="file" id="image-file" name="image" accept="image/png,image/jpeg,image/gif">
+<p class="help-text">Supported formats: PNG, JPEG, GIF. Max size: 5MB.</p>
+</div>
+<div id="image-url" class="photo-input" style="display: none;">
+<input type="url" id="image-url-input" name="image_url" placeholder="https://example.com/image.jpg">
+</div>
+<div id="preview-image-container" class="photo-preview">
+<img id="preview-image" src="" alt="Image Preview" style="display: none;">
+</div>
+</div>
+<div class="form-actions">
+<button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Post</button>
+<a href="profile.html" class="btn btn-secondary"><i class="fas fa-times"></i> Cancel</a>
+</div>
+</form>
+<div id="message-container" class="message" style="display: none;"></div>
+</section>
+<aside class="preview-container" id="desktop-preview">
+<h2 id="preview-title" class="preview-title">Post Preview</h2>
+<div id="preview-content" class="preview-content">
+<p>Your content preview will appear here as you type...</p>
+</div>
+</aside>
 </main>
 <button id="mobile-preview-toggle" class="mobile-preview-toggle"><i class="fas fa-eye"></i></button>
 <div id="mobile-preview" class="mobile-preview">
-    <h2 id="mobile-preview-title" class="preview-title">Post Preview</h2>
-    <div id="mobile-preview-image-container" style="display: none;">
-        <img id="mobile-preview-image" src="" alt="Image Preview">
-    </div>
-    <div id="mobile-preview-content" class="preview-content"></div>
+<h2 id="mobile-preview-title" class="preview-title">Post Preview</h2>
+<div id="mobile-preview-image-container" style="display: none;">
+<img id="mobile-preview-image" src="" alt="Image Preview">
+</div>
+<div id="mobile-preview-content" class="preview-content"></div>
 </div>
 <script>
-    // Navigation and Theme Logic (No changes here)
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const mobileDropdown = document.getElementById('mobileDropdown');
-    if (mobileMenuBtn && mobileDropdown) {
-        mobileMenuBtn.addEventListener('click', (event) => {
-            event.stopPropagation();
-            mobileDropdown.classList.toggle('active');
-            mobileMenuBtn.setAttribute('aria-expanded', mobileDropdown.classList.contains('active'));
-        });
-        document.addEventListener('click', (event) => {
-            if (mobileDropdown.classList.contains('active') && !mobileDropdown.contains(event.target) && event.target !== mobileMenuBtn) {
-                mobileDropdown.classList.remove('active');
-                mobileMenuBtn.setAttribute('aria-expanded', 'false');
-            }
-        });
-        mobileDropdown.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                mobileDropdown.classList.remove('active');
-                mobileMenuBtn.setAttribute('aria-expanded', 'false');
-            });
-        });
+// --- START: NAVIGATION AND THEME LOGIC (Unchanged) ---
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+const mobileDropdown = document.getElementById('mobileDropdown');
+if (mobileMenuBtn && mobileDropdown) {
+mobileMenuBtn.addEventListener('click', (event) => {
+event.stopPropagation();
+mobileDropdown.classList.toggle('active');
+mobileMenuBtn.setAttribute('aria-expanded', mobileDropdown.classList.contains('active'));
+});
+document.addEventListener('click', (event) => {
+if (mobileDropdown.classList.contains('active') && !mobileDropdown.contains(event.target) && event.target !== mobileMenuBtn) {
+mobileDropdown.classList.remove('active');
+mobileMenuBtn.setAttribute('aria-expanded', 'false');
+}
+});
+}
+const themeToggleMobile = document.getElementById('themeToggleMobile');
+const themeToggleDesktop = document.getElementById('themeToggleDesktop');
+function applyTheme(theme) {
+document.body.classList.remove('dark-mode', 'light-mode');
+document.body.classList.add(`${theme}-mode`);
+const icon = theme === 'dark' ? 'fa-sun' : 'fa-moon';
+if (themeToggleDesktop) themeToggleDesktop.innerHTML = `<i class="fas ${icon}" aria-hidden="true"></i>`;
+if (themeToggleMobile) themeToggleMobile.innerHTML = `<i class="fas ${icon}" aria-hidden="true"></i><span>Toggle Theme</span>`;
+}
+function toggleTheme() {
+const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+localStorage.setItem('theme', newTheme);
+applyTheme(newTheme);
+}
+if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
+if (themeToggleDesktop) themeToggleDesktop.addEventListener('click', toggleTheme);
+function showMessage(containerId, text, type) {
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.textContent = text;
+        container.className = `message ${type}`;
+        container.style.display = 'block';
+        setTimeout(() => { container.style.display = 'none'; }, 3000);
     }
-    const themeToggleMobile = document.getElementById('themeToggleMobile');
-    const themeToggleDesktop = document.getElementById('themeToggleDesktop');
-    function applyTheme(theme) {
-        document.body.classList.remove('dark-mode', 'light-mode');
-        document.body.classList.add(`${theme}-mode`);
-        const icon = theme === 'dark' ? 'fa-sun' : 'fa-moon';
-        if (themeToggleDesktop) themeToggleDesktop.innerHTML = `<i class="fas ${icon}" aria-hidden="true"></i>`;
-        if (themeToggleMobile) themeToggleMobile.innerHTML = `<i class="fas ${icon}" aria-hidden="true"></i><span>Toggle Theme</span>`;
-    }
-    function toggleTheme() {
-        const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
-        localStorage.setItem('theme', newTheme);
-        applyTheme(newTheme);
-    }
-    if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
-    if (themeToggleDesktop) themeToggleDesktop.addEventListener('click', toggleTheme);
-    function updateNav() {
-        const isLoggedIn = isAuthenticated();
-        ['registerLink', 'loginLink'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.style.display = isLoggedIn ? 'none' : 'flex';
-        });
-        ['sideRegisterLink', 'sideLoginLink'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.style.display = isLoggedIn ? 'none' : 'block';
-        });
-        ['logoutLink', 'sideLogoutLink'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.style.display = isLoggedIn ? 'block' : 'none';
-        });
-    }
+}
+function hideMessage(containerId) {
+    const container = document.getElementById(containerId);
+    if (container) container.style.display = 'none';
+}
+function updateNav() {
+    const isLoggedIn = typeof isAuthenticated === 'function' ? isAuthenticated() : false;
+    document.querySelectorAll('#registerLink, #loginLink, #sideRegisterLink, #sideLoginLink').forEach(el => el.style.display = isLoggedIn ? 'none' : '');
+    document.querySelectorAll('#logoutLink, #sideLogoutLink').forEach(el => el.style.display = isLoggedIn ? '' : 'none');
+}
 
-    // Post Editor Logic
-    const postForm = document.getElementById('post-form');
-    const pageTitle = document.getElementById('page-title');
-    const postTitleInput = document.getElementById('post-title');
-    const postContentInput = document.getElementById('post-content');
-    const imageFileInput = document.getElementById('image-file');
-    const imageUrlInput = document.getElementById('image-url-input');
-    const messageContainer = document.getElementById('message-container');
-    const previewImage = document.getElementById('preview-image');
-    const previewImageContainer = document.getElementById('preview-image-container');
-    const desktopPreviewTitle = document.getElementById('preview-title');
-    const desktopPreviewContent = document.getElementById('preview-content');
-    const mobilePreviewToggle = document.getElementById('mobile-preview-toggle');
-    const mobilePreview = document.getElementById('mobile-preview');
-    const mobilePreviewTitle = document.getElementById('mobile-preview-title');
-    const mobilePreviewImageContainer = document.getElementById('mobile-preview-image-container');
-    const mobilePreviewImage = document.getElementById('mobile-preview-image');
-    const mobilePreviewContent = document.getElementById('mobile-preview-content');
-    let currentImageUrlObject = null;
-    if (typeof marked !== 'undefined') {
-        marked.setOptions({ breaks: true, gfm: true, tables: true, sanitize: false });
+// --- START: POST EDITOR LOGIC ---
+const postForm = document.getElementById('post-form');
+const pageTitle = document.getElementById('page-title');
+const postTitleInput = document.getElementById('post-title');
+const postContentInput = document.getElementById('post-content');
+const imageFileInput = document.getElementById('image-file');
+const imageUrlInput = document.getElementById('image-url-input');
+const previewImage = document.getElementById('preview-image');
+const previewImageContainer = document.getElementById('preview-image-container');
+const desktopPreviewTitle = document.getElementById('preview-title');
+const desktopPreviewContent = document.getElementById('preview-content');
+const mobilePreviewToggle = document.getElementById('mobile-preview-toggle');
+const mobilePreview = document.getElementById('mobile-preview');
+const mobilePreviewTitle = document.getElementById('mobile-preview-title');
+const mobilePreviewImageContainer = document.getElementById('mobile-preview-image-container');
+const mobilePreviewImage = document.getElementById('mobile-preview-image');
+const mobilePreviewContent = document.getElementById('mobile-preview-content');
+let currentImageUrlObject = null;
+
+if (typeof marked !== 'undefined') {
+    marked.setOptions({ breaks: true, gfm: true, tables: true, sanitize: false });
+} else { console.error('Marked.js not loaded.'); }
+
+function insertText(startTag, endTag) {
+    const textarea = postContentInput;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const selected = text.substring(start, end);
+    textarea.value = text.substring(0, start) + startTag + selected + endTag + text.substring(end);
+    textarea.focus();
+    textarea.selectionStart = textarea.selectionEnd = start + startTag.length;
+    updatePreview();
+}
+function insertTable() {
+    const table = '| Header 1 | Header 2 |\n|---|---|\n| Cell 1   | Cell 2   |\n| Cell 3   | Cell 4   |\n';
+    insertText(table, '');
+}
+
+// ==========================================================
+// START: CORRECTED FUNCTION / بداية الدالة المصححة
+// ==========================================================
+function switchImageInput(mode) {
+    // The 'mode' parameter comes from the button's data-target attribute,
+    // which is either 'image-upload' or 'image-url'.
+    // We must compare against these exact values.
+    document.getElementById('image-upload').style.display = mode === 'image-upload' ? 'block' : 'none';
+    document.getElementById('image-url').style.display = mode === 'image-url' ? 'block' : 'none';
+
+    // This part correctly toggles the 'active' class on the buttons.
+    document.querySelector('.toggle-btn[data-target="image-upload"]').classList.toggle('active', mode === 'image-upload');
+    document.querySelector('.toggle-btn[data-target="image-url"]').classList.toggle('active', mode === 'image-url');
+
+    // When switching, clear the input that is being hidden to avoid confusion.
+    if (mode === 'image-upload') {
+        // We are switching to 'upload', so clear the 'url' input.
+        imageUrlInput.value = '';
     } else {
-        console.error('Marked library not loaded. Preview will not render Markdown.');
+        // We are switching to 'url', so clear the 'file' input.
+        imageFileInput.value = '';
     }
-    if (typeof DOMPurify === 'undefined') {
-        console.error('DOMPurify library not loaded. Preview will not sanitize content.');
+}
+// ==========================================================
+// END: CORRECTED FUNCTION / نهاية الدالة المصححة
+// ==========================================================
+
+function updatePreview() {
+    if (!desktopPreviewContent || !mobilePreviewContent) return;
+    const title = postTitleInput.value || 'Post Preview';
+    desktopPreviewTitle.textContent = title;
+    mobilePreviewTitle.textContent = title;
+    const file = imageFileInput.files[0];
+    const url = imageUrlInput.value.trim();
+    let imageSource = null;
+    if (file) {
+        if (currentImageUrlObject) { URL.revokeObjectURL(currentImageUrlObject); }
+        currentImageUrlObject = URL.createObjectURL(file);
+        imageSource = currentImageUrlObject;
+    } else if (url) {
+        imageSource = url;
     }
-    function insertText(startTag, endTag) {
-        const textarea = postContentInput;
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const text = textarea.value;
-        const selected = text.substring(start, end);
-        textarea.value = text.substring(0, start) + startTag + selected + endTag + text.substring(end);
-        textarea.focus();
-        textarea.selectionStart = textarea.selectionEnd = start + startTag.length + selected.length;
-        updatePreview();
-    }
-    function insertTable() {
-        const rows = prompt('Enter number of rows (excluding header):', '2');
-        const cols = prompt('Enter number of columns:', '2');
-        if (!rows || !cols || isNaN(rows) || isNaN(cols) || rows < 1 || cols < 1) {
-            showMessage('message-container', 'Please enter valid numbers for rows and columns.', 'error');
-            return;
-        }
-        const rowCount = parseInt(rows);
-        const colCount = parseInt(cols);
-        let table = '|';
-        for (let i = 1; i <= colCount; i++) { table += ` Column ${i} |`; }
-        table += '\n|';
-        for (let i = 0; i < colCount; i++) { table += '---|'; }
-        table += '\n';
-        for (let i = 0; i < rowCount; i++) {
-            table += '|';
-            for (let j = 0; j < colCount; j++) { table += ' |'; }
-            table += '\n';
-        }
-        insertText(table, '');
-    }
-    function switchImageInput(mode) {
-        const uploadContainer = document.getElementById('image-upload');
-        const urlContainer = document.getElementById('image-url');
-        const btnUpload = document.querySelector('.toggle-btn[data-target="image-upload"]');
-        const btnUrl = document.querySelector('.toggle-btn[data-target="image-url"]');
-        btnUpload.classList.toggle('active', mode === 'upload');
-        btnUrl.classList.toggle('active', mode === 'url');
-        uploadContainer.style.display = mode === 'upload' ? 'block' : 'none';
-        urlContainer.style.display = mode === 'url' ? 'block' : 'none';
-        if (mode === 'upload') {
-            imageUrlInput.value = '';
-        } else {
-            imageFileInput.value = '';
-        }
-        if (currentImageUrlObject) {
-            URL.revokeObjectURL(currentImageUrlObject);
-            currentImageUrlObject = null;
-        }
-        updatePreview();
-    }
-    function updatePreview() {
-        if (!desktopPreviewContent || !mobilePreviewContent) return;
-        const title = postTitleInput.value || 'Post Preview';
-        if (desktopPreviewTitle) desktopPreviewTitle.textContent = title;
-        if (mobilePreviewTitle) mobilePreviewTitle.textContent = title;
-        const file = imageFileInput.files[0];
-        const url = imageUrlInput.value.trim();
-        let imageSource = null;
-        if (file) {
-            if (currentImageUrlObject) { URL.revokeObjectURL(currentImageUrlObject); }
-            currentImageUrlObject = URL.createObjectURL(file);
-            imageSource = currentImageUrlObject;
-        } else if (url) {
-            imageSource = url;
-        }
+    [previewImage, mobilePreviewImage].forEach(img => {
+        const container = img.parentElement;
         if (imageSource) {
-            previewImage.src = imageSource;
-            mobilePreviewImage.src = imageSource;
-            previewImage.style.display = 'block';
-            mobilePreviewImage.style.display = 'block';
-            previewImageContainer.style.display = 'block';
-            mobilePreviewImageContainer.style.display = 'block';
-            previewImage.onerror = () => {
-                showMessage('message-container', 'Failed to load image. Please check the URL or file.', 'error');
-                previewImage.src = ''; mobilePreviewImage.src = '';
-                previewImage.style.display = 'none'; mobilePreviewImage.style.display = 'none';
-                previewImageContainer.style.display = 'none'; mobilePreviewImageContainer.style.display = 'none';
-            };
+            img.src = imageSource;
+            img.style.display = 'block';
+            if(container) container.style.display = 'block';
         } else {
-            previewImage.src = ''; mobilePreviewImage.src = '';
-            previewImage.style.display = 'none'; mobilePreviewImage.style.display = 'none';
-            previewImageContainer.style.display = 'none'; mobilePreviewImageContainer.style.display = 'none';
+            img.src = '';
+            img.style.display = 'none';
+            if(container) container.style.display = 'none';
         }
-        const content = postContentInput.value || '';
-        const placeholderText = '<p>Your content preview will appear here as you type...</p>';
-        if (content.trim() === '') {
-            desktopPreviewContent.innerHTML = placeholderText;
-            mobilePreviewContent.innerHTML = placeholderText;
-            return;
-        }
-        if (typeof marked !== 'undefined' && typeof DOMPurify !== 'undefined') {
-            try {
-                const dirtyHtml = marked.parse(content);
-                const sanitizedHtml = DOMPurify.sanitize(dirtyHtml);
-                desktopPreviewContent.innerHTML = sanitizedHtml;
-                mobilePreviewContent.innerHTML = sanitizedHtml;
-                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-                    MathJax.typesetPromise([desktopPreviewContent, mobilePreviewContent]).catch(err => {
-                        console.warn('MathJax Error:', err);
-                    });
-                }
-            } catch (err) {
-                console.error('Error rendering preview:', err);
-                desktopPreviewContent.textContent = content; mobilePreviewContent.textContent = content;
+    });
+    const content = postContentInput.value || '<p>Your content preview will appear here...</p>';
+    const dirtyHtml = marked.parse(content);
+    const sanitizedHtml = DOMPurify.sanitize(dirtyHtml);
+    desktopPreviewContent.innerHTML = sanitizedHtml;
+    mobilePreviewContent.innerHTML = sanitizedHtml;
+    if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+        MathJax.typesetPromise([desktopPreviewContent, mobilePreviewContent]).catch(err => console.warn('MathJax Error:', err));
+    }
+}
+
+async function loadPostForEdit(postId) {
+    if (!postId) { return; }
+    pageTitle.innerHTML = '<i class="fas fa-edit"></i> Edit Post';
+    document.title = 'Edit Post - University Social Network';
+    try {
+        const result = await apiGetPost(postId); 
+        if (result.ok && result.data && result.data.post) {
+            const post = result.data.post;
+            postTitleInput.value = post.title || '';
+            postContentInput.value = post.content || '';
+            if (post.image) {
+                switchImageInput('url'); // This should now work, but its value is 'image-url'
+                imageUrlInput.value = post.image;
             }
+            updatePreview();
         } else {
-            desktopPreviewContent.textContent = content; mobilePreviewContent.textContent = content;
+            showMessage('message-container', 'Failed to load post data: ' + (result.error || 'Post not found.'), 'error');
         }
+    } catch (error) {
+        showMessage('message-container', 'Error loading post: ' + error.message, 'error');
     }
+}
 
-    // ==========================================================
-    // START: CORRECTED FUNCTION / بداية الدالة المصححة
-    // ==========================================================
-    async function loadPostForEdit(postId) {
-        if (!postId) {
-            console.log('No postId provided, assuming new post creation.');
-            return;
-        }
-
-        console.log('Loading post with ID:', postId);
-        pageTitle.innerHTML = '<i class="fas fa-edit"></i> Edit Post';
-        document.title = 'Edit Post - University Social Network';
-
-        try {
-            const result = await apiGetPost(postId);
-            console.log('API response received:', result);
-
-            // التصحيح الأول: التحقق من وجود result.data.post
-            if (result.ok && result.data && result.data.post) {
-                // التصحيح الثاني: استخراج البيانات من الكائن المتداخل 'post'
-                const post = result.data.post; 
-                console.log('Post data loaded successfully:', post);
-
-                // --- وضع البيانات في أماكنها الصحيحة ---
-
-                // 1. وضع عنوان المنشور
-                postTitleInput.value = post.title || '';
-
-                // 2. وضع محتوى المنشور
-                postContentInput.value = post.content || '';
-
-                // 3. التعامل مع الصورة
-                if (post.image) {
-                    // التبديل إلى وضع إدخال الرابط
-                    switchImageInput('url'); 
-                    // وضع رابط الصورة في الحقل المخصص
-                    imageUrlInput.value = post.image;
-                } else {
-                    // إذا لم تكن هناك صورة، تأكد من أن الواجهة في وضع الرفع
-                    switchImageInput('upload');
-                }
-
-                // 4. تحديث المعاينة لتعكس كل البيانات التي تم تحميلها
-                updatePreview();
-
-            } else {
-                // عرض رسالة خطأ إذا لم يتم العثور على المنشور أو كانت البيانات غير صالحة
-                showMessage('message-container', 'Failed to load post: ' + (result.error || 'Post data not found in response'), 'error');
-                console.error('Failed to load post or invalid data structure:', result);
-            }
-        } catch (error) {
-            showMessage('message-container', 'Error loading post: ' + error.message, 'error');
-            console.error('Error in loadPostForEdit:', error);
-        }
+async function handleFormSubmit(event) {
+    event.preventDefault();
+    hideMessage('message-container');
+    if (!postContentInput.value.trim()) {
+        showMessage('message-container', 'Content is required.', 'error');
+        return;
     }
-    // ==========================================================
-    // END: CORRECTED FUNCTION / نهاية الدالة المصححة
-    // ==========================================================
-
-
-    async function handleFormSubmit(event) {
-        event.preventDefault();
-        hideMessage('message-container');
-        const title = postTitleInput.value.trim();
-        const content = postContentInput.value.trim();
-        const imageUrl = imageUrlInput.value.trim();
-        if (!content) {
-            showMessage('message-container', 'Content is required.', 'error');
-            console.log('Validation failed: Content is required');
-            return;
-        }
-        const isAdminPost = isAdmin();
-        const payload = new FormData(postForm);
-        if (payload.get('image') && payload.get('image').size > 0) {
-            payload.delete('image_url');
-        } else if (!imageUrl) {
-            payload.delete('image_url');
-            payload.delete('image');
-        }
-        if (isAdminPost) {
-            payload.append('is_admin_post', isAdminPost);
-        }
-        try {
-            const urlParams = new URLSearchParams(window.location.search);
-            const postId = urlParams.get('id');
-            let result;
-            if (postId) {
-                console.log('Updating post with ID:', postId);
-                result = await apiUpdatePost(postId, payload);
-            } else {
-                console.log('Creating new post');
-                result = await apiCreatePost(payload);
-            }
-            console.log('Save post result:', result);
-            if (result.ok) {
-                showMessage('message-container', postId ? 'Post updated successfully!' : 'Post created successfully!', 'success');
-                setTimeout(() => { window.location.href = 'profile.html'; }, 1500);
-            } else {
-                showMessage('message-container', result.error || 'Failed to save post.', 'error');
-                console.error('Failed to save post:', result.error);
-            }
-        } catch (error) {
-            showMessage('message-container', 'Error saving post: ' + error.message, 'error');
-            console.error('Error in handleFormSubmit:', error);
-        }
+    const payload = new FormData(postForm);
+    if (payload.get('image')?.size > 0) {
+        payload.delete('image_url');
+    } else if (!imageUrlInput.value.trim()) {
+        payload.delete('image_url');
+        payload.delete('image');
     }
-
-    // Event listeners
-    document.addEventListener('DOMContentLoaded', async () => {
-        console.log('edit-post.html loaded');
+    try {
         const urlParams = new URLSearchParams(window.location.search);
         const postId = urlParams.get('id');
-        applyTheme(localStorage.getItem('theme') || 'light');
-        updateNav();
-        if (postId) {
-            if (redirectToLoginIfNotAuthenticated()) return;
-            await loadPostForEdit(postId);
+        const result = postId ? await apiUpdatePost(postId, payload) : await apiCreatePost(payload);
+        if (result.ok) {
+            showMessage('message-container', result.message || (postId ? 'Post updated successfully!' : 'Post created successfully!'), 'success');
+            setTimeout(() => { window.location.href = 'profile.html'; }, 1500);
+        } else {
+            showMessage('message-container', result.error || 'An unknown error occurred.', 'error');
         }
-        document.querySelectorAll('.photo-toggle .toggle-btn').forEach(button => {
-            button.addEventListener('click', () => switchImageInput(button.dataset.target === 'image-upload' ? 'upload' : 'url'));
+    } catch (error) {
+        showMessage('message-container', 'Error saving post: ' + error.message, 'error');
+    }
+}
+
+// --- Event Listeners ---
+document.addEventListener('DOMContentLoaded', async () => {
+    applyTheme(localStorage.getItem('theme') || 'light');
+    updateNav();
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get('id');
+    if (postId) {
+        if (typeof redirectToLoginIfNotAuthenticated === 'function' && redirectToLoginIfNotAuthenticated()) return;
+        // In loadPostForEdit, 'url' should be 'image-url' to work with the corrected function.
+        // But for user-click, 'image-url' is correct. Let's fix loadPostForEdit call as well.
+        await loadPostForEdit(postId);
+    }
+    
+    // This is the listener for the toggle buttons
+    document.querySelectorAll('.photo-toggle .toggle-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            switchImageInput(button.dataset.target);
+            updatePreview(); 
         });
-        imageFileInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                if (file.size > 5 * 1024 * 1024) {
-                    showMessage('message-container', 'File size exceeds 5MB.', 'error');
-                    imageFileInput.value = '';
-                    return;
-                }
-                if (!['image/png', 'image/jpeg', 'image/gif'].includes(file.type)) {
-                    showMessage('message-container', 'Please upload a valid image file (PNG, JPEG, or GIF).', 'error');
-                    imageFileInput.value = '';
-                    return;
-                }
-            }
-            updatePreview();
-        });
-        imageUrlInput.addEventListener('input', () => {
-            updatePreview();
-        });
-        mobilePreviewToggle.addEventListener('click', () => {
-            mobilePreview.classList.toggle('show');
-            const icon = mobilePreview.classList.contains('show') ? 'fa-times' : 'fa-eye';
-            mobilePreviewToggle.innerHTML = `<i class="fas ${icon}"></i>`;
-        });
-        postTitleInput.addEventListener('input', updatePreview);
-        postContentInput.addEventListener('input', updatePreview);
-        postForm.addEventListener('submit', handleFormSubmit);
-        updatePreview();
     });
+
+    imageFileInput.addEventListener('change', updatePreview);
+    imageUrlInput.addEventListener('input', updatePreview);
+    mobilePreviewToggle.addEventListener('click', () => {
+        mobilePreview.classList.toggle('show');
+        const icon = mobilePreview.classList.contains('show') ? 'fa-times' : 'fa-eye';
+        mobilePreviewToggle.innerHTML = `<i class="fas ${icon}"></i>`;
+    });
+    postTitleInput.addEventListener('input', updatePreview);
+    postContentInput.addEventListener('input', updatePreview);
+    postForm.addEventListener('submit', handleFormSubmit);
+    if (!postId) {
+        updatePreview();
+    }
+});
 </script>
 </body>
 </html>

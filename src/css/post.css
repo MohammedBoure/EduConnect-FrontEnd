@@ -427,3 +427,42 @@ body.dark-mode .comment .post-content table {
         padding: 8px 10px;
     }
 }
+
+/* ============================================= */
+/*          POST DETAILS PAGE STYLES             */
+/* ============================================= */
+
+/* --- Image Styles --- */
+#postDetails .post-content > div img,
+.comment .post-content img {
+    max-width: 50%; /* Reduced max width for smaller images */
+    max-height: 30%; /* Reduced max height for smaller images */
+    height: auto;
+    display: block;
+    margin: 12px auto; /* Reduced margin for tighter spacing */
+    border-radius: 6px; /* Slightly smaller border-radius for proportionality */
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+    object-fit: contain;
+}
+
+body.dark-mode #postDetails .post-content > div img,
+body.dark-mode .comment .post-content img {
+    border-color: #4b5563;
+}
+
+/* Responsive Images for Mobile */
+@media (max-width: 767px) {
+    #postDetails .post-content > div img,
+    .comment .post-content img {
+        max-width: 100%; /* Even smaller on mobile */
+        max-height: 60%;
+        margin: 8px auto;
+        border-radius: 4px;
+    }
+}
+
+
+
+
+

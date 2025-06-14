@@ -140,8 +140,9 @@
         let currentPage = 1;
         let totalPages = 1;
         let isLoadingMessages = false;
-        let lastMessageId = null; // Store the ID of the last message fetched
+        let lastMessageId = null; // Store the ID of the last message fetched дниوبنيوم fetched
         let syncInterval = null; // Store the synchronization interval ID
+        let pendingMessages = new Set(); // Track locally sent messages
         
         const contactsPanel = document.getElementById('contactsPanel');
         const messengerContainer = document.getElementById('messengerContainer');
@@ -199,6 +200,7 @@
             currentRecipientId = recipientId;
             isLoadingMessages = false;
             lastMessageId = null; // Reset last message ID
+            pendingMessages.clear(); // Clear pending messages
 
             document.querySelectorAll('.contact-item.active').forEach(c => c.classList.remove('active'));
             const contactItems = document.querySelectorAll('.contact-item');
@@ -219,7 +221,6 @@
             `;
             document.getElementById('mobileBackToContacts').addEventListener('click', () => { 
                 messengerContainer.classList.remove('chat-active');
-                // Stop synchronization when returning to contacts list
                 if (syncInterval) {
                     clearInterval(syncInterval);
                     syncInterval = null;
@@ -281,7 +282,7 @@
                     const currentUserId = getUserId();
                     const messagesHtml = messages.map(msg => {
                         const type = msg.sender_id === currentUserId ? 'sent' : 'received';
-                        const sanitizedContent = msg.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                        const sanitizedContent = msg.content.replace(/</g, "<").replace(/>/g, ">");
                         return `
                         <div class="message-bubble ${type}">
                             <p>${sanitizedContent}</p>
@@ -309,21 +310,20 @@
             if (!currentRecipientId || isLoadingMessages) return;
 
             try {
-                // Fetch only new messages (after lastMessageId)
                 const result = await apiGetMessages(currentRecipientId, 1, lastMessageId);
                 if (result.ok && result.data) {
                     const messages = result.data.messages || result.data;
-                    if (messages.length === 0) return; // No new messages
+                    if (messages.length === 0) return;
 
                     const chatMessages = document.getElementById('chatMessages');
                     const wasScrolledToBottom = chatMessages.scrollTop + chatMessages.clientHeight >= chatMessages.scrollHeight - 10;
 
                     const currentUserId = getUserId();
                     const messagesHtml = messages
-                        .filter(msg => msg.id > lastMessageId) // Only new messages
+                        .filter(msg => !pendingMessages.has(msg.content)) // Ignore locally sent messages
                         .map(msg => {
                             const type = msg.sender_id === currentUserId ? 'sent' : 'received';
-                            const sanitizedContent = msg.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                            const sanitizedContent = msg.content.replace(/</g, "<").replace(/>/g, ">");
                             return `
                             <div class="message-bubble ${type}">
                                 <p>${sanitizedContent}</p>
@@ -333,9 +333,7 @@
 
                     if (messagesHtml) {
                         chatMessages.insertAdjacentHTML('beforeend', messagesHtml);
-                        // Update lastMessageId
                         lastMessageId = Math.max(...messages.map(msg => msg.id));
-                        // Scroll to bottom only if user is at the end of the conversation
                         if (wasScrolledToBottom) {
                             chatMessages.scrollTop = chatMessages.scrollHeight;
                         }
@@ -351,26 +349,43 @@
             const contentInput = document.getElementById('messageContent');
             const content = contentInput.value.trim();
             if (!content) return;
+
+            // Add message content to pending messages
+            pendingMessages.add(content);
+
+            // Add message to UI instantly
+            const chatMessages = document.getElementById('chatMessages');
+            const messageHtml = `
+                <div class="message-bubble sent">
+                    <p>${content.replace(/</g, "<").replace(/>/g, ">")}</p>
+                    <div class="message-meta">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                </div>`;
+            chatMessages.insertAdjacentHTML('beforeend', messageHtml);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            contentInput.value = '';
+            contentInput.dispatchEvent(new Event('input'));
+
             try {
                 const result = await apiSendMessage(currentRecipientId, content);
                 if (result.ok) {
-                    // Add message to UI instantly for better UX
-                    const chatMessages = document.getElementById('chatMessages');
-                    const messageHtml = `
-                        <div class="message-bubble sent">
-                            <p>${content.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
-                            <div class="message-meta">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                        </div>`;
-                    chatMessages.insertAdjacentHTML('beforeend', messageHtml);
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                    
-                    contentInput.value = '';
-                    contentInput.dispatchEvent(new Event('input'));
+                    // Update lastMessageId if server provides message ID
+                    if (result.data && result.data.id) {
+                        lastMessageId = Math.max(lastMessageId || 0, result.data.id);
+                    }
+                    // Remove from pending messages
+                    pendingMessages.delete(content);
                 } else {
                     alert(`Error: ${result.error}`);
+                    // Remove from UI and pending messages on failure
+                    chatMessages.removeChild(chatMessages.lastElementChild);
+                    pendingMessages.delete(content);
                 }
             } catch (error) {
                 alert(`Error: ${error.message}`);
+                // Remove from UI and pending messages on error
+                chatMessages.removeChild(chatMessages.lastElementChild);
+                pendingMessages.delete(content);
             }
         }
         
@@ -392,7 +407,6 @@
         const debouncedSearch = debounce((e) => loadUsers(e.target.value.trim()), 300);
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Stop any existing synchronization
             if (syncInterval) {
                 clearInterval(syncInterval);
                 syncInterval = null;
@@ -416,7 +430,6 @@
             document.getElementById('chatMessages').addEventListener('scroll', handleScroll);
         });
 
-        // Override logout function to stop synchronization
         function logout() {
             if (syncInterval) {
                 clearInterval(syncInterval);

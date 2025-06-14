@@ -185,18 +185,27 @@ async function apiGetComments(postId) {
 }
 
 async function postComment(postId, content) {
-    const createdAt = new Date().toISOString(); // Generate ISO format timestamp
-    const payload = {
-        content: content,
-        created_at: createdAt
-    };
-
-    const response = await fetchApi(`/posts/${postId}/comments`, {
-        method: 'POST',
-        body: payload,
-    });
-
-    return response;
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/api/posts/${postId}/comments`, { // Update port to 5000
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}` // Ensure token is valid
+            },
+            body: JSON.stringify({
+                content: content,
+                created_at: new Date().toISOString()
+            })
+        });
+        const data = await response.json();
+        return {
+            ok: response.ok,
+            data: data,
+            error: response.ok ? null : (data.error || 'Failed to add comment')
+        };
+    } catch (error) {
+        return { ok: false, error: error.message };
+    }
 }
 
 // Message APIs

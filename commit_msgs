@@ -21,3 +21,10 @@ fix(ui,edit): adjust AboutUs.html to match site theme and fix post editing issue
 -----
 
 fix(frontend): correct backend URL path integration in frontend
+-----
+
+Add image display in posts, inline LaTeX support, and fix double message issue
+
+- Styled post images using CSS for better layout and presentation
+- Enabled inline math expressions using $...$ syntax
+- Fixed issue causing message to appear twice due to 3s sync delay
