@@ -1,5 +1,6 @@
-Add image display in posts, inline LaTeX support, and fix double message issue
+Fix comment date not displaying due to incompatible server date format
 
-- Styled post images using CSS for better layout and presentation
-- Enabled inline math expressions using $...$ syntax
-- Fixed issue causing message to appear twice due to 3s sync delay
+- Handled parsing of server-returned date string to ensure proper display
+- Improved date formatting for better consistency across UI
+
+

@@ -8,7 +8,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.5/purify.min.js"></script>
 
-<!-- MathJax Configuration to enable inline math ($...$) -->
+<!-- MathJax Configuration -->
 <script>
 window.MathJax = {
   tex: {
@@ -20,21 +20,17 @@ window.MathJax = {
   }
 };
 </script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js" async></script>
 <link rel="stylesheet" href="/css/post.css">
 <link rel="stylesheet" href="/styles.css">
 <link rel="icon" href="/icons/icon-192x192.png" type="image/png" sizes="192x192">
-
-<!-- CSS for math rendering and button fixes -->
 <style>
-    /* Style for better inline math rendering */
     mjx-container[display="false"] {
         padding: 0 0.2em;
-        background-color: var(--code-bg-color, #f1f1f1); /* Using a variable for theme compatibility */
+        background-color: var(--code-bg-color, #f1f1f1);
         border-radius: 4px;
-        font-size: 0.95em; /* Helps it fit better within text lines */
-        display: inline-block; /* Prevents awkward line breaks */
+        font-size: 0.95em;
+        display: inline-block;
     }
     .dark-mode mjx-container[display="false"] {
         background-color: var(--code-bg-color, #2c3038);
@@ -47,16 +43,12 @@ window.MathJax = {
         height: auto;
         border-radius: 8px;
     }
-
-    /* --- ADDED: CSS for Comment Form Buttons --- */
     #commentForm .form-group {
         display: flex;
-        flex-wrap: wrap; /* Allow wrapping on small screens */
-        gap: 10px; /* Adds space between buttons */
+        flex-wrap: wrap;
+        gap: 10px;
         align-items: center;
     }
-
-    /* Base styles for buttons might be in styles.css, but this ensures consistency */
     #commentForm .btn-primary,
     #commentForm .btn-secondary {
         padding: 10px 15px;
@@ -67,34 +59,26 @@ window.MathJax = {
         transition: all 0.2s ease-in-out;
         display: inline-flex;
         align-items: center;
-        gap: 8px; /* Space between icon and text */
+        gap: 8px;
         border-style: solid;
         border-width: 1px;
     }
-
-    /* Secondary button style (for Preview) */
     #commentForm .btn-secondary {
         background-color: transparent;
         color: var(--text-color, #333);
         border-color: var(--border-color, #ccc);
     }
-
     #commentForm .btn-secondary:hover {
         background-color: var(--secondary-hover-bg, #f0f0f0);
     }
-
-    /* Dark mode specific styles for the secondary button */
     .dark-mode #commentForm .btn-secondary {
         color: var(--text-color-dark, #eee);
         border-color: var(--border-color-dark, #555);
     }
-
     .dark-mode #commentForm .btn-secondary:hover {
         background-color: var(--secondary-hover-bg-dark, #3a3f44);
     }
-    /* --- END ADDED --- */
 </style>
-
 </head>
 <body>
 <header>
@@ -206,18 +190,15 @@ window.MathJax = {
 
     themeToggleDesktop.addEventListener('click', toggleTheme);
     themeToggleMobile.addEventListener('click', toggleTheme);
-
     const savedTheme = localStorage.getItem('theme') || 'light';
     applyTheme(savedTheme);
 
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const mobileDropdown = document.getElementById('mobileDropdown');
-
     mobileMenuBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         mobileDropdown.classList.toggle('active');
     });
-
     document.addEventListener('click', (e) => {
         if (mobileDropdown.classList.contains('active') && !mobileDropdown.contains(e.target) && e.target !== mobileMenuBtn) {
             mobileDropdown.classList.remove('active');
@@ -251,9 +232,7 @@ window.MathJax = {
 
         const commentForm = document.getElementById('commentForm');
         if (!isLoggedIn && commentForm) {
-            commentForm.innerHTML = `
-                <p class="message info"><i class="fas fa-sign-in-alt"></i> Please <a href="login.html" style="text-decoration: underline;">login</a> to add a comment.</p>
-            `;
+            commentForm.innerHTML = `<p class="message info"><i class="fas fa-sign-in-alt"></i> Please <a href="login.html" style="text-decoration: underline;">login</a> to add a comment.</p>`;
         }
     }
 
@@ -263,13 +242,18 @@ window.MathJax = {
         messageDiv.textContent = message;
         messageDiv.className = `message ${type}`;
         messageDiv.style.display = 'block';
-        setTimeout(() => {
-            messageDiv.style.display = 'none';
-        }, 3000);
+        setTimeout(() => { messageDiv.style.display = 'none'; }, 3000);
     }
 
     const urlParams = new URLSearchParams(window.location.search);
     const postId = urlParams.get('id');
+
+    function formatDate(dateString) {
+        if (!dateString) return 'Date unavailable';
+        const cleanedDateString = dateString.replace(/Z$/, '');
+        const date = new Date(cleanedDateString);
+        return date instanceof Date && !isNaN(date) ? date.toLocaleDateString() : 'Date unavailable';
+    }
 
     async function loadPost() {
         const postDiv = document.getElementById('postDetails');
@@ -292,7 +276,7 @@ window.MathJax = {
                             <div>${markdownContent}</div>
                             <div class="post-meta">
                                 <span><i class="fas fa-user"></i> ${post.author.first_name} ${post.author.last_name}</span>
-                                <span><i class="fas fa-calendar-alt"></i> ${new Date(post.created_at).toLocaleDateString()}</span>
+                                <span><i class="fas fa-calendar-alt"></i> ${formatDate(post.created_at)}</span>
                             </div>
                             ${isCurrentUser ? `
                                 <div class="post-actions">
@@ -326,6 +310,12 @@ window.MathJax = {
                     comments.forEach(comment => {
                         const direction = detectDirection(comment.content);
                         const markdownContent = DOMPurify.sanitize(marked.parse(comment.content));
+
+                        // --- التعديل هنا ---
+                        // نستخدم دالة formatDate التي أنشأناها للتعامل مع التاريخ بشكل آمن
+                        const displayDate = formatDate(comment.created_at);
+                        // --- نهاية التعديل ---
+
                         const commentDiv = document.createElement('div');
                         commentDiv.className = 'comment';
                         commentDiv.innerHTML = `
@@ -335,7 +325,7 @@ window.MathJax = {
                             </div>
                             <div class="post-content" dir="${direction}">${markdownContent}</div>
                             <div class="post-meta">
-                                <span><i class="fas fa-calendar-alt"></i> ${new Date(comment.created_at).toLocaleDateString()}</span>
+                                <span><i class="fas fa-calendar-alt"></i> ${displayDate}</span>
                             </div>
                         `;
                         commentsContainer.appendChild(commentDiv);
@@ -397,15 +387,14 @@ window.MathJax = {
         if (!confirm('Are you sure you want to delete this post? This action cannot be undone.')) return;
         try {
             const result = await apiDeletePost(postId);
-            const postDetailsDiv = document.getElementById('postDetails');
             if (result.ok) {
-                postDetailsDiv.innerHTML = `<p class="message success">Post deleted successfully! Redirecting...</p>`;
+                document.getElementById('postDetails').innerHTML = `<p class="message success">Post deleted successfully! Redirecting...</p>`;
                 setTimeout(() => { window.location.href = 'profile.html'; }, 2000);
             } else {
-                showMessage(null, `Failed to delete post: ${result.error}`, 'error'); // Fallback to alert if no container
+                alert(`Failed to delete post: ${result.error}`);
             }
         } catch (error) {
-            showMessage(null, `Error deleting post: ${error.message}`, 'error');
+            alert(`Error deleting post: ${error.message}`);
         }
     }
 
