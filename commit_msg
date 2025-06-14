@@ -1,6 +1,1 @@
-Fix comment date not displaying due to incompatible server date format
-
-- Handled parsing of server-returned date string to ensure proper display
-- Improved date formatting for better consistency across UI
-
-
+docs(changelog): update CHANGELOG with latest UI and backend changes

@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.3.0] 2025-06-14
+
+### Added
+- Implemented live Markdown and LaTeX preview in `edit-post.html`.
+- Added support for image uploads and image URLs in post editor.
+- Enabled profile image upload during account creation and profile updates.
+- Enabled inline LaTeX math expressions using `$...$` syntax.
+- Display images in posts with improved CSS styling.
+
+### Changed
+- Redesigned `edit-post.html` structure for better UX and extensibility.
+- Adjusted `AboutUs.html` to match the site's theme.
+- Set message sync interval in `messenger.html` to 3 seconds.
+
+### Fixed
+- Fixed post editing issue in `edit-post.html`.
+- Fixed duplicate message issue caused by sync timing.
+- Corrected backend URL path integration in frontend.
+- Fixed comment date display by parsing server-side date formats and improving formatting consistency.
+
+
+
 ## [1.2.0] 2025-06-11
 
 ### Features
