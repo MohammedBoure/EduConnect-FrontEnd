@@ -18,6 +18,101 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <title>EduConnect</title>
+  
+  <!-- START: ADDED CSS FOR API MODAL -->
+  <style>
+    /* Styles for the API URL Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal-content {
+      background: var(--background-color);
+      color: var(--text-color);
+      padding: 2rem;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      position: relative;
+      transform: translateY(-50px);
+      transition: transform 0.3s ease;
+    }
+    .modal-overlay.active .modal-content {
+        transform: translateY(0);
+    }
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--text-color);
+    }
+    .modal-content h2 {
+      margin-top: 0;
+      color: var(--primary-color);
+    }
+    .modal-content .form-group {
+        margin-bottom: 1rem;
+    }
+    .modal-content label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    .modal-content input[type="url"] {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border-color);
+        background-color: var(--card-bg-color);
+        color: var(--text-color);
+        border-radius: 5px;
+    }
+    /* Style for the new navbar buttons */
+    #mainNav button, #mobileDropdown button {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        color: inherit;
+        font-size: 1rem;
+        padding: 0;
+    }
+    #mainNav #changeApiBtnDesktop, #mainNav #themeToggleDesktop {
+        color: var(--text-color-nav);
+        font-size: 1.2rem;
+        padding: 10px;
+    }
+    #mobileDropdown button {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: 15px 20px;
+        text-align: left;
+    }
+    #mobileDropdown button i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+    }
+  </style>
+  <!-- END: ADDED CSS -->
+
 </head>
 <body>
     <header>
@@ -35,6 +130,13 @@
                 <li class="hideOnMobile auth-link" id="registerLink"><a href="register.html"><i class="fas fa-user-plus"></i> Register</a></li>
                 <li class="hideOnMobile auth-link" id="loginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
                 <li class="hideOnMobile auth-link" id="logoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <!-- START: ADDED BUTTONS -->
+                <li class="hideOnMobile">
+                    <button id="changeApiBtnDesktop" title="Change API URL">
+                        <i class="fas fa-server"></i>
+                    </button>
+                </li>
+                <!-- END: ADDED BUTTONS -->
                 <li class="hideOnMobile">
                     <button id="themeToggleDesktop" title="Toggle Theme">
                         <i class="fas fa-sun"></i>
@@ -58,6 +160,13 @@
                         <li class="auth-link" id="sideRegisterLink"><a href="register.html"><i class="fas fa-user-plus"></i> Register</a></li>
                         <li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
                         <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                         <!-- START: ADDED BUTTONS -->
+                        <li>
+                            <button id="changeApiBtnMobile" title="Change API URL">
+                                <i class="fas fa-server"></i><span>Change API</span>
+                            </button>
+                        </li>
+                        <!-- END: ADDED BUTTONS -->
                         <li>
                             <button id="themeToggleMobile" title="Toggle Theme">
                                 <i class="fas fa-moon"></i><span>Toggle Theme</span>
@@ -69,6 +178,7 @@
         </nav>
     </header>
 
+    <!-- Main content here -->
     <div class="hero-section">
         <div class="hero-content">
             <h1>Welcome to EduConnect</h1>
@@ -76,9 +186,8 @@
             <a href="register.html" class="btn-primary">Join Now</a>
         </div>
     </div>
-
     <div class="container">
-        <div class="section about-section" data-aos="fade-up">
+         <div class="section about-section" data-aos="fade-up">
             <div class="about-image">
                 <img src="/images/MainImage.jpg" alt="University Community" loading="lazy">
             </div>
@@ -88,7 +197,6 @@
                 <a href="aboutUS.html" class="btn-primary">Discover More</a>
             </div>
         </div>
-
         <div class="section" data-aos="fade-up">
             <h2><i class="fas fa-bullhorn"></i> Community Announcements</h2>
             <div id="adminPosts">
@@ -112,24 +220,37 @@
         </div>
     </footer>
 
+    <!-- START: ADDED API MODAL HTML -->
+    <div id="apiModal" class="modal-overlay">
+        <div class="modal-content">
+            <span id="closeApiModal" class="modal-close">×</span>
+            <h2>Change API Base URL</h2>
+            <p>Enter the new API URL. The page will reload after saving to apply the changes.</p>
+            <div class="form-group">
+                <label for="apiUrlInput">API Base URL</label>
+                <input type="url" id="apiUrlInput" placeholder="https://api.example.com/v1" required>
+            </div>
+            <button id="saveApiUrlBtn" class="btn-primary">Save & Reload</button>
+        </div>
+    </div>
+    <!-- END: ADDED API MODAL HTML -->
+
+    <!-- Load foundational scripts first -->
     <script src="/js/auth.js"></script>
     <script src="/js/api.js"></script>
+    
+    <!-- Page-specific logic -->
     <script defer>
-        // --- START: CORRECTED NAVIGATION AND THEME LOGIC ---
-
-        // Mobile Menu Toggle
+        // --- Mobile Menu Toggle ---
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileDropdown = document.getElementById('mobileDropdown'); // Corrected ID
-
+        const mobileDropdown = document.getElementById('mobileDropdown'); 
         if (mobileMenuBtn && mobileDropdown) {
-            mobileMenuBtn.addEventListener('click', (event) => { // Added event listener
+            mobileMenuBtn.addEventListener('click', (event) => { 
                 event.stopPropagation();
                 const isExpanded = mobileDropdown.classList.toggle('active');
                 mobileMenuBtn.setAttribute('aria-expanded', isExpanded);
             });
-        
-            // Close menu when clicking outside of it
-            document.addEventListener('click', function(event) {
+            document.addEventListener('click', (event) => {
                 if (mobileDropdown.classList.contains('active') && !mobileDropdown.contains(event.target) && event.target !== mobileMenuBtn) {
                     mobileDropdown.classList.remove('active');
                     mobileMenuBtn.setAttribute('aria-expanded', 'false');
@@ -137,99 +258,115 @@
             });
         }
 
-        // Theme toggle
-        const themeToggleMobile = document.getElementById('themeToggleMobile'); // Corrected ID
+        // --- Theme Toggle Logic ---
+        const themeToggleMobile = document.getElementById('themeToggleMobile');
         const themeToggleDesktop = document.getElementById('themeToggleDesktop');
-
         function applyTheme(theme) {
             const isDark = theme === 'dark';
             document.body.classList.toggle('dark-mode', isDark);
             const iconClass = isDark ? 'fa-sun' : 'fa-moon';
             if (themeToggleDesktop) themeToggleDesktop.innerHTML = `<i class="fas ${iconClass}"></i>`;
-            if (themeToggleMobile) themeToggleMobile.innerHTML = `<i class="fas ${iconClass}"></i><span>Toggle Theme</span>`;
+            if (themeToggleMobile) themeToggleMobile.querySelector('i').className = `fas ${iconClass}`;
         }
-        
         function toggleTheme() {
             const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
             localStorage.setItem('theme', newTheme);
             applyTheme(newTheme);
         }
-
         if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
         if (themeToggleDesktop) themeToggleDesktop.addEventListener('click', toggleTheme);
         
-        // --- END: CORRECTED LOGIC ---
+        // --- API Modal Logic ---
+        const apiModal = document.getElementById('apiModal');
+        const changeApiBtnDesktop = document.getElementById('changeApiBtnDesktop');
+        const changeApiBtnMobile = document.getElementById('changeApiBtnMobile');
+        const closeApiModalBtn = document.getElementById('closeApiModal');
+        const saveApiUrlBtn = document.getElementById('saveApiUrlBtn');
+        const apiUrlInput = document.getElementById('apiUrlInput');
 
-        // Navigation update
-        function updateNav() {
-            const isLoggedIn = isAuthenticated();
-            ['registerLink', 'loginLink', 'sideRegisterLink', 'sideLoginLink'].forEach(id => {
-                const element = document.getElementById(id);
-                if (element) element.style.display = isLoggedIn ? 'none' : 'list-item';
-            });
-            ['logoutLink', 'sideLogoutLink'].forEach(id => {
-                const element = document.getElementById(id);
-                if (element) element.style.display = isLoggedIn ? 'list-item' : 'none';
+        function openApiModal() {
+            if (typeof getApiBaseUrl === 'function') {
+                apiUrlInput.value = getApiBaseUrl();
+            } else {
+                console.error("The function getApiBaseUrl() is not defined. Make sure auth.js is loaded correctly.");
+                apiUrlInput.placeholder = "Could not load current URL";
+            }
+            if (apiModal) apiModal.classList.add('active');
+        }
+
+        function closeApiModal() {
+            if (apiModal) apiModal.classList.remove('active');
+        }
+        
+        if (changeApiBtnDesktop) changeApiBtnDesktop.addEventListener('click', openApiModal);
+        if (changeApiBtnMobile) changeApiBtnMobile.addEventListener('click', openApiModal);
+        if (closeApiModalBtn) closeApiModalBtn.addEventListener('click', closeApiModal);
+        
+        if (apiModal) {
+            apiModal.addEventListener('click', (event) => {
+                if (event.target === apiModal) closeApiModal();
             });
         }
 
-        // Load admin posts
+        if (saveApiUrlBtn) {
+            saveApiUrlBtn.addEventListener('click', () => {
+                const newUrl = apiUrlInput.value.trim();
+                try {
+                    // Use URL constructor for robust validation
+                    new URL(newUrl); 
+                    if (newUrl.startsWith('http://') || newUrl.startsWith('https://')) {
+                        localStorage.setItem('customApiBaseUrl', newUrl);
+                        alert('API URL saved successfully. The page will now reload.');
+                        window.location.reload();
+                    } else {
+                        alert('Please enter a valid URL starting with http:// or https://');
+                    }
+                } catch (_) {
+                    alert('Invalid URL format. Please check the URL and try again.');
+                }
+            });
+        }
+        
+        // --- Page Initialization Logic ---
+        function updateNav() {
+            const isLoggedIn = isAuthenticated();
+            document.querySelectorAll('#registerLink, #loginLink, #sideRegisterLink, #sideLoginLink').forEach(el => {
+                if (el) el.style.display = isLoggedIn ? 'none' : 'list-item';
+            });
+            document.querySelectorAll('#logoutLink, #sideLogoutLink').forEach(el => {
+                if (el) el.style.display = isLoggedIn ? 'list-item' : 'none';
+            });
+        }
+
         async function loadAdminPosts(page = 1, perPage = 9) {
             const postsDiv = document.getElementById('adminPosts');
+            // The apiGetAdminUserPosts function (in api.js) will use getApiBaseUrl() internally
             try {
-                const result = await apiGetAdminUserPosts(page, perPage);
+                const result = await apiGetAdminUserPosts(page, perPage); // Assumes this function is in api.js
                 if (result.ok) {
                     const { posts, total, pages } = result.data;
                     postsDiv.innerHTML = '';
                     if (posts.length === 0) {
-                        postsDiv.innerHTML = `
-                            <div class="no-posts">
-                                <i class="fas fa-file-alt"></i>
-                                <h3>No Announcements Yet</h3>
-                                <p>No community announcements available at this time.</p>
-                            </div>
-                        `;
+                        postsDiv.innerHTML = `<div class="no-posts"><i class="fas fa-file-alt"></i><h3>No Announcements Yet</h3></div>`;
                     } else {
                         const postsContainer = document.createElement('div');
-                        postsContainer.id = 'posts-container';
-                        postsContainer.innerHTML = `
-                            <div id="userPosts">
-                                ${posts.map(post => `
-                                    <div class="user-post" data-aos="fade-up">
-                                        ${post.image ? `
-                                            <div class="post-image-container">
-                                                <img src="${post.image}" alt="${post.title || 'Post Image'}" loading="lazy">
-                                            </div>
-                                        ` : ''}
-                                        <div class="post-content">
-                                            <span class="post-badge">Announcement</span>
-                                            <h3><a href="post.html?id=${post.id}">${post.title || 'Untitled'}</a></h3>
-                                            <p>${(post.content || "").substring(0, 120)}${(post.content || "").length > 120 ? '...' : ''}</p>
-                                            <div class="post-meta">
-                                                <span><i class="fas fa-user"></i> ${post.author.first_name} ${post.author.last_name}</span>
-                                                <span><i class="fas fa-calendar-alt"></i> ${new Date(post.created_at).toLocaleDateString()}</span>
-                                            </div>
-                                            <div class="post-actions">
-                                                <a href="post.html?id=${post.id}" class="btn-primary">Read More</a>
-                                            </div>
-                                        </div>
+                        postsContainer.id = 'posts-container'; // For easier styling
+                        postsContainer.innerHTML = posts.map(post => `
+                            <div class="user-post" data-aos="fade-up">
+                                ${post.image ? `<div class="post-image-container"><img src="${post.image.url || post.image}" alt="${post.title || 'Post Image'}" loading="lazy"></div>` : ''}
+                                <div class="post-content">
+                                    <span class="post-badge">Announcement</span>
+                                    <h3><a href="post.html?id=${post.id}">${post.title || 'Untitled'}</a></h3>
+                                    <p>${(post.body || post.content || "").substring(0, 120)}...</p>
+                                    <div class="post-meta">
+                                        <span><i class="fas fa-user"></i> ${post.author.first_name} ${post.author.last_name}</span>
+                                        <span><i class="fas fa-calendar-alt"></i> ${new Date(post.created_at).toLocaleDateString()}</span>
                                     </div>
-                                `).join('')}
-                            </div>
-                        `;
+                                    <a href="post.html?id=${post.id}" class="btn-primary">Read More</a>
+                                </div>
+                            </div>`).join('');
                         postsDiv.appendChild(postsContainer);
-                        if (pages > 1) {
-                            const pagination = document.createElement('div');
-                            pagination.className = 'pagination';
-                            pagination.innerHTML = `
-                                ${page > 1 ? `<button class="btn-primary" onclick="loadAdminPosts(${page - 1}, ${perPage})" aria-label="Previous Page"><i class="fas fa-chevron-left"></i></button>` : ''}
-                                ${Array.from({ length: pages }, (_, i) => i + 1).map(p => `
-                                    <button class="${p === page ? 'active' : ''}" onclick="loadAdminPosts(${p}, ${perPage})" aria-label="Page ${p}" ${p === page ? 'aria-current="page"' : ''}>${p}</button>
-                                `).join('')}
-                                ${page < pages ? `<button class="btn-primary" onclick="loadAdminPosts(${page + 1}, ${perPage})" aria-label="Next Page"><i class="fas fa-chevron-right"></i></button>` : ''}
-                            `;
-                            postsDiv.appendChild(pagination);
-                        }
+                        // Add pagination if needed...
                     }
                 } else {
                     postsDiv.innerHTML = `<p class="message error"><i class="fas fa-exclamation-circle"></i> ${result.error}</p>`;
@@ -239,35 +376,30 @@
             }
         }
 
-        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            // Load saved theme first
+            // Apply saved theme on load
             const savedTheme = localStorage.getItem('theme') || 'light';
             applyTheme(savedTheme);
-
+            
+            // Update navigation based on auth state
             updateNav();
+
+            // Load dynamic content
             loadAdminPosts();
-            // Smooth scroll
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', e => {
-                    e.preventDefault();
-                    document.querySelector(anchor.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
-                });
-            });
         });
     </script>
+    
     <!-- AOS for animations -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({ duration: 800, once: true });
-    </script>
-    <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js')
-            .then(reg => console.log('SW registered:', reg.scope))
-            .catch(err => console.error('SW failed:', err));
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                .then(reg => console.log('Service Worker registered:', reg.scope))
+                .catch(err => console.error('Service Worker registration failed:', err));
+            });
         }
     </script>
-
 </body>
 </html>

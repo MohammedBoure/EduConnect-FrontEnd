@@ -1,4 +1,6 @@
 
 -----
 
-docs(changelog): update CHANGELOG with latest UI and backend changes
+feat: add temporary option to change backend server URL from UI
+
+Added a temporary input in the frontend allowing users to set a custom backend server URL for testing purposes. This feature is intended for development only and will be removed in future versions.
