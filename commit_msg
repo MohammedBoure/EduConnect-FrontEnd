@@ -1,3 +1,3 @@
- fix: correct postComment function in src/js/api.js
+feat: enable full post listing with pagination in profile page
 
-Refactored the postComment function to fix bugs and ensure proper handling of comment submission. Improved error handling and request payload formatting.
+Updated src/profile.html to support displaying all user posts with pagination. This improves scalability and reduces computational complexity when rendering large post lists.

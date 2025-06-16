@@ -10,6 +10,51 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="/icons/icon-192x192.png" type="image/png" sizes="192x192">
     <link rel="stylesheet" href="/css/profile.css">
+    <style>
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .pagination button {
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+            border: 1px solid var(--border-color, #ccc);
+            background-color: var(--btn-bg, #fff);
+            color: var(--text-color, #333);
+        }
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .pagination button:hover:not(:disabled) {
+            background-color: var(--primary-color, #2563eb);
+            color: #fff;
+            border-color: var(--primary-color, #2563eb);
+        }
+        .pagination span {
+            font-size: 0.9rem;
+            color: var(--text-color, #333);
+        }
+        .dark-mode .pagination button {
+            background-color: var(--btn-bg-dark, #2c3038);
+            color: var(--text-color-dark, #eee);
+            border-color: var(--border-color-dark, #555);
+        }
+        .dark-mode .pagination button:hover:not(:disabled) {
+            background-color: var(--primary-color-dark, #3b82f6);
+            color: #fff;
+        }
+        .dark-mode .pagination span {
+            color: var(--text-color-dark, #eee);
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -116,6 +161,11 @@
             <div id="posts-container">
                 <div id="userPosts">
                     <div class="loading-spinner"><div class="spinner"></div></div>
+                </div>
+                <div class="pagination" id="paginationControls" style="display: none;">
+                    <button id="prevPage" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+                    <span id="pageInfo"></span>
+                    <button id="nextPage"><i class="fas fa-chevron-right"></i> Next</button>
                 </div>
             </div>
         </div>
@@ -387,12 +437,23 @@
             }
         }
 
-        async function loadPosts() {
+        // Pagination state
+        let currentPage = 1;
+        const postsPerPage = 10;
+
+        async function loadPosts(page = 1) {
             const userPostsContainer = document.getElementById('userPosts');
+            const paginationControls = document.getElementById('paginationControls');
+            const prevPageBtn = document.getElementById('prevPage');
+            const nextPageBtn = document.getElementById('nextPage');
+            const pageInfo = document.getElementById('pageInfo');
+
             try {
-                const result = await apiGetUserPosts(currentUserId);
+                const result = await apiGetUserPosts(currentUserId, page, postsPerPage);
                 if (result.ok) {
-                    const posts = result.data.posts || [];
+                    const { posts = [], total = 0, pages = 1 } = result.data;
+                    currentPage = page;
+
                     if (posts.length === 0) {
                         userPostsContainer.innerHTML = `
                             <div class="no-posts">
@@ -401,8 +462,10 @@
                                 <p>You haven't created any posts. Share your thoughts now!</p>
                                 <a href="edit-post.html" class="btn-primary"><i class="fas fa-plus"></i> Create Your First Post</a>
                             </div>`;
+                        paginationControls.style.display = 'none';
                         return;
                     }
+
                     userPostsContainer.innerHTML = posts.map(post => `
                         <div class="user-post">
                             ${post.image ? `<div class="post-image-container"><img src="${post.image}" alt="Post Image"></div>` : ''}
@@ -418,11 +481,19 @@
                                 </div>
                             </div>
                         </div>`).join('');
+
+                    // Update pagination controls
+                    paginationControls.style.display = total > postsPerPage ? 'flex' : 'none';
+                    prevPageBtn.disabled = currentPage === 1;
+                    nextPageBtn.disabled = currentPage >= pages;
+                    pageInfo.textContent = `Page ${currentPage} of ${pages}`;
                 } else {
                     userPostsContainer.innerHTML = `<p class="message error">${result.error}</p>`;
+                    paginationControls.style.display = 'none';
                 }
             } catch (error) {
                 userPostsContainer.innerHTML = `<p class="message error">An unexpected error occurred: ${error.message}</p>`;
+                paginationControls.style.display = 'none';
             }
         }
 
@@ -432,7 +503,7 @@
                 const result = await apiDeletePost(postId);
                 if (result.ok) {
                     showMessage('Post deleted successfully!', 'success');
-                    await loadPosts();
+                    await loadPosts(currentPage);
                 } else {
                     showMessage(`Failed to delete post: ${result.error}`, 'error');
                 }
@@ -440,6 +511,17 @@
                 showMessage(`Error deleting post: ${error.message}`, 'error');
             }
         }
+
+        // Pagination event listeners
+        document.getElementById('prevPage').addEventListener('click', () => {
+            if (currentPage > 1) {
+                loadPosts(currentPage - 1);
+            }
+        });
+
+        document.getElementById('nextPage').addEventListener('click', () => {
+            loadPosts(currentPage + 1);
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             const savedTheme = localStorage.getItem('theme') || 'light';
