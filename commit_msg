@@ -1,1 +1,3 @@
-docs: fix and improve installation and setup steps in README.md
+ fix: correct postComment function in src/js/api.js
+
+Refactored the postComment function to fix bugs and ensure proper handling of comment submission. Improved error handling and request payload formatting.
