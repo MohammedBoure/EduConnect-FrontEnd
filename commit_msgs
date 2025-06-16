@@ -2,3 +2,6 @@
 -----
 
 docs(changelog): update CHANGELOG with latest UI and backend changes
+-----
+
+docs: fix and improve installation and setup steps in README.md

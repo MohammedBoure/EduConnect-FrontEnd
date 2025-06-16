@@ -36,8 +36,6 @@ The following accounts can be used for testing the API and admin interface (all 
 
 ## Project Structure
 
-The project is organized as follows:
-
 ```
 EduConnect-FrontEnd/
 ├── src/
@@ -96,7 +94,13 @@ To run the project locally, ensure you have:
 3. **Set Up the Backend**:
    Follow the instructions in the [EduConnect BackEnd repository](https://github.com/MohammedBoure/EduConnect-BackEnd) to set up the server and API.
 
-4. **Run the Application**:
+4. **Configure Backend API URL**:
+   To connect to the backend, update the `API_BASE_URL` constant in the following files:
+   - `src/js/auth.js`
+   - `src/admin/js/auth.js`
+   Set the `API_BASE_URL` to the backend URL, ensuring `/api` is appended to the end of the URL (e.g., `https://your-backend-url/api`).
+
+5. **Run the Application**:
    - Serve the front-end files using a local server (e.g., `live-server` or any static file server).
    ```bash
    npm install -g live-server
