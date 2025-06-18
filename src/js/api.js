@@ -72,6 +72,28 @@ async function fetchApi(endpoint, options = {}, expectedResponseType = 'json') {
         return { ok: false, error: errorMessage };
     }
 }
+
+// Message APIs
+async function apiSendMessage(recipientId, content) {
+    return await fetchApi(`/messages`, {
+        method: 'POST',
+        body: {
+            receiver_id: recipientId,
+            content: content
+        }
+    }, 'json');
+}
+
+async function apiGetMessages(recipientId, page = 1, lastMessageId = null) {
+    const query = lastMessageId 
+        ? `last_message_id=${lastMessageId}&per_page=30`
+        : `page=${page}&per_page=30`;
+    return await fetchApi(`/messages/${recipientId}?${query}`, {
+        method: 'GET',
+    }, 'json');
+}
+
+// Other APIs (unchanged, included for completeness)
 async function apiRegister(formData) {
     try {
         const response = await fetch(`${API_BASE_URL}/register`, {
@@ -99,7 +121,6 @@ async function apiLogin(credentials) {
     return result;
 }
 
-// Profile APIs
 async function apiGetProfile(userId) {
     return await fetchApi(`/profile/${userId}`, {
         method: 'GET',
@@ -132,7 +153,6 @@ async function apiGetUsers(page = 1, perPage = 10) {
     }, 'json');
 }
 
-// Post APIs
 async function apiGetUserPosts(userId, page = 1, perPage = 10) {
     return await fetchApi(`/posts/user/${userId}?page=${page}&per_page=${perPage}`, {
         method: 'GET',
@@ -177,7 +197,6 @@ async function apiDeletePost(postId) {
     }, 'json');
 }
 
-// Comment APIs
 async function apiGetComments(postId) {
     return await fetchApi(`/posts/${postId}/comments`, {
         method: 'GET',
@@ -206,21 +225,4 @@ async function postComment(postId, content) {
     } catch (error) {
         return { ok: false, error: error.message };
     }
-}
-
-// Message APIs
-async function apiSendMessage(recipientId, content) {
-    return await fetchApi(`/messages`, {
-        method: 'POST',
-        body: {
-            receiver_id: recipientId,
-            content: content
-        }
-    }, 'json');
-}
-
-async function apiGetMessages(recipientId) {
-    return await fetchApi(`/messages/${recipientId}`, {
-        method: 'GET',
-    }, 'json');
 }

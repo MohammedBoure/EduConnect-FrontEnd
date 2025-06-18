@@ -43,7 +43,7 @@
                         <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
                         <li><a href="messenger.html" aria-current="page"><i class="fas fa-comments"></i> Messages</a></li>
                         <li><a href="profile.html"><i class="fas fa-user"></i> Profile</a></li>
-                        <li><a href="posts.html"><i class="fas fa-blog"></i> Blog</a></li>
+                        <li><a href="posts.html"><i class="fas fa-home"></i> Blog</a></li>
                         <li class="auth-link" id="sideRegisterLink"><a href="register.html"><i class="fas fa-user-plus"></i> Register</a></li>
                         <li class="auth-link" id="sideLoginLink"><a href="login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
                         <li class="auth-link" id="sideLogoutLink" style="display: none;"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
@@ -117,7 +117,7 @@
                 }
             });
         }
-        
+
         const themeToggleMobile = document.getElementById('themeToggleMobile');
         const themeToggleDesktop = document.getElementById('themeToggleDesktop');
         function applyTheme(theme) {
@@ -133,22 +133,31 @@
         }
         if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
         if (themeToggleDesktop) themeToggleDesktop.addEventListener('click', toggleTheme);
-        // --- END: NAVIGATION AND THEME LOGIC ---
 
         // --- START: MESSENGER PAGE LOGIC ---
         let currentRecipientId = null;
         let currentPage = 1;
         let totalPages = 1;
         let isLoadingMessages = false;
-        let lastMessageId = null; // Store the ID of the last message fetched дниوبنيوم fetched
-        let syncInterval = null; // Store the synchronization interval ID
-        let pendingMessages = new Set(); // Track locally sent messages
-        
+        let lastMessageId = null;
+        let syncInterval = null;
+        let hasMoreMessages = true;
+
         const contactsPanel = document.getElementById('contactsPanel');
         const messengerContainer = document.getElementById('messengerContainer');
         const closeContactsBtn = document.getElementById('closeContactsBtn');
-        
-        function closeContactsSidebar() { messengerContainer.classList.remove('sidebar-visible'); }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function closeContactsSidebar() {
+            messengerContainer.classList.remove('sidebar-visible');
+        }
         if (closeContactsBtn) closeContactsBtn.addEventListener('click', closeContactsSidebar);
 
         function updateNav() {
@@ -163,7 +172,7 @@
                 const el = document.getElementById(id); if (el) el.style.display = isLoggedIn ? 'block' : 'none';
             });
         }
-        
+
         async function loadUsers(query = '') {
             const contactListDiv = document.getElementById('contactList');
             contactListDiv.innerHTML = `<div class="loading-spinner"><div class="spinner"></div></div>`;
@@ -176,31 +185,34 @@
                     } else {
                         contactListDiv.innerHTML = users.map(user => `
                             <div class="contact-item" role="button" tabindex="0" 
-                                 onclick="selectContact(${user.id}, '${user.first_name}', '${user.last_name}', '${user.photo || '/images/placeholder-avatar.jpg'}')">
-                                <img src="${user.photo || '/images/placeholder-avatar.jpg'}" alt="${user.first_name} avatar">
+                                 onclick="selectContact(${user.id}, '${user.first_name}', '${user.last_name}', '${user.photo || '/images/placeholder-avatar.jpg'}')"
+                                 onkeydown="if(event.key === 'Enter' || event.key === ' ') selectContact(${user.id}, '${user.first_name}', '${user.last_name}', '${user.photo || '/images/placeholder-avatar.jpg'}')">
+                                <img src="${user.photo || '/images/placeholder-avatar.jpg'}" alt="${user.first_name} ${user.last_name}'s avatar">
                                 <div class="contact-info"><p class="contact-name">${user.first_name} ${user.last_name}</p></div>
                             </div>
                         `).join('');
                     }
                 } else {
                     contactListDiv.innerHTML = `<div class="placeholder-view small"><i class="fas fa-exclamation-circle"></i><p>${result.error || 'Failed to load users'}</p></div>`;
+                    showToast(result.error || 'Failed to load users');
                 }
             } catch (error) {
                 contactListDiv.innerHTML = `<div class="placeholder-view small"><i class="fas fa-exclamation-circle"></i><p>Error: ${error.message}</p></div>`;
+                showToast(`Error: ${error.message}`);
             }
         }
 
         async function selectContact(recipientId, firstName, lastName, photo) {
-            // Stop any existing synchronization
             if (syncInterval) {
                 clearInterval(syncInterval);
                 syncInterval = null;
             }
-            
+
             currentRecipientId = recipientId;
             isLoadingMessages = false;
-            lastMessageId = null; // Reset last message ID
-            pendingMessages.clear(); // Clear pending messages
+            lastMessageId = null;
+            hasMoreMessages = true;
+            currentPage = 1;
 
             document.querySelectorAll('.contact-item.active').forEach(c => c.classList.remove('active'));
             const contactItems = document.querySelectorAll('.contact-item');
@@ -209,98 +221,115 @@
                     item.classList.add('active');
                 }
             });
-            
+
             closeContactsSidebar();
             messengerContainer.classList.add('chat-active');
 
             const chatHeader = document.getElementById('chatHeader');
             chatHeader.innerHTML = `
                 <button id="mobileBackToContacts" class="show-on-mobile-only" aria-label="Back to Contacts"><i class="fas fa-arrow-left"></i></button>
-                <img src="${photo}" alt="${firstName} avatar" class="chat-header-avatar">
+                <img src="${photo}" alt="${firstName} ${lastName}'s avatar" class="chat-header-avatar">
                 <span class="chat-header-name">${firstName} ${lastName}</span>
             `;
-            document.getElementById('mobileBackToContacts').addEventListener('click', () => { 
+            document.getElementById('mobileBackToContacts').addEventListener('click', () => {
                 messengerContainer.classList.remove('chat-active');
                 if (syncInterval) {
                     clearInterval(syncInterval);
                     syncInterval = null;
                 }
             });
-            
+
             document.getElementById('chatHeader').style.display = 'flex';
             document.getElementById('chatInputArea').style.display = 'flex';
-            
-            // Load initial messages
+
             await loadInitialMessages();
-            
-            // Start periodic synchronization
-            syncInterval = setInterval(syncMessages, 3000);
+
+            syncInterval = setInterval(syncMessages, 5000); // Increased to 5 seconds for efficiency
         }
-        
+
         async function loadInitialMessages() {
             const chatMessages = document.getElementById('chatMessages');
             chatMessages.innerHTML = `<div class="loading-spinner"><div class="spinner"></div></div>`;
 
             try {
-                const metaResult = await apiGetMessages(currentRecipientId, 1);
-                if (metaResult.ok && metaResult.data) {
-                    totalPages = metaResult.data.pages || 1;
-                    await loadMessages(totalPages, true);
+                const result = await apiGetMessages(currentRecipientId, 1);
+                if (result.ok && result.data) {
+                    totalPages = result.data.pages || 1;
+                    await loadMessages(1, false);
                 } else {
                     chatMessages.innerHTML = `<div class="placeholder-view"><i class="fas fa-exclamation-triangle"></i><h3>Error</h3><p>Could not load conversation.</p></div>`;
+                    showToast(result.error || 'Could not load conversation');
                 }
             } catch (error) {
                 chatMessages.innerHTML = `<div class="placeholder-view"><i class="fas fa-exclamation-triangle"></i><h3>Error</h3><p>${error.message}</p></div>`;
+                showToast(`Error: ${error.message}`);
             }
         }
 
-        async function loadMessages(page, isInitialLoad = false) {
-            if (isLoadingMessages) return;
+        async function loadMessages(page, append = false) {
+            if (isLoadingMessages || !hasMoreMessages) return;
             isLoadingMessages = true;
 
             const chatMessages = document.getElementById('chatMessages');
-            
-            if (!isInitialLoad) {
+
+            if (append) {
                 chatMessages.insertAdjacentHTML('afterbegin', `<div class="loading-spinner" id="history-spinner"><div class="spinner"></div></div>`);
             }
 
             try {
                 const result = await apiGetMessages(currentRecipientId, page);
-                
                 const historySpinner = document.getElementById('history-spinner');
                 if (historySpinner) historySpinner.remove();
 
                 if (result.ok && result.data) {
-                    const messages = result.data.messages || result.data;
-                    currentPage = result.data.page || 1;
+                    const { messages, page: currentPageFromApi, per_page, pages } = result.data;
+                    currentPage = currentPageFromApi;
+                    totalPages = pages;
+                    hasMoreMessages = currentPage < totalPages;
 
-                    // Update lastMessageId if there are messages
                     if (messages.length > 0) {
-                        lastMessageId = Math.max(...messages.map(msg => msg.id));
+                        lastMessageId = Math.max(lastMessageId || 0, ...messages.map(msg => msg.id));
                     }
 
                     const currentUserId = getUserId();
-                    const messagesHtml = messages.map(msg => {
-                        const type = msg.sender_id === currentUserId ? 'sent' : 'received';
-                        const sanitizedContent = msg.content.replace(/</g, "<").replace(/>/g, ">");
-                        return `
-                        <div class="message-bubble ${type}">
-                            <p>${sanitizedContent}</p>
-                            <div class="message-meta">${new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                        </div>`;
-                    }).join('');
+                    const existingMessageIds = new Set(
+                        Array.from(chatMessages.querySelectorAll('.message-bubble')).map(bubble => parseInt(bubble.getAttribute('data-message-id')))
+                    );
 
-                    if (isInitialLoad) {
-                        chatMessages.innerHTML = messages.length > 0 ? messagesHtml : `<div class="placeholder-view"><i class="fas fa-hand-paper"></i><h3>Say hello!</h3></div>`;
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
-                    } else {
-                        const oldScrollHeight = chatMessages.scrollHeight;
+                    const messagesHtml = messages
+                        .filter(msg => !existingMessageIds.has(msg.id))
+                        .map(msg => {
+                            const type = msg.sender_id === currentUserId ? 'sent' : 'received';
+                            const senderName = type === 'sent' ? 'You' : `${msg.sender_id}`; // Adjust based on available sender name
+                            return `
+                            <div class="message-bubble ${type}" data-message-id="${msg.id}" aria-label="Message from ${senderName} at ${new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}">
+                                <p>${msg.content}</p>
+                                <div class="message-meta">${new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                            </div>`;
+                        }).join('');
+
+                    if (append) {
+                        const scrollHeightBefore = chatMessages.scrollHeight;
                         chatMessages.insertAdjacentHTML('afterbegin', messagesHtml);
-                        chatMessages.scrollTop = chatMessages.scrollHeight - oldScrollHeight;
+                        chatMessages.scrollTop = chatMessages.scrollHeight - scrollHeightBefore;
+                    } else {
+                        chatMessages.innerHTML = messages.length > 0 
+                            ? messagesHtml 
+                            : `<div class="placeholder-view"><i class="fas fa-hand-paper"></i><h3>Say hello!</h3></div>`;
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }
+                } else {
+                    if (!append) {
+                        chatMessages.innerHTML = `<div class="placeholder-view"><i class="fas fa-exclamation-triangle"></i><h3>Error</h3><p>${result.error || 'Could not load conversation'}</p></div>`;
+                        showToast(result.error || 'Could not load conversation');
                     }
                 }
             } catch (error) {
                 console.error("Error loading messages:", error);
+                if (!append) {
+                    chatMessages.innerHTML = `<div class="placeholder-view"><i class="fas fa-exclamation-triangle"></i><h3>Error</h3><p>${error.message}</p></div>`;
+                    showToast(`Error: ${error.message}`);
+                }
             } finally {
                 isLoadingMessages = false;
             }
@@ -312,28 +341,32 @@
             try {
                 const result = await apiGetMessages(currentRecipientId, 1, lastMessageId);
                 if (result.ok && result.data) {
-                    const messages = result.data.messages || result.data;
+                    const messages = result.data.messages || [];
                     if (messages.length === 0) return;
 
                     const chatMessages = document.getElementById('chatMessages');
                     const wasScrolledToBottom = chatMessages.scrollTop + chatMessages.clientHeight >= chatMessages.scrollHeight - 10;
 
                     const currentUserId = getUserId();
+                    const existingMessageIds = new Set(
+                        Array.from(chatMessages.querySelectorAll('.message-bubble')).map(bubble => parseInt(bubble.getAttribute('data-message-id')))
+                    );
+
                     const messagesHtml = messages
-                        .filter(msg => !pendingMessages.has(msg.content)) // Ignore locally sent messages
+                        .filter(msg => !existingMessageIds.has(msg.id))
                         .map(msg => {
                             const type = msg.sender_id === currentUserId ? 'sent' : 'received';
-                            const sanitizedContent = msg.content.replace(/</g, "<").replace(/>/g, ">");
+                            const senderName = type === 'sent' ? 'You' : `${msg.sender_id}`; // Adjust based on available sender name
                             return `
-                            <div class="message-bubble ${type}">
-                                <p>${sanitizedContent}</p>
-                                <div class="message-meta">${new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                            <div class="message-bubble ${type}" data-message-id="${msg.id}" aria-label="Message from ${senderName} at ${new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}">
+                                <p>${msg.content}</p>
+                                <div class="message-meta">${new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                             </div>`;
                         }).join('');
 
                     if (messagesHtml) {
                         chatMessages.insertAdjacentHTML('beforeend', messagesHtml);
-                        lastMessageId = Math.max(...messages.map(msg => msg.id));
+                        lastMessageId = Math.max(lastMessageId || 0, ...messages.map(msg => msg.id));
                         if (wasScrolledToBottom) {
                             chatMessages.scrollTop = chatMessages.scrollHeight;
                         }
@@ -341,61 +374,59 @@
                 }
             } catch (error) {
                 console.error("Error syncing messages:", error);
+                showToast("Failed to sync messages. Please try again.");
             }
         }
-        
+
         async function sendMessage() {
             if (!currentRecipientId) return;
             const contentInput = document.getElementById('messageContent');
             const content = contentInput.value.trim();
             if (!content) return;
 
-            // Add message content to pending messages
-            pendingMessages.add(content);
-
-            // Add message to UI instantly
             const chatMessages = document.getElementById('chatMessages');
+            const tempMessageId = `temp-${Date.now()}`;
+            const currentUserId = getUserId();
             const messageHtml = `
-                <div class="message-bubble sent">
-                    <p>${content.replace(/</g, "<").replace(/>/g, ">")}</p>
-                    <div class="message-meta">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                <div class="message-bubble sent" data-message-id="${tempMessageId}" aria-label="Message from You at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}">
+                    <p>${content}</p>
+                    <div class="message-meta">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                 </div>`;
             chatMessages.insertAdjacentHTML('beforeend', messageHtml);
             chatMessages.scrollTop = chatMessages.scrollHeight;
-            
+
+            const originalContent = contentInput.value;
             contentInput.value = '';
             contentInput.dispatchEvent(new Event('input'));
 
             try {
                 const result = await apiSendMessage(currentRecipientId, content);
-                if (result.ok) {
-                    // Update lastMessageId if server provides message ID
-                    if (result.data && result.data.id) {
-                        lastMessageId = Math.max(lastMessageId || 0, result.data.id);
+                if (result.ok && result.data.sent_message) {
+                    lastMessageId = Math.max(lastMessageId || 0, result.data.sent_message.id);
+                    const tempMessage = chatMessages.querySelector(`[data-message-id="${tempMessageId}"]`);
+                    if (tempMessage) {
+                        tempMessage.setAttribute('data-message-id', result.data.sent_message.id);
+                        tempMessage.setAttribute('aria-label', `Message from You at ${new Date(result.data.sent_message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
                     }
-                    // Remove from pending messages
-                    pendingMessages.delete(content);
                 } else {
-                    alert(`Error: ${result.error}`);
-                    // Remove from UI and pending messages on failure
-                    chatMessages.removeChild(chatMessages.lastElementChild);
-                    pendingMessages.delete(content);
+                    throw new Error(result.error || 'Failed to send message');
                 }
             } catch (error) {
-                alert(`Error: ${error.message}`);
-                // Remove from UI and pending messages on error
-                chatMessages.removeChild(chatMessages.lastElementChild);
-                pendingMessages.delete(content);
+                console.error("Error sending message:", error);
+                const tempMessage = chatMessages.querySelector(`[data-message-id="${tempMessageId}"]`);
+                if (tempMessage) tempMessage.remove();
+                contentInput.value = originalContent;
+                showToast(`Error: ${error.message}`);
             }
         }
-        
+
         function handleScroll() {
             const messagesDiv = document.getElementById('chatMessages');
-            if (messagesDiv.scrollTop === 0 && currentPage > 1 && !isLoadingMessages) {
-                loadMessages(currentPage - 1);
+            if (messagesDiv.scrollTop === 0 && hasMoreMessages && !isLoadingMessages) {
+                loadMessages(currentPage + 1, true);
             }
         }
-        
+
         function debounce(func, wait) {
             let timeout;
             return function(...args) {
@@ -403,8 +434,6 @@
                 timeout = setTimeout(() => func.apply(this, args), wait);
             };
         }
-
-        const debouncedSearch = debounce((e) => loadUsers(e.target.value.trim()), 300);
 
         document.addEventListener('DOMContentLoaded', () => {
             if (syncInterval) {
@@ -415,19 +444,37 @@
             updateNav();
             if (redirectToLoginIfNotAuthenticated()) return;
             loadUsers();
-            
+
             const messageTextarea = document.getElementById('messageContent');
             messageTextarea.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
             });
             messageTextarea.addEventListener('input', () => {
                 document.getElementById('sendButton').disabled = messageTextarea.value.trim().length === 0;
                 messageTextarea.style.height = 'auto';
-                messageTextarea.style.height = (messageTextarea.scrollHeight) + 'px';
+                messageTextarea.style.height = `${messageTextarea.scrollHeight}px`;
             });
 
-            document.getElementById('searchInput').addEventListener('input', debouncedSearch);
+            document.getElementById('searchInput').addEventListener('input', debounce((e) => loadUsers(e.target.value.trim()), 300));
             document.getElementById('chatMessages').addEventListener('scroll', handleScroll);
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 768 && messengerContainer.classList.contains('chat-active')) {
+                    messengerContainer.classList.add('sidebar-visible');
+                } else if (window.innerWidth <= 768) {
+                    messengerContainer.classList.remove('sidebar-visible');
+                }
+            });
+
+            window.addEventListener('beforeunload', () => {
+                if (syncInterval) {
+                    clearInterval(syncInterval);
+                    syncInterval = null;
+                }
+            });
         });
 
         function logout() {
